@@ -2,133 +2,148 @@ import { Length, Position } from "../unit/Length";
 import { keyMap } from "../../util/functions/func";
 import { Property } from "../items/Property";
 import { Gradient } from "../image-resource/Gradient";
+import { ImageResource } from "../image-resource/ImageResource";
 
-const RepeatList = ['repeat', 'no-repeat', 'repeat-x', 'repeat-y']
+const RepeatList = ["repeat", "no-repeat", "repeat-x", "repeat-y"];
 
-export class BackgroundImage extends Property { 
+export class BackgroundImage extends Property {
+  static parse(obj) {
+    return new BackgroundImage(obj);
+  }
 
-    static parse (obj) {
-        return new BackgroundImage(obj);
-    }
- 
-    addImageResource (imageResource) {
-        this.clear('image-resource')
-        return this.addItem('image-resource', imageResource)
-    }
+  addImageResource(imageResource) {
+    this.clear("image-resource");
+    return this.addItem("image-resource", imageResource);
+  }
 
-    addGradient(gradient) {
-        return this.addImageResource(gradient);
-    }
+  addGradient(gradient) {
+    return this.addImageResource(gradient);
+  }
 
-    getDefaultObject() { 
-        return super.getDefaultObject({ 
-            itemType: 'background-image',
-            blendMode: 'normal',
-            size: 'auto',
-            repeat: 'repeat',
-            width: Length.percent(100),
-            height: Length.percent(100),
-            x: Position.CENTER,
-            y: Position.CENTER
-        })
-    }
+  getDefaultObject() {
+    return super.getDefaultObject({
+      itemType: "background-image",
+      type: "color",
+      color: "#FFFFFF",
+      checked: false,
+      opacity: 1,
+      blendMode: "normal",
+      size: "auto",
+      repeat: "repeat",
+      width: Length.percent(100),
+      height: Length.percent(100),
+      x: Length.percent(0),
+      y: Length.percent(0),
+      image: new ImageResource()
+    });
+  }
 
-    convert (json) {
-        json.x = Length.parse(json.x);
-        json.y = Length.parse(json.y);
+  convert(json) {
+    json.x = Length.parse(json.x);
+    json.y = Length.parse(json.y);
 
-        if (json.width) json.width = Length.parse(json.width);
-        if (json.height) json.height = Length.parse(json.height);
-        
-        return json; 
-    }
+    if (json.width) json.width = Length.parse(json.width);
+    if (json.height) json.height = Length.parse(json.height);
 
-    checkField(key, value) {
-        if (key === 'repeat') {
-            return RepeatList.includes(value)
-        }
+    return json;
+  }
 
-        return super.checkField(key, value); 
-    }
+  get image() {
+    return this.json.image;
+  }
 
-    get image (){
-        return this.one({itemType: 'image-resource'}) || new Gradient()
-    }
+  set image(image) {
+    this.json.image = image;
+  }
 
-    //FIXME: why this method is not working 
-    set image (imageResource) {
-        this.addImageResource(imageResource);
-    }
-
-    toBackgroundImageCSS () {
-        if (!this.image) return {}
-        return {
-            'background-image': this.image + ""
-        }
+  checkField(key, value) {
+    if (key === "repeat") {
+      return RepeatList.includes(value);
     }
 
-    toBackgroundPositionCSS () {
-        var json = this.json; 
-    
-        return {
-            'background-position': `${json.x} ${json.y}`
-        }
-    }      
-    
-    toBackgroundSizeCSS() {
-    
-        var json = this.json; 
-        var backgroundSize = 'auto' 
+    return super.checkField(key, value);
+  }
 
-        if (json.size == 'contain' || json.size == 'cover') {
-            backgroundSize = json.size; 
-        } else if (json.width.isPercent() && json.width.isPercent()) {
-            // 기본 사이즈가 아닌 것만 표시 (100% 100% 이 아닐 때 )
-            if (+json.width !== 100 || +json.height !== 100) {
-                backgroundSize = `${json.width} ${json.height}`
-            }
-            
-        } else {
-            backgroundSize = `${json.width} ${json.height}`
-        }
+  toBackgroundImageCSS() {
+    if (!this.json.image) return {};
+    return {
+      "background-image": this.json.image + ""
+    };
+  }
 
-        return {
-            'background-size': backgroundSize
-        }
-    }
-    
-    toBackgroundRepeatCSS() {
-        var json = this.json; 
-        return {
-            'background-repeat': json.repeat
-        }
+  toBackgroundPositionCSS() {
+    var json = this.json;
+
+    return {
+      "background-position": `${json.x} ${json.y}`
+    };
+  }
+
+  toBackgroundSizeCSS() {
+    var json = this.json;
+    var backgroundSize = "auto";
+
+    if (json.size == "contain" || json.size == "cover") {
+      backgroundSize = json.size;
+    } else if (json.width.isPercent() && json.width.isPercent()) {
+      // 기본 사이즈가 아닌 것만 표시 (100% 100% 이 아닐 때 )
+      if (+json.width !== 100 || +json.height !== 100) {
+        backgroundSize = `${json.width} ${json.height}`;
+      }
+    } else {
+      backgroundSize = `${json.width} ${json.height}`;
     }
 
-    toBackgroundBlendCSS() {
-        var json = this.json; 
-        return {
-            'background-blend-mode': json.blendMode
-        }
-    }    
+    return {
+      "background-size": backgroundSize
+    };
+  }
 
-    toCSS () {
+  toBackgroundRepeatCSS() {
+    var json = this.json;
+    return {
+      "background-repeat": json.repeat
+    };
+  }
 
-        var results = {
-            ...this.toBackgroundImageCSS(),
-            ...this.toBackgroundPositionCSS(),
-            ...this.toBackgroundSizeCSS(),
-            ...this.toBackgroundRepeatCSS(),
-            ...this.toBackgroundBlendCSS()
-        }       
-        
-        return results
-    }    
+  toBackgroundBlendCSS() {
+    var json = this.json;
+    return {
+      "background-blend-mode": json.blendMode
+    };
+  }
 
-    toString () {
-        return keyMap(this.toCSS(), (key, value) => {
-            return `${key}: ${value}`
-        }).join(';')
+  toBackgroundColorCSS() {
+    var json = this.json;
+
+    return {
+      "background-color": json.color
+    };
+  }
+
+  toCSS() {
+    var json = this.json;
+
+    if (json.type == "color") {
+      return {
+        ...this.toBackgroundColorCSS()
+      };
     }
 
+    var results = {
+      ...this.toBackgroundImageCSS(),
+      ...this.toBackgroundPositionCSS(),
+      ...this.toBackgroundSizeCSS(),
+      ...this.toBackgroundRepeatCSS(),
+      ...this.toBackgroundBlendCSS()
+    };
 
+    return results;
+  }
+
+  toString() {
+    return keyMap(this.toCSS(), (key, value) => {
+      return `${key}: ${value}`;
+    }).join(";");
+  }
 }

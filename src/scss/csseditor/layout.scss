@@ -14,153 +14,147 @@ $toggle-left-size: 80px;
 $right-size: 310px;
 $timeline-header-size: 30px;
 $timeline-size: 300px;
-$show-timeline-animation: all 0.15s linear; 
+$show-timeline-animation: all 0.15s linear;
 $gradient-box-size: 0px;
 $layer-toolbar-height: 0px;
 $display-flex-color: #01a270;
 $display-grid-color: red;
 
-
-
 .layout-main {
-    position: absolute;
-    left: 0px;
-    top: 0px;
-    right: 0px;
-    bottom: 0px; 
-    display: flex;
-    flex-direction: column;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  display: flex;
+  flex-direction: column;
 
-    &.show-timeline {
-        .layout-footer {
-            height: $timeline-size - 1px;
-        }
-    }
-
-    &:not(.show-timeline) {
-        .layout-footer {
-            height: $timeline-header-size - 1px !important; 
-        }
-    }
-
-
-    .layout-header {
-        flex: none; 
-        height: $tool-size;
-        overflow: hidden;
-        display: flex; 
-        border-bottom: 1px solid $border-color;
-        position: relative;        
-
-        .page-tab-menu {
-            flex: 1 1 auto; 
-            display: block;
-            position: relative;
-        }
-    }
-
-
+  &.show-timeline {
     .layout-footer {
-        flex: none; 
-        height: $timeline-header-size - 1px;
-        overflow: hidden; 
-        border-top: 1px solid $border-color;      
-        transition: $show-timeline-animation;  
-        position: relative;
-        pointer-events: all;
-    }    
+      height: $timeline-size - 1px;
+    }
+  }
 
-    .layout-middle {
-        flex: 1 1 auto; 
-        display: flex;
-        height: 100%;
-        position: relative;
+  &:not(.show-timeline) {
+    .layout-footer {
+      height: $timeline-header-size - 1px !important;
+    }
+  }
 
-        .layout-right {
-            flex: none; 
-            width: $right-size;
-            border-left: 1px solid $border-color;
-            background-color: white; 
-            z-index: 100;
-            height: 100%;
-            position: relative;
-            display: flex; 
-            flex-direction: column; 
-        }
+  .layout-header {
+    flex: none;
+    height: $tool-size;
+    overflow: hidden;
+    display: flex;
+    border-bottom: 1px solid $border-color;
+    position: relative;
 
-        .layout-left {
-            flex: none; 
-            width: $left-size;
-            border-right: 1px solid $border-color;
-            z-index: 100;
-            height: 100%;
-            position: relative;
-        }    
+    .page-tab-menu {
+      flex: 1 1 auto;
+      display: block;
+      position: relative;
+    }
+  }
 
-        .layout-body {
-            flex: 1 1 auto;
-            height: 100%;
-            position: relative;
-        }
+  .layout-footer {
+    flex: none;
+    height: $timeline-header-size - 1px;
+    overflow: hidden;
+    border-top: 1px solid $border-color;
+    transition: $show-timeline-animation;
+    position: relative;
+    pointer-events: all;
+  }
+
+  .layout-middle {
+    flex: 1 1 auto;
+    display: flex;
+    height: 100%;
+    position: relative;
+
+    .layout-right {
+      flex: none;
+      width: $right-size;
+      border-left: 1px solid $border-color;
+      background-color: white;
+      z-index: 100;
+      height: 100%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
     }
 
-    .select-layer-view {
-        .pages {
-            display: block; 
-        }
-
-        .item-info {
-            .page-info {
-                display: block;
-            }
-
-            left: $left-page-size;
-
-            .layers {
-                top: 0px;
-            }
-        }
+    .layout-left {
+      flex: none;
+      width: $left-size;
+      border-right: 1px solid $border-color;
+      z-index: 100;
+      height: 100%;
+      position: relative;
     }
 
+    .layout-body {
+      flex: 1 1 auto;
+      height: 100%;
+      position: relative;
+    }
+  }
 
+  .select-layer-view {
+    .pages {
+      display: block;
+    }
 
+    .item-info {
+      .page-info {
+        display: block;
+      }
+
+      left: $left-page-size;
+
+      .layers {
+        top: 0px;
+      }
+    }
+  }
 }
 
-@import './range-ui.scss';
-@import './tab-ui.scss';
+@import "./range-ui.scss";
+@import "./tab-ui.scss";
 
-@import './element/unit-range.scss';
+@import "./element/unit-range.scss";
 
-@import './select-layer-view.scss';
-@import './outline.scss';
-@import './colorpicker-ui.scss';
-@import './tool-menu.scss';
-@import './shape-manager.scss';
-@import './project-manager.scss';
-@import './layer-manager.scss';
-@import './layer-toolbar.scss';
-@import './image-toolbar.scss';
-@import './images.scss';
-@import './guide/angluar-group.scss';
-@import './feature-manager.scss';
-@import './timeline-manager.scss';
-@import './gradient-types.scss';
-@import './layers-menu.scss'; 
-@import './vertical-colorstep.scss';
-@import './gradient-sample-view.scss';
-@import './layer-sample-view.scss';
-@import './page-sample-view.scss';
-@import './view.scss';       
-@import './property-items/group-align.scss';
+@import "./select-layer-view.scss";
+@import "./outline.scss";
+@import "./colorpicker-ui.scss";
+@import "./tool-menu.scss";
+@import "./shape-manager.scss";
+@import "./project-manager.scss";
+@import "./layer-manager.scss";
+@import "./layer-toolbar.scss";
+@import "./image-toolbar.scss";
+@import "./images.scss";
+@import "./guide/angluar-group.scss";
+@import "./feature-manager.scss";
+@import "./timeline-manager.scss";
+@import "./gradient-types.scss";
+@import "./layers-menu.scss";
+@import "./vertical-colorstep.scss";
+@import "./gradient-sample-view.scss";
+@import "./layer-sample-view.scss";
+@import "./page-sample-view.scss";
+@import "./view.scss";
+@import "./property-items/group-align.scss";
 
-
-@import './drag-angle.scss';
-@import './drag-position.scss';
-@import './guide/background-resizer.scss';
-@import './guide/background-position.scss';
-@import './guide/perspective-origin-position.scss';
-@import './blends.scss';
-@import './property-view.scss';
-@import './filters.scss';
-@import './export-view.scss';
-@import './image-resource.scss';
+@import "./drag-angle.scss";
+@import "./drag-position.scss";
+@import "./guide/background-resizer.scss";
+@import "./guide/background-position.scss";
+@import "./guide/perspective-origin-position.scss";
+@import "./blends.scss";
+@import "./property-view.scss";
+@import "./filters.scss";
+@import "./export-view.scss";
+@import "./image-resource.scss";
+@import "./fill-picker.scss";
+@import "./popup.scss";

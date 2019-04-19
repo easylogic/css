@@ -18,6 +18,7 @@ export default class AddRect extends MenuItem {
         if (!project) {
             project = editor.addProject(new Project({ name: 'New Project'}));
             project.select()
+            this.emit('refreshProjectListView')
         }
 
         var artboard = project.artboard || editor.selection.currentArtBoard; 
@@ -25,6 +26,7 @@ export default class AddRect extends MenuItem {
         if (!artboard) {
             artboard = project.add(new ArtBoard({ name: 'New ArtBoard'}));
             artboard.select()
+            this.emit('refreshLayerListView')
         }
 
         var current = editor.selection.current; 
@@ -35,6 +37,7 @@ export default class AddRect extends MenuItem {
         }))
         layer.select();      
 
-        this.emit(CHANGE_EDITOR);
+        this.emit('refreshLayerListView')
+        this.emit('refreshCanvas')
     }
 } 

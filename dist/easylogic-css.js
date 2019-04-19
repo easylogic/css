@@ -2867,15 +2867,9 @@ function px(value) {
 
 
 
-function isPX(unit) {
-    return unit === UNIT_PX;
-}
-function isEM(unit) {
-    return unit === UNIT_EM;
-}
-function isPercent(unit) {
-    return unit === UNIT_PERCENT;
-}
+
+
+
 
 
 
@@ -2906,17 +2900,11 @@ function isUnit(obj, unit) {
     return obj && obj.unit == unit;
 }
 
-function isPxUnit(obj) {
-    return isUnit(obj, UNIT_PX);
-}
 
-function isPercentUnit(obj) {
-    return isUnit(obj, UNIT_PERCENT);
-}
 
-function isEmUnit(obj) {
-    return isUnit(obj, UNIT_EM);
-}
+
+
+
 
 function isColorUnit(obj) {
     return isUnit(obj, UNIT_COLOR);
@@ -2926,9 +2914,7 @@ function isColorUnit(obj) {
 
 
 
-function unitObject(value, unit) {
-    return { unit: unit, value: value };
-}
+
 
 
 
@@ -6371,806 +6357,1165 @@ function DomDiff(A, B) {
     }
 }
 
+var _stringToPercent = {
+  center: 50,
+  top: 0,
+  left: 0,
+  right: 100,
+  bottom: 100
+};
+
+var Position = function Position() {
+  classCallCheck(this, Position);
+};
+
+Position.CENTER = "center";
+Position.TOP = "top";
+Position.RIGHT = "right";
+Position.LEFT = "left";
+Position.BOTTOM = "bottom";
+
+var CSS_UNIT_REG = /([\d.]+)(px|pt|fr|em|deg|vh|vw|%)/gi;
+
+var Length$1 = function () {
+  function Length() {
+    var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "";
+    var unit = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "";
+    classCallCheck(this, Length);
+
+    this.value = value;
+    this.unit = unit;
+  }
+
+  createClass(Length, [{
+    key: Symbol.toPrimitive,
+    value: function value(hint) {
+      if (hint == "number") {
+        return this.value;
+      }
+
+      return this.toString();
+    }
+  }, {
+    key: "toString",
+    value: function toString() {
+      if (this.isCalc()) {
+        return "calc(" + this.value + ")";
+      }
+
+      return this.value + this.unit;
+    }
+  }, {
+    key: "isCalc",
+    value: function isCalc() {
+      return this.unit == "calc";
+    }
+  }, {
+    key: "isFr",
+    value: function isFr() {
+      return this.unit == "fr";
+    }
+  }, {
+    key: "isPercent",
+    value: function isPercent() {
+      return this.unit == "%";
+    }
+  }, {
+    key: "isPx",
+    value: function isPx() {
+      return this.unit == "px";
+    }
+  }, {
+    key: "isEm",
+    value: function isEm() {
+      return this.unit == "em";
+    }
+  }, {
+    key: "isDeg",
+    value: function isDeg() {
+      return this.unit == "deg";
+    }
+  }, {
+    key: "isString",
+    value: function isString$$1() {
+      return this.unit === "";
+    }
+  }, {
+    key: "set",
+    value: function set$$1(value) {
+      this.value = value;
+    }
+  }, {
+    key: "add",
+    value: function add(obj) {
+      this.value += +obj;
+      return this;
+    }
+  }, {
+    key: "sub",
+    value: function sub(obj) {
+      return this.add(-1 * obj);
+    }
+  }, {
+    key: "mul",
+    value: function mul(obj) {
+      this.value *= +obj;
+      return this;
+    }
+  }, {
+    key: "div",
+    value: function div(obj) {
+      this.value /= +obj;
+      return this;
+    }
+  }, {
+    key: "mod",
+    value: function mod(obj) {
+      this.value %= +obj;
+      return this;
+    }
+  }, {
+    key: "clone",
+    value: function clone$$1() {
+      return new Length(this.value, this.unit);
+    }
+  }, {
+    key: "getUnitName",
+    value: function getUnitName() {
+      return this.unit === "%" ? "percent" : this.unit;
+    }
+  }, {
+    key: "toJSON",
+    value: function toJSON() {
+      return { value: this.value, unit: this.unit };
+    }
+  }, {
+    key: "rate",
+    value: function rate(value) {
+      return value / this.value;
+    }
+  }, {
+    key: "stringToPercent",
+    value: function stringToPercent() {
+      if (isNotUndefined(_stringToPercent[this.value])) {
+        return Length.percent(_stringToPercent[this.value]);
+      }
+
+      return Length.percent(0);
+    }
+  }, {
+    key: "stringToEm",
+    value: function stringToEm(maxValue) {
+      return this.stringToPercent().toEm(maxValue);
+    }
+  }, {
+    key: "stringToPx",
+    value: function stringToPx(maxValue) {
+      return this.stringToPercent().toPx(maxValue);
+    }
+  }, {
+    key: "toPercent",
+    value: function toPercent(maxValue) {
+      var fontSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 16;
+
+      if (this.isPercent()) {
+        return this;
+      } else if (this.isPx()) {
+        return Length.percent(this.value * 100 / maxValue);
+      } else if (this.isEm()) {
+        return Length.percent(this.value * fontSize * 100 / maxValue);
+      } else if (this.isString()) {
+        return this.stringToPercent(maxValue);
+      }
+    }
+  }, {
+    key: "toEm",
+    value: function toEm(maxValue) {
+      var fontSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 16;
+
+      if (this.isPercent()) {
+        return Length.em(this.value / 100 * maxValue / fontSize);
+      } else if (this.isPx()) {
+        return Length.em(this.value / fontSize);
+      } else if (this.isEm()) {
+        return this;
+      } else if (this.isString()) {
+        return this.stringToEm(maxValue);
+      }
+    }
+  }, {
+    key: "toPx",
+    value: function toPx(maxValue) {
+      if (this.isPercent()) {
+        return Length.px(this.value / 100 * maxValue);
+      } else if (this.isPx()) {
+        return this;
+      } else if (this.isEm()) {
+        return Length.px(this.value / 100 * maxValue / 16);
+      } else if (this.isString()) {
+        return this.stringToPx(maxValue);
+      }
+    }
+  }, {
+    key: "to",
+    value: function to(unit, maxValue) {
+      var fontSize = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 16;
+
+      if (unit === "px") {
+        return this.toPx(maxValue, fontSize);
+      } else if (unit === "%" || unit === "percent") {
+        return this.toPercent(maxValue, fontSize);
+      } else if (unit === "em") {
+        return this.toEm(maxValue, fontSize);
+      }
+    }
+  }, {
+    key: "calculate",
+    value: function calculate(type, dist) {
+      var func = this[type];
+
+      if (func) {
+        return func.call(this, dist);
+      }
+
+      return this;
+    }
+  }], [{
+    key: "min",
+    value: function min() {
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      var min = args.shift();
+
+      for (var i = 0, len = args.length; i < len; i++) {
+        if (min.value > args[i].value) {
+          min = args[i];
+        }
+      }
+
+      return min;
+    }
+  }, {
+    key: "max",
+    value: function max() {
+      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        args[_key2] = arguments[_key2];
+      }
+
+      var max = args.shift();
+
+      for (var i = 0, len = args.length; i < len; i++) {
+        if (max.value < args[i].value) {
+          max = args[i];
+        }
+      }
+
+      return max;
+    }
+  }, {
+    key: "string",
+    value: function string(value) {
+      return new Length(value + "", "");
+    }
+  }, {
+    key: "px",
+    value: function px(value) {
+      return new Length(+value, "px");
+    }
+  }, {
+    key: "em",
+    value: function em(value) {
+      return new Length(+value, "em");
+    }
+  }, {
+    key: "percent",
+    value: function percent(value) {
+      return new Length(+value, "%");
+    }
+  }, {
+    key: "deg",
+    value: function deg(value) {
+      return new Length(+value, "deg");
+    }
+  }, {
+    key: "fr",
+    value: function fr(value) {
+      return new Length(+value, "fr");
+    }
+  }, {
+    key: "auto",
+    value: function auto() {
+      return Length.string("auto");
+    }
+
+    /**
+     * return calc()  css fuction string
+     *
+     * Length.calc(`${Length.percent(100)} - ${Length.px(10)}`)
+     *
+     * @param {*} str
+     */
+
+  }, {
+    key: "calc",
+    value: function calc(str) {
+      return new Length(str, "calc");
+    }
+  }, {
+    key: "parse",
+    value: function parse(obj) {
+      if (isString(obj)) {
+        if (obj.indexOf("calc(") > -1) {
+          return new Length(obj.split("calc(")[1].split(")")[0], "calc");
+        } else {
+          var arr = obj.replace(CSS_UNIT_REG, "$1 $2").split(" ");
+          var isNumberString = +arr[0] == arr[0];
+          if (isNumberString) {
+            return new Length(+arr[0], arr[1]);
+          } else {
+            return new Length(arr[0]);
+          }
+        }
+      }
+
+      if (obj instanceof Length) {
+        return obj;
+      } else if (obj.unit) {
+        if (obj.unit == "%" || obj.unit == "percent") {
+          var value = 0;
+
+          if (isNotUndefined(obj.percent)) {
+            value = obj.percent;
+          } else if (isNotUndefined(obj.value)) {
+            value = obj.value;
+          }
+
+          return Length.percent(value);
+        } else if (obj.unit == "px") {
+          var value = 0;
+
+          if (isNotUndefined(obj.px)) {
+            value = obj.px;
+          } else if (isNotUndefined(obj.value)) {
+            value = obj.value;
+          }
+
+          return Length.px(value);
+        } else if (obj.unit == "em") {
+          var value = 0;
+
+          if (isNotUndefined(obj.em)) {
+            value = obj.em;
+          } else if (isNotUndefined(obj.value)) {
+            value = obj.value;
+          }
+
+          return Length.em(value);
+        } else if (obj.unit == "deg") {
+          var value = 0;
+
+          if (isNotUndefined(obj.deg)) {
+            value = obj.deg;
+          } else if (isNotUndefined(obj.value)) {
+            value = obj.value;
+          }
+
+          return Length.deg(value);
+        } else if (obj.unit === "" || obj.unit === "string") {
+          var value = "";
+
+          if (isNotUndefined(obj.str)) {
+            value = obj.str;
+          } else if (isNotUndefined(obj.value)) {
+            value = obj.value;
+          }
+
+          return Length.string(value);
+        }
+      }
+
+      return Length.string(obj);
+    }
+  }]);
+  return Length;
+}();
+
 var counter = 0;
 var cached = [];
 
 var Dom = function () {
-    function Dom(tag, className, attr) {
-        classCallCheck(this, Dom);
+  function Dom(tag, className, attr) {
+    classCallCheck(this, Dom);
 
+    if (isNotString(tag)) {
+      this.el = tag;
+    } else {
+      var el = document.createElement(tag);
+      this.uniqId = counter++;
 
-        if (isNotString(tag)) {
-            this.el = tag;
+      if (className) {
+        el.className = className;
+      }
+
+      attr = attr || {};
+
+      for (var k in attr) {
+        el.setAttribute(k, attr[k]);
+      }
+
+      this.el = el;
+    }
+  }
+
+  createClass(Dom, [{
+    key: "attr",
+    value: function attr(key, value$$1) {
+      if (arguments.length == 1) {
+        return this.el.getAttribute(key);
+      }
+
+      this.el.setAttribute(key, value$$1);
+
+      return this;
+    }
+  }, {
+    key: "attrs",
+    value: function attrs() {
+      var _this = this;
+
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      return args.map(function (key) {
+        return _this.el.getAttribute(key);
+      });
+    }
+  }, {
+    key: "removeAttr",
+    value: function removeAttr(key) {
+      this.el.removeAttribute(key);
+
+      return this;
+    }
+  }, {
+    key: "is",
+    value: function is(checkElement) {
+      return this.el === (checkElement.el || checkElement);
+    }
+  }, {
+    key: "closest",
+    value: function closest(cls) {
+      var temp = this;
+      var checkCls = false;
+
+      while (!(checkCls = temp.hasClass(cls))) {
+        if (temp.el.parentNode) {
+          temp = new Dom(temp.el.parentNode);
         } else {
-
-            var el = document.createElement(tag);
-            this.uniqId = counter++;
-
-            if (className) {
-                el.className = className;
-            }
-
-            attr = attr || {};
-
-            for (var k in attr) {
-                el.setAttribute(k, attr[k]);
-            }
-
-            this.el = el;
+          return null;
         }
+      }
+
+      if (checkCls) {
+        return temp;
+      }
+
+      return null;
+    }
+  }, {
+    key: "parent",
+    value: function parent() {
+      return new Dom(this.el.parentNode);
+    }
+  }, {
+    key: "removeClass",
+    value: function removeClass() {
+      var _el$classList;
+
+      (_el$classList = this.el.classList).remove.apply(_el$classList, arguments);
+
+      /*
+          if (this.el.className) {
+              var className = this.el.className;
+               if ($1) { className = ((` ${className} `).replace(` ${$1} `, WHITE_STRING)).trim();    }
+              if ($2) { className = ((` ${className} `).replace(` ${$2} `, WHITE_STRING)).trim();    }
+              if ($3) { className = ((` ${className} `).replace(` ${$3} `, WHITE_STRING)).trim();    }
+              if ($4) { className = ((` ${className} `).replace(` ${$4} `, WHITE_STRING)).trim();    }
+              if ($5) { className = ((` ${className} `).replace(` ${$5} `, WHITE_STRING)).trim();    }
+               this.el.className = className;
+          }
+          */
+
+      return this;
+    }
+  }, {
+    key: "hasClass",
+    value: function hasClass(cls) {
+      if (!this.el.classList) return false;
+      return this.el.classList.contains(cls);
+    }
+  }, {
+    key: "addClass",
+    value: function addClass() {
+      var _el$classList2;
+
+      (_el$classList2 = this.el.classList).add.apply(_el$classList2, arguments);
+
+      return this;
+    }
+  }, {
+    key: "onlyOneClass",
+    value: function onlyOneClass(cls) {
+      var parent = this.parent();
+      var selected = parent.$("." + cls);
+      if (selected) selected.removeClass(cls);
+      this.addClass(cls);
+    }
+  }, {
+    key: "toggleClass",
+    value: function toggleClass(cls, isForce) {
+      this.el.classList.toggle(cls, isForce);
+    }
+  }, {
+    key: "html",
+    value: function html$$1(_html) {
+      if (isUndefined$1(_html)) {
+        return this.el.innerHTML;
+      }
+
+      if (isString(_html)) {
+        this.el.innerHTML = _html;
+      } else {
+        this.empty().append(_html);
+      }
+
+      return this;
+    }
+  }, {
+    key: "htmlDiff",
+    value: function htmlDiff(fragment) {
+      if (!this.fragment) {
+        this.empty().append(fragment);
+        this.fragment = true;
+      } else {
+        // go diff
+        DomDiff(this.el, fragment);
+      }
+    }
+  }, {
+    key: "find",
+    value: function find(selector) {
+      return this.el.querySelector(selector);
+    }
+  }, {
+    key: "$",
+    value: function $(selector) {
+      var node = this.find(selector);
+      return node ? new Dom(node) : null;
+    }
+  }, {
+    key: "findAll",
+    value: function findAll(selector) {
+      return this.el.querySelectorAll(selector);
+    }
+  }, {
+    key: "$$",
+    value: function $$(selector) {
+      return [].concat(toConsumableArray(this.findAll(selector))).map(function (node) {
+        return new Dom(node);
+      });
+    }
+  }, {
+    key: "empty",
+    value: function empty() {
+      return this.html(EMPTY_STRING);
+    }
+  }, {
+    key: "append",
+    value: function append(el) {
+      if (isString(el)) {
+        this.el.appendChild(document.createTextNode(el));
+      } else {
+        this.el.appendChild(el.el || el);
+      }
+
+      return this;
+    }
+  }, {
+    key: "appendHTML",
+    value: function appendHTML(html$$1) {
+      var $dom = new Dom("div").html(html$$1);
+
+      this.append($dom.createChildrenFragment());
     }
 
-    createClass(Dom, [{
-        key: "attr",
-        value: function attr(key, value$$1) {
-            if (arguments.length == 1) {
-                return this.el.getAttribute(key);
-            }
-
-            this.el.setAttribute(key, value$$1);
-
-            return this;
-        }
-    }, {
-        key: "attrs",
-        value: function attrs() {
-            var _this = this;
-
-            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-                args[_key] = arguments[_key];
-            }
-
-            return args.map(function (key) {
-                return _this.el.getAttribute(key);
-            });
-        }
-    }, {
-        key: "removeAttr",
-        value: function removeAttr(key) {
-            this.el.removeAttribute(key);
-
-            return this;
-        }
-    }, {
-        key: "is",
-        value: function is(checkElement) {
-            return this.el === (checkElement.el || checkElement);
-        }
-    }, {
-        key: "closest",
-        value: function closest(cls) {
-
-            var temp = this;
-            var checkCls = false;
-
-            while (!(checkCls = temp.hasClass(cls))) {
-                if (temp.el.parentNode) {
-                    temp = new Dom(temp.el.parentNode);
-                } else {
-                    return null;
-                }
-            }
-
-            if (checkCls) {
-                return temp;
-            }
-
-            return null;
-        }
-    }, {
-        key: "parent",
-        value: function parent() {
-            return new Dom(this.el.parentNode);
-        }
-    }, {
-        key: "removeClass",
-        value: function removeClass() {
-            var _el$classList;
-
-            (_el$classList = this.el.classList).remove.apply(_el$classList, arguments);
-
-            /*
-            if (this.el.className) {
-                var className = this.el.className;
-                 if ($1) { className = ((` ${className} `).replace(` ${$1} `, WHITE_STRING)).trim();    }
-                if ($2) { className = ((` ${className} `).replace(` ${$2} `, WHITE_STRING)).trim();    }
-                if ($3) { className = ((` ${className} `).replace(` ${$3} `, WHITE_STRING)).trim();    }
-                if ($4) { className = ((` ${className} `).replace(` ${$4} `, WHITE_STRING)).trim();    }
-                if ($5) { className = ((` ${className} `).replace(` ${$5} `, WHITE_STRING)).trim();    }
-                 this.el.className = className;
-            }
-            */
-
-            return this;
-        }
-    }, {
-        key: "hasClass",
-        value: function hasClass(cls) {
-            if (!this.el.classList) return false;
-            return this.el.classList.contains(cls);
-        }
-    }, {
-        key: "addClass",
-        value: function addClass() {
-            var _el$classList2;
-
-            (_el$classList2 = this.el.classList).add.apply(_el$classList2, arguments);
-
-            return this;
-        }
-    }, {
-        key: "onlyOneClass",
-        value: function onlyOneClass(cls) {
-            var parent = this.parent();
-            var selected = parent.$("." + cls);
-            if (selected) selected.removeClass(cls);
-            this.addClass(cls);
-        }
-    }, {
-        key: "toggleClass",
-        value: function toggleClass(cls, isForce) {
-
-            this.el.classList.toggle(cls, isForce);
-
-            /*
-            if (arguments.length == 2) {
-                if (isForce) {
-                    this.addClass(cls)
-                } else {
-                    this.removeClass(cls);
-                }
-            } else {
-                if (this.hasClass(cls)) {
-                    this.removeClass(cls);
-                } else {
-                    this.addClass(cls);
-                }
-            }
-            */
-        }
-    }, {
-        key: "html",
-        value: function html$$1(_html) {
-
-            if (isUndefined$1(_html)) {
-                return this.el.innerHTML;
-            }
-
-            if (isString(_html)) {
-                this.el.innerHTML = _html;
-            } else {
-                this.empty().append(_html);
-            }
-
-            return this;
-        }
-    }, {
-        key: "htmlDiff",
-        value: function htmlDiff(fragment) {
-            if (!this.fragment) {
-
-                this.empty().append(fragment);
-                this.fragment = true;
-            } else {
-                // go diff 
-                DomDiff(this.el, fragment);
-            }
-        }
-    }, {
-        key: "find",
-        value: function find(selector) {
-            return this.el.querySelector(selector);
-        }
-    }, {
-        key: "$",
-        value: function $(selector) {
-            var node = this.find(selector);
-            return node ? new Dom(node) : null;
-        }
-    }, {
-        key: "findAll",
-        value: function findAll(selector) {
-            return this.el.querySelectorAll(selector);
-        }
-    }, {
-        key: "$$",
-        value: function $$(selector) {
-            return [].concat(toConsumableArray(this.findAll(selector))).map(function (node) {
-                return new Dom(node);
-            });
-        }
-    }, {
-        key: "empty",
-        value: function empty() {
-            return this.html(EMPTY_STRING);
-        }
-    }, {
-        key: "append",
-        value: function append(el) {
-
-            if (isString(el)) {
-                this.el.appendChild(document.createTextNode(el));
-            } else {
-                this.el.appendChild(el.el || el);
-            }
-
-            return this;
-        }
-    }, {
-        key: "appendHTML",
-        value: function appendHTML(html$$1) {
-            var $dom = new Dom("div").html(html$$1);
-
-            this.append($dom.createChildrenFragment());
-        }
-
-        /**
-         * create document fragment with children dom 
-         */
-
-    }, {
-        key: "createChildrenFragment",
-        value: function createChildrenFragment() {
-            var list = this.children();
-
-            var fragment = document.createDocumentFragment();
-            list.forEach(function ($el) {
-                return fragment.appendChild($el.el);
-            });
-
-            return fragment;
-        }
-    }, {
-        key: "appendTo",
-        value: function appendTo(target) {
-            var t = target.el ? target.el : target;
-
-            t.appendChild(this.el);
-
-            return this;
-        }
-    }, {
-        key: "remove",
-        value: function remove() {
-            if (this.el.parentNode) {
-                this.el.parentNode.removeChild(this.el);
-            }
-
-            return this;
-        }
-    }, {
-        key: "text",
-        value: function text(value$$1) {
-            if (isUndefined$1(value$$1)) {
-                return this.el.textContent;
-            } else {
-
-                var tempText = value$$1;
-
-                if (value$$1 instanceof Dom) {
-                    tempText = value$$1.text();
-                }
-
-                this.el.textContent = tempText;
-                return this;
-            }
-        }
-
-        /**
-         * 
-         * $el.css`
-         *  border-color: yellow;
-         * `
-         * 
-         * @param {*} key 
-         * @param {*} value 
-         */
-
-    }, {
-        key: "css",
-        value: function css(key, value$$1) {
-            if (isNotUndefined(key) && isNotUndefined(value$$1)) {
-                this.el.style[key] = value$$1;
-            } else if (isNotUndefined(key)) {
-
-                if (isString(key)) {
-                    return getComputedStyle(this.el)[key];
-                } else {
-                    var keys = Object.keys(key || {});
-
-                    for (var i = 0, len = keys.length; i < len; i++) {
-                        var k = keys[i];
-                        this.el.style[k] = key[k];
-                    }
-                }
-            }
-
-            return this;
-        }
-    }, {
-        key: "cssText",
-        value: function cssText(value$$1) {
-            if (isUndefined$1(value$$1)) {
-                return this.el.style.cssText;
-            }
-
-            if (value$$1 != this.el.style.cssText) {
-                this.el.style.cssText = value$$1;
-            }
-
-            return this;
-        }
-    }, {
-        key: "cssArray",
-        value: function cssArray(arr) {
-
-            if (arr[0]) this.el.style[arr[0]] = arr[1];
-            if (arr[2]) this.el.style[arr[2]] = arr[3];
-            if (arr[4]) this.el.style[arr[4]] = arr[5];
-            if (arr[6]) this.el.style[arr[6]] = arr[7];
-            if (arr[8]) this.el.style[arr[8]] = arr[9];
-
-            return this;
-        }
-    }, {
-        key: "cssFloat",
-        value: function cssFloat(key) {
-            return parseFloat(this.css(key));
-        }
-    }, {
-        key: "cssInt",
-        value: function cssInt(key) {
-            return parseInt(this.css(key));
-        }
-    }, {
-        key: "px",
-        value: function px$$1(key, value$$1) {
-            return this.css(key, px(value$$1));
-        }
-    }, {
-        key: "rect",
-        value: function rect() {
-            return this.el.getBoundingClientRect();
-        }
-    }, {
-        key: "offsetRect",
-        value: function offsetRect() {
-            return {
-                top: this.el.offsetTop,
-                left: this.el.offsetLeft,
-                width: this.el.offsetWidth,
-                height: this.el.offsetHeight
-            };
-        }
-    }, {
-        key: "offset",
-        value: function offset() {
-            var rect = this.rect();
-
-            var scrollTop = Dom.getScrollTop();
-            var scrollLeft = Dom.getScrollLeft();
-
-            return {
-                top: rect.top + scrollTop,
-                left: rect.left + scrollLeft
-            };
-        }
-    }, {
-        key: "offsetLeft",
-        value: function offsetLeft() {
-            return this.offset().left;
-        }
-    }, {
-        key: "offsetTop",
-        value: function offsetTop() {
-            return this.offset().top;
-        }
-    }, {
-        key: "position",
-        value: function position() {
-
-            if (this.el.style.top) {
-                return {
-                    top: parseFloat(this.css('top')),
-                    left: parseFloat(this.css('left'))
-                };
-            } else {
-                return this.rect();
-            }
-        }
-    }, {
-        key: "size",
-        value: function size() {
-            return [this.width(), this.height()];
-        }
-    }, {
-        key: "width",
-        value: function width() {
-            return this.el.offsetWidth || this.rect().width;
-        }
-    }, {
-        key: "contentWidth",
-        value: function contentWidth() {
-            return this.width() - this.cssFloat('padding-left') - this.cssFloat('padding-right');
-        }
-    }, {
-        key: "height",
-        value: function height() {
-            return this.el.offsetHeight || this.rect().height;
-        }
-    }, {
-        key: "contentHeight",
-        value: function contentHeight() {
-            return this.height() - this.cssFloat('padding-top') - this.cssFloat('padding-bottom');
-        }
-    }, {
-        key: "dataKey",
-        value: function dataKey(key) {
-            return this.uniqId + '.' + key;
-        }
-    }, {
-        key: "data",
-        value: function data(key, value$$1) {
-            if (arguments.length == 2) {
-                cached[this.dataKey(key)] = value$$1;
-            } else if (arguments.length == 1) {
-                return cached[this.dataKey(key)];
-            } else {
-                var keys = Object.keys(cached);
-
-                var uniqId = this.uniqId + ".";
-                return keys.filter(function (key) {
-                    if (key.indexOf(uniqId) == 0) {
-                        return true;
-                    }
-
-                    return false;
-                }).map(function (value$$1) {
-                    return cached[value$$1];
-                });
-            }
-
-            return this;
-        }
-    }, {
-        key: "val",
-        value: function val(value$$1) {
-            if (isUndefined$1(value$$1)) {
-                return this.el.value;
-            } else if (isNotUndefined(value$$1)) {
-
-                var tempValue = value$$1;
-
-                if (value$$1 instanceof Dom) {
-                    tempValue = value$$1.val();
-                }
-
-                this.el.value = tempValue;
-            }
-
-            return this;
-        }
-    }, {
-        key: "realVal",
-        value: function realVal() {
-            switch (this.el.nodeType) {
-                case 'INPUT':
-                    var type = this.attr('type');
-                    if (type == 'checkbox' || type == 'radio') {
-                        return this.checked();
-                    }
-                case 'SELECT':
-                case 'TEXTAREA':
-                    return this.el.value;
-            }
-
-            return '';
-        }
-    }, {
-        key: "int",
-        value: function int() {
-            return parseInt(this.val(), 10);
-        }
-    }, {
-        key: "float",
-        value: function float() {
-            return parseFloat(this.val());
-        }
-    }, {
-        key: "show",
-        value: function show() {
-            return this.css('display', 'block');
-        }
-    }, {
-        key: "hide",
-        value: function hide() {
-            return this.css('display', 'none');
-        }
-    }, {
-        key: "toggle",
-        value: function toggle(isForce) {
-
-            var currentHide = this.css('display') == 'none';
-
-            if (arguments.length == 1) {
-                if (currentHide && isForce) {
-                    return this.show();
-                } else {
-                    return this.hide();
-                }
-            } else {
-                if (currentHide) {
-                    return this.show();
-                } else {
-                    return this.hide();
-                }
-            }
-        }
-    }, {
-        key: "setScrollTop",
-        value: function setScrollTop(scrollTop) {
-            this.el.scrollTop = scrollTop;
-            return this;
-        }
-    }, {
-        key: "setScrollLeft",
-        value: function setScrollLeft(scrollLeft) {
-            this.el.scrollLeft = scrollLeft;
-            return this;
-        }
-    }, {
-        key: "scrollTop",
-        value: function scrollTop() {
-            if (this.el === document.body) {
-                return Dom.getScrollTop();
-            }
-
-            return this.el.scrollTop;
-        }
-    }, {
-        key: "scrollLeft",
-        value: function scrollLeft() {
-            if (this.el === document.body) {
-                return Dom.getScrollLeft();
-            }
-
-            return this.el.scrollLeft;
-        }
-    }, {
-        key: "scrollHeight",
-        value: function scrollHeight() {
-            return this.el.scrollHeight;
-        }
-    }, {
-        key: "on",
-        value: function on(eventName, callback, opt1, opt2) {
-            this.el.addEventListener(eventName, callback, opt1, opt2);
-
-            return this;
-        }
-    }, {
-        key: "off",
-        value: function off(eventName, callback) {
-            this.el.removeEventListener(eventName, callback);
-
-            return this;
-        }
-    }, {
-        key: "getElement",
-        value: function getElement() {
-            return this.el;
-        }
-    }, {
-        key: "createChild",
-        value: function createChild(tag) {
-            var className = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : EMPTY_STRING;
-            var attrs = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-            var css = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
-
-            var $element = new Dom(tag, className, attrs);
-            $element.css(css);
-
-            this.append($element);
-
-            return $element;
-        }
-    }, {
-        key: "firstChild",
-        value: function firstChild() {
-            return new Dom(this.el.firstElementChild);
-        }
-    }, {
-        key: "children",
-        value: function children() {
-            var element = this.el.firstElementChild;
-
-            if (!element) {
-                return [];
-            }
-
-            var results = [];
-
-            do {
-                results.push(new Dom(element));
-                element = element.nextElementSibling;
-            } while (element);
-
-            return results;
-        }
-    }, {
-        key: "childLength",
-        value: function childLength() {
-            return this.el.children.length;
-        }
-    }, {
-        key: "replace",
-        value: function replace(newElement) {
-
-            this.el.parentNode.replaceChild(newElement.el || newElement, this.el);
-
-            return this;
-        }
-    }, {
-        key: "checked",
-        value: function checked() {
-            var isChecked = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-
-
-            if (arguments.length == 0) {
-                return !!this.el.checked;
-            }
-
-            this.el.checked = !!isChecked;
-
-            return this;
-        }
-    }, {
-        key: "focus",
-        value: function focus() {
-            this.el.focus();
-
-            return this;
-        }
-    }, {
-        key: "select",
-        value: function select() {
-            this.el.select();
-            return this;
-        }
-    }, {
-        key: "blur",
-        value: function blur() {
-            this.el.blur();
-
-            return this;
-        }
-    }, {
-        key: "select",
-        value: function select() {
-            this.el.select();
-
-            return this;
-        }
-
-        // canvas functions 
-
-    }, {
-        key: "context",
-        value: function context() {
-            var contextType = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '2d';
-
-
-            if (!this._initContext) {
-                this._initContext = this.el.getContext(contextType);
-            }
-
-            return this._initContext;
-        }
-    }, {
-        key: "resize",
-        value: function resize(_ref) {
-            var width = _ref.width,
-                height = _ref.height;
-
-
-            // support hi-dpi for retina display 
-            this._initContext = null;
-            var ctx = this.context();
-            var scale = window.devicePixelRatio || 1;
-
-            this.px('width', width);
-            this.px('height', height);
-
-            this.el.width = width * scale;
-            this.el.height = height * scale;
-
-            ctx.scale(scale, scale);
-        }
-    }, {
-        key: "clear",
-        value: function clear() {
-            this.context().clearRect(0, 0, this.el.width, this.el.height);
-        }
-    }, {
-        key: "update",
-        value: function update(callback) {
-            this.clear();
-            callback.call(this);
-        }
-    }, {
-        key: "drawOption",
-        value: function drawOption() {
-            var option = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-            var ctx = this.context();
-
-            Object.assign(ctx, option);
-        }
-    }, {
-        key: "drawLine",
-        value: function drawLine(x1, y1, x2, y2) {
-            var ctx = this.context();
-
-            ctx.beginPath();
-            ctx.moveTo(x1, y1);
-            ctx.lineTo(x2, y2);
-            ctx.stroke();
-            ctx.closePath();
-        }
-    }, {
-        key: "drawPath",
-        value: function drawPath() {
-            var ctx = this.context();
-
-            ctx.beginPath();
-
-            for (var _len2 = arguments.length, path = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-                path[_key2] = arguments[_key2];
-            }
-
-            path.forEach(function (p, index) {
-                if (index == 0) {
-                    ctx.moveTo(p[0], p[1]);
-                } else {
-                    ctx.lineTo(p[0], p[1]);
-                }
-            });
-            ctx.stroke();
-            ctx.fill();
-            ctx.closePath();
-        }
-    }, {
-        key: "drawCircle",
-        value: function drawCircle(cx, cy, r) {
-            var ctx = this.context();
-            ctx.beginPath();
-            ctx.arc(cx, cy, r, 0, 2 * Math.PI);
-            ctx.stroke();
-            ctx.fill();
-        }
-    }, {
-        key: "drawText",
-        value: function drawText(x, y, text) {
-            this.context().fillText(text, x, y);
-        }
-    }], [{
-        key: "getScrollTop",
-        value: function getScrollTop() {
-            return Math.max(window.pageYOffset, document.documentElement.scrollTop, document.body.scrollTop);
-        }
-    }, {
-        key: "getScrollLeft",
-        value: function getScrollLeft() {
-            return Math.max(window.pageXOffset, document.documentElement.scrollLeft, document.body.scrollLeft);
-        }
-    }, {
-        key: "parse",
-        value: function parse(html$$1) {
-            var parser = DOMParser();
-            return parser.parseFromString(html$$1, 'text/htmll');
-        }
-    }]);
-    return Dom;
+    /**
+     * create document fragment with children dom
+     */
+
+  }, {
+    key: "createChildrenFragment",
+    value: function createChildrenFragment() {
+      var list = this.children();
+
+      var fragment = document.createDocumentFragment();
+      list.forEach(function ($el) {
+        return fragment.appendChild($el.el);
+      });
+
+      return fragment;
+    }
+  }, {
+    key: "appendTo",
+    value: function appendTo(target) {
+      var t = target.el ? target.el : target;
+
+      t.appendChild(this.el);
+
+      return this;
+    }
+  }, {
+    key: "remove",
+    value: function remove() {
+      if (this.el.parentNode) {
+        this.el.parentNode.removeChild(this.el);
+      }
+
+      return this;
+    }
+  }, {
+    key: "text",
+    value: function text(value$$1) {
+      if (isUndefined$1(value$$1)) {
+        return this.el.textContent;
+      } else {
+        var tempText = value$$1;
+
+        if (value$$1 instanceof Dom) {
+          tempText = value$$1.text();
+        }
+
+        this.el.textContent = tempText;
+        return this;
+      }
+    }
+
+    /**
+     *
+     * $el.css`
+     *  border-color: yellow;
+     * `
+     *
+     * @param {*} key
+     * @param {*} value
+     */
+
+  }, {
+    key: "css",
+    value: function css(key, value$$1) {
+      if (isNotUndefined(key) && isNotUndefined(value$$1)) {
+        this.el.style[key] = value$$1;
+      } else if (isNotUndefined(key)) {
+        if (isString(key)) {
+          return getComputedStyle(this.el)[key];
+        } else {
+          var keys = Object.keys(key || {});
+
+          for (var i = 0, len = keys.length; i < len; i++) {
+            var k = keys[i];
+            this.el.style[k] = key[k];
+          }
+        }
+      }
+
+      return this;
+    }
+  }, {
+    key: "cssText",
+    value: function cssText(value$$1) {
+      if (isUndefined$1(value$$1)) {
+        return this.el.style.cssText;
+      }
+
+      if (value$$1 != this.el.style.cssText) {
+        this.el.style.cssText = value$$1;
+      }
+
+      return this;
+    }
+  }, {
+    key: "cssArray",
+    value: function cssArray(arr) {
+      if (arr[0]) this.el.style[arr[0]] = arr[1];
+      if (arr[2]) this.el.style[arr[2]] = arr[3];
+      if (arr[4]) this.el.style[arr[4]] = arr[5];
+      if (arr[6]) this.el.style[arr[6]] = arr[7];
+      if (arr[8]) this.el.style[arr[8]] = arr[9];
+
+      return this;
+    }
+  }, {
+    key: "cssFloat",
+    value: function cssFloat(key) {
+      return parseFloat(this.css(key));
+    }
+  }, {
+    key: "cssInt",
+    value: function cssInt(key) {
+      return parseInt(this.css(key));
+    }
+  }, {
+    key: "px",
+    value: function px$$1(key, value$$1) {
+      return this.css(key, Length$1.px(value$$1));
+    }
+  }, {
+    key: "rect",
+    value: function rect() {
+      return this.el.getBoundingClientRect();
+    }
+  }, {
+    key: "offsetRect",
+    value: function offsetRect() {
+      return {
+        top: this.el.offsetTop,
+        left: this.el.offsetLeft,
+        width: this.el.offsetWidth,
+        height: this.el.offsetHeight
+      };
+    }
+  }, {
+    key: "offset",
+    value: function offset() {
+      var rect = this.rect();
+
+      var scrollTop = Dom.getScrollTop();
+      var scrollLeft = Dom.getScrollLeft();
+
+      return {
+        top: rect.top + scrollTop,
+        left: rect.left + scrollLeft
+      };
+    }
+  }, {
+    key: "offsetLeft",
+    value: function offsetLeft() {
+      return this.offset().left;
+    }
+  }, {
+    key: "offsetTop",
+    value: function offsetTop() {
+      return this.offset().top;
+    }
+  }, {
+    key: "position",
+    value: function position() {
+      if (this.el.style.top) {
+        return {
+          top: parseFloat(this.css("top")),
+          left: parseFloat(this.css("left"))
+        };
+      } else {
+        return this.rect();
+      }
+    }
+  }, {
+    key: "size",
+    value: function size() {
+      return [this.width(), this.height()];
+    }
+  }, {
+    key: "width",
+    value: function width() {
+      return this.el.offsetWidth || this.rect().width;
+    }
+  }, {
+    key: "contentWidth",
+    value: function contentWidth() {
+      return this.width() - this.cssFloat("padding-left") - this.cssFloat("padding-right");
+    }
+  }, {
+    key: "height",
+    value: function height() {
+      return this.el.offsetHeight || this.rect().height;
+    }
+  }, {
+    key: "contentHeight",
+    value: function contentHeight() {
+      return this.height() - this.cssFloat("padding-top") - this.cssFloat("padding-bottom");
+    }
+  }, {
+    key: "dataKey",
+    value: function dataKey(key) {
+      return this.uniqId + "." + key;
+    }
+  }, {
+    key: "data",
+    value: function data(key, value$$1) {
+      if (arguments.length == 2) {
+        cached[this.dataKey(key)] = value$$1;
+      } else if (arguments.length == 1) {
+        return cached[this.dataKey(key)];
+      } else {
+        var keys = Object.keys(cached);
+
+        var uniqId = this.uniqId + ".";
+        return keys.filter(function (key) {
+          if (key.indexOf(uniqId) == 0) {
+            return true;
+          }
+
+          return false;
+        }).map(function (value$$1) {
+          return cached[value$$1];
+        });
+      }
+
+      return this;
+    }
+  }, {
+    key: "val",
+    value: function val(value$$1) {
+      if (isUndefined$1(value$$1)) {
+        return this.el.value;
+      } else if (isNotUndefined(value$$1)) {
+        var tempValue = value$$1;
+
+        if (value$$1 instanceof Dom) {
+          tempValue = value$$1.val();
+        }
+
+        this.el.value = tempValue;
+      }
+
+      return this;
+    }
+  }, {
+    key: "realVal",
+    value: function realVal() {
+      switch (this.el.nodeType) {
+        case "INPUT":
+          var type = this.attr("type");
+          if (type == "checkbox" || type == "radio") {
+            return this.checked();
+          }
+        case "SELECT":
+        case "TEXTAREA":
+          return this.el.value;
+      }
+
+      return "";
+    }
+  }, {
+    key: "int",
+    value: function int() {
+      return parseInt(this.val(), 10);
+    }
+  }, {
+    key: "float",
+    value: function float() {
+      return parseFloat(this.val());
+    }
+  }, {
+    key: "show",
+    value: function show() {
+      var displayType = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "block";
+
+      return this.css("display", displayType != "none" ? displayType : "block");
+    }
+  }, {
+    key: "hide",
+    value: function hide() {
+      return this.css("display", "none");
+    }
+  }, {
+    key: "toggle",
+    value: function toggle(isForce) {
+      var currentHide = this.css("display") == "none";
+
+      if (arguments.length == 1) {
+        if (currentHide && isForce) {
+          return this.show();
+        } else {
+          return this.hide();
+        }
+      } else {
+        if (currentHide) {
+          return this.show();
+        } else {
+          return this.hide();
+        }
+      }
+    }
+  }, {
+    key: "setScrollTop",
+    value: function setScrollTop(scrollTop) {
+      this.el.scrollTop = scrollTop;
+      return this;
+    }
+  }, {
+    key: "setScrollLeft",
+    value: function setScrollLeft(scrollLeft) {
+      this.el.scrollLeft = scrollLeft;
+      return this;
+    }
+  }, {
+    key: "scrollTop",
+    value: function scrollTop() {
+      if (this.el === document.body) {
+        return Dom.getScrollTop();
+      }
+
+      return this.el.scrollTop;
+    }
+  }, {
+    key: "scrollLeft",
+    value: function scrollLeft() {
+      if (this.el === document.body) {
+        return Dom.getScrollLeft();
+      }
+
+      return this.el.scrollLeft;
+    }
+  }, {
+    key: "scrollHeight",
+    value: function scrollHeight() {
+      return this.el.scrollHeight;
+    }
+  }, {
+    key: "on",
+    value: function on(eventName, callback, opt1, opt2) {
+      this.el.addEventListener(eventName, callback, opt1, opt2);
+
+      return this;
+    }
+  }, {
+    key: "off",
+    value: function off(eventName, callback) {
+      this.el.removeEventListener(eventName, callback);
+
+      return this;
+    }
+  }, {
+    key: "getElement",
+    value: function getElement() {
+      return this.el;
+    }
+  }, {
+    key: "createChild",
+    value: function createChild(tag) {
+      var className = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : EMPTY_STRING;
+      var attrs = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+      var css = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : {};
+
+      var $element = new Dom(tag, className, attrs);
+      $element.css(css);
+
+      this.append($element);
+
+      return $element;
+    }
+  }, {
+    key: "firstChild",
+    value: function firstChild() {
+      return new Dom(this.el.firstElementChild);
+    }
+  }, {
+    key: "children",
+    value: function children() {
+      var element = this.el.firstElementChild;
+
+      if (!element) {
+        return [];
+      }
+
+      var results = [];
+
+      do {
+        results.push(new Dom(element));
+        element = element.nextElementSibling;
+      } while (element);
+
+      return results;
+    }
+  }, {
+    key: "childLength",
+    value: function childLength() {
+      return this.el.children.length;
+    }
+  }, {
+    key: "replace",
+    value: function replace(newElement) {
+      this.el.parentNode.replaceChild(newElement.el || newElement, this.el);
+
+      return this;
+    }
+  }, {
+    key: "checked",
+    value: function checked() {
+      var isChecked = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+      if (arguments.length == 0) {
+        return !!this.el.checked;
+      }
+
+      this.el.checked = !!isChecked;
+
+      return this;
+    }
+  }, {
+    key: "focus",
+    value: function focus() {
+      this.el.focus();
+
+      return this;
+    }
+  }, {
+    key: "select",
+    value: function select() {
+      this.el.select();
+      return this;
+    }
+  }, {
+    key: "blur",
+    value: function blur() {
+      this.el.blur();
+
+      return this;
+    }
+  }, {
+    key: "select",
+    value: function select() {
+      this.el.select();
+
+      return this;
+    }
+
+    // canvas functions
+
+  }, {
+    key: "context",
+    value: function context() {
+      var contextType = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "2d";
+
+      if (!this._initContext) {
+        this._initContext = this.el.getContext(contextType);
+      }
+
+      return this._initContext;
+    }
+  }, {
+    key: "resize",
+    value: function resize(_ref) {
+      var width = _ref.width,
+          height = _ref.height;
+
+      // support hi-dpi for retina display
+      this._initContext = null;
+      var ctx = this.context();
+      var scale = window.devicePixelRatio || 1;
+
+      this.px("width", width);
+      this.px("height", height);
+
+      this.el.width = width * scale;
+      this.el.height = height * scale;
+
+      ctx.scale(scale, scale);
+    }
+  }, {
+    key: "clear",
+    value: function clear() {
+      this.context().clearRect(0, 0, this.el.width, this.el.height);
+    }
+  }, {
+    key: "update",
+    value: function update(callback) {
+      this.clear();
+      callback.call(this);
+    }
+  }, {
+    key: "drawOption",
+    value: function drawOption() {
+      var option = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      var ctx = this.context();
+
+      Object.assign(ctx, option);
+    }
+  }, {
+    key: "drawLine",
+    value: function drawLine(x1, y1, x2, y2) {
+      var ctx = this.context();
+
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+      ctx.closePath();
+    }
+  }, {
+    key: "drawPath",
+    value: function drawPath() {
+      var ctx = this.context();
+
+      ctx.beginPath();
+
+      for (var _len2 = arguments.length, path = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        path[_key2] = arguments[_key2];
+      }
+
+      path.forEach(function (p, index) {
+        if (index == 0) {
+          ctx.moveTo(p[0], p[1]);
+        } else {
+          ctx.lineTo(p[0], p[1]);
+        }
+      });
+      ctx.stroke();
+      ctx.fill();
+      ctx.closePath();
+    }
+  }, {
+    key: "drawCircle",
+    value: function drawCircle(cx, cy, r) {
+      var ctx = this.context();
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+      ctx.stroke();
+      ctx.fill();
+    }
+  }, {
+    key: "drawText",
+    value: function drawText(x, y, text) {
+      this.context().fillText(text, x, y);
+    }
+  }, {
+    key: "value",
+    get: function get$$1() {
+      return this.el.value;
+    }
+  }], [{
+    key: "getScrollTop",
+    value: function getScrollTop() {
+      return Math.max(window.pageYOffset, document.documentElement.scrollTop, document.body.scrollTop);
+    }
+  }, {
+    key: "getScrollLeft",
+    value: function getScrollLeft() {
+      return Math.max(window.pageXOffset, document.documentElement.scrollLeft, document.body.scrollLeft);
+    }
+  }, {
+    key: "parse",
+    value: function parse(html$$1) {
+      var parser = DOMParser();
+      return parser.parseFromString(html$$1, "text/htmll");
+    }
+  }]);
+  return Dom;
 }();
 
 var EventChecker = function () {
@@ -7442,223 +7787,247 @@ function ACTION(str) {
     return ACTION_PREFIX + str;
 }
 
-var PREVENT$1 = 'PREVENT';
+var PREVENT$1 = "PREVENT";
 
 var BaseStore = function () {
-    function BaseStore(opt) {
-        classCallCheck(this, BaseStore);
+  function BaseStore(opt) {
+    classCallCheck(this, BaseStore);
 
-        this.cachedCallback = {};
-        this.callbacks = [];
-        this.actions = [];
-        this.getters = [];
-        this.modules = opt.modules || [];
-        this.standalone = {
-            getters: {},
-            actions: {},
-            dispatches: {}
-        };
+    this.cachedCallback = {};
+    this.callbacks = [];
+    this.actions = [];
+    this.getters = [];
+    this.modules = opt.modules || [];
+    this.standalone = {
+      getters: {},
+      actions: {},
+      dispatches: {}
+    };
 
-        this.initialize();
+    this.initialize();
+  }
+
+  createClass(BaseStore, [{
+    key: "initialize",
+    value: function initialize() {
+      this.initializeModule();
     }
+  }, {
+    key: "initializeModule",
+    value: function initializeModule() {
+      var _this = this;
 
-    createClass(BaseStore, [{
-        key: "initialize",
-        value: function initialize() {
-            this.initializeModule();
+      this.modules.forEach(function (ModuleClass) {
+        _this.addModule(ModuleClass);
+      });
+    }
+  }, {
+    key: "makeActionCallback",
+    value: function makeActionCallback(context, action, actionName) {
+      var _this2 = this;
+
+      var func = function func($1, $2, $3, $4, $5) {
+        return context[action].call(context, _this2, $1, $2, $3, $4, $5);
+      };
+
+      func.context = context;
+      func.displayName = actionName;
+
+      return func;
+    }
+  }, {
+    key: "action",
+    value: function action(_action, context) {
+      var _this3 = this;
+
+      var actionName = _action.substr(_action.indexOf(ACTION_PREFIX) + ACTION_PREFIX.length);
+
+      this.actions[actionName] = this.makeActionCallback(context, _action, actionName);
+
+      this.standalone.actions[actionName] = function ($1, $2, $3, $4, $5) {
+        return _this3.run(actionName, $1, $2, $3, $4, $5);
+      };
+      this.standalone.dispatches[actionName] = function ($1, $2, $3, $4, $5) {
+        return _this3.dispatch(actionName, $1, $2, $3, $4, $5);
+      };
+    }
+  }, {
+    key: "getter",
+    value: function getter(action, context) {
+      var _this4 = this;
+
+      var actionName = action.substr(action.indexOf(GETTER_PREFIX) + GETTER_PREFIX.length);
+
+      this.getters[actionName] = this.makeActionCallback(context, action, actionName);
+
+      this.standalone.getters[actionName] = function ($1, $2, $3, $4, $5) {
+        return _this4.read(actionName, $1, $2, $3, $4, $5);
+      };
+    }
+  }, {
+    key: "mapGetters",
+    value: function mapGetters() {
+      var _this5 = this;
+
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      return args.map(function (actionName) {
+        return _this5.standalone.getters[actionName];
+      });
+    }
+  }, {
+    key: "mapActions",
+    value: function mapActions() {
+      var _this6 = this;
+
+      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        args[_key2] = arguments[_key2];
+      }
+
+      return args.map(function (actionName) {
+        return _this6.standalone.actions[actionName];
+      });
+    }
+  }, {
+    key: "mapDispatches",
+    value: function mapDispatches() {
+      var _this7 = this;
+
+      for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+        args[_key3] = arguments[_key3];
+      }
+
+      return args.map(function (actionName) {
+        return _this7.standalone.dispatches[actionName];
+      });
+    }
+  }, {
+    key: "dispatch",
+    value: function dispatch(action, $1, $2, $3, $4, $5) {
+      var actionCallback = this.actions[action];
+
+      if (actionCallback) {
+        var ret = actionCallback($1, $2, $3, $4, $5);
+
+        if (ret != PREVENT$1) {
+          actionCallback.context.afterDispatch();
         }
-    }, {
-        key: "initializeModule",
-        value: function initializeModule() {
-            var _this = this;
+      } else {
+        throw new Error("action : " + action + " is not a valid.");
+      }
+    }
+  }, {
+    key: "run",
+    value: function run(action, $1, $2, $3, $4, $5) {
+      var actionCallback = this.actions[action];
 
-            this.modules.forEach(function (ModuleClass) {
-                _this.addModule(ModuleClass);
-            });
-        }
-    }, {
-        key: "makeActionCallback",
-        value: function makeActionCallback(context, action, actionName) {
-            var _this2 = this;
+      if (actionCallback) {
+        return actionCallback($1, $2, $3, $4, $5);
+      } else {
+        throw new Error("action : " + action + " is not a valid.");
+      }
+    }
+  }, {
+    key: "read",
+    value: function read(action, $1, $2, $3, $4, $5) {
+      var getterCallback = this.getters[action];
 
-            var func = function func($1, $2, $3, $4, $5) {
-                return context[action].call(context, _this2, $1, $2, $3, $4, $5);
-            };
+      if (getterCallback) {
+        return getterCallback($1, $2, $3, $4, $5);
+      } else {
+        throw new Error("getter : " + action + " is not a valid.");
+      }
+    }
+  }, {
+    key: "addModule",
+    value: function addModule(ModuleClass) {
+      return new ModuleClass(this);
+    }
+  }, {
+    key: "on",
+    value: function on(event, originalCallback, context) {
+      var delay = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
 
-            func.context = context;
-            func.displayName = actionName;
+      var callback = delay > 0 ? debounce(originalCallback, delay) : originalCallback;
+      this.callbacks.push({ event: event, callback: callback, context: context, originalCallback: originalCallback });
+    }
+  }, {
+    key: "off",
+    value: function off(event, originalCallback) {
+      if (arguments.length == 0) {
+        this.callbacks = [];
+        this.cachedCallback = {};
+      } else if (arguments.length == 1) {
+        this.callbacks = this.callbacks.filter(function (f) {
+          return f.event != event;
+        });
+        this.cachedCallback = {};
+      } else if (arguments.length == 2) {
+        this.callbacks = this.callbacks.filter(function (f) {
+          return !(f.event == event && f.originalCallback == originalCallback);
+        });
+        this.cachedCallback = {};
+      }
+    }
+  }, {
+    key: "sendMessage",
+    value: function sendMessage(source, event, $2, $3, $4, $5) {
+      var _this8 = this;
 
-            return func;
-        }
-    }, {
-        key: "action",
-        value: function action(_action, context) {
-            var _this3 = this;
+      setTimeout(function () {
+        var list = _this8.cachedCallback[event];
 
-            var actionName = _action.substr(_action.indexOf(ACTION_PREFIX) + ACTION_PREFIX.length);
+        list.filter(function (f) {
+          return f.originalCallback.source !== source;
+        }).forEach(function (f) {
+          return f.callback($2, $3, $4, $5);
+        });
+      }, 0);
+    }
+  }, {
+    key: "triggerMessage",
+    value: function triggerMessage(source, event, $2, $3, $4, $5) {
+      var _this9 = this;
 
-            this.actions[actionName] = this.makeActionCallback(context, _action, actionName);
+      setTimeout(function () {
+        var list = _this9.cachedCallback[event];
 
-            this.standalone.actions[actionName] = function ($1, $2, $3, $4, $5) {
-                return _this3.run(actionName, $1, $2, $3, $4, $5);
-            };
-            this.standalone.dispatches[actionName] = function ($1, $2, $3, $4, $5) {
-                return _this3.dispatch(actionName, $1, $2, $3, $4, $5);
-            };
-        }
-    }, {
-        key: "getter",
-        value: function getter(action, context) {
-            var _this4 = this;
+        list.filter(function (f) {
+          return f.originalCallback.source === source;
+        }).forEach(function (f) {
+          return f.callback($2, $3, $4, $5);
+        });
+      }, 0);
+    }
+  }, {
+    key: "makeCachedCallback",
+    value: function makeCachedCallback(event) {
+      if (!this.cachedCallback[event]) {
+        this.cachedCallback[event] = this.callbacks.filter(function (f) {
+          return f.event === event;
+        });
+      }
+    }
+  }, {
+    key: "emit",
+    value: function emit($1, $2, $3, $4, $5) {
+      var event = $1;
 
-            var actionName = action.substr(action.indexOf(GETTER_PREFIX) + GETTER_PREFIX.length);
+      this.makeCachedCallback(event);
+      this.sendMessage(this.source, $1, $2, $3, $4, $5);
+    }
+  }, {
+    key: "trigger",
+    value: function trigger($1, $2, $3, $4, $5) {
+      var event = $1;
 
-            this.getters[actionName] = this.makeActionCallback(context, action, actionName);
-
-            this.standalone.getters[actionName] = function ($1, $2, $3, $4, $5) {
-                return _this4.read(actionName, $1, $2, $3, $4, $5);
-            };
-        }
-    }, {
-        key: "mapGetters",
-        value: function mapGetters() {
-            var _this5 = this;
-
-            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-                args[_key] = arguments[_key];
-            }
-
-            return args.map(function (actionName) {
-                return _this5.standalone.getters[actionName];
-            });
-        }
-    }, {
-        key: "mapActions",
-        value: function mapActions() {
-            var _this6 = this;
-
-            for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-                args[_key2] = arguments[_key2];
-            }
-
-            return args.map(function (actionName) {
-                return _this6.standalone.actions[actionName];
-            });
-        }
-    }, {
-        key: "mapDispatches",
-        value: function mapDispatches() {
-            var _this7 = this;
-
-            for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-                args[_key3] = arguments[_key3];
-            }
-
-            return args.map(function (actionName) {
-                return _this7.standalone.dispatches[actionName];
-            });
-        }
-    }, {
-        key: "dispatch",
-        value: function dispatch(action, $1, $2, $3, $4, $5) {
-            var actionCallback = this.actions[action];
-
-            if (actionCallback) {
-                var ret = actionCallback($1, $2, $3, $4, $5);
-
-                if (ret != PREVENT$1) {
-                    actionCallback.context.afterDispatch();
-                }
-            } else {
-                throw new Error('action : ' + action + ' is not a valid.');
-            }
-        }
-    }, {
-        key: "run",
-        value: function run(action, $1, $2, $3, $4, $5) {
-            var actionCallback = this.actions[action];
-
-            if (actionCallback) {
-                return actionCallback($1, $2, $3, $4, $5);
-            } else {
-                throw new Error('action : ' + action + ' is not a valid.');
-            }
-        }
-    }, {
-        key: "read",
-        value: function read(action, $1, $2, $3, $4, $5) {
-            var getterCallback = this.getters[action];
-
-            if (getterCallback) {
-                return getterCallback($1, $2, $3, $4, $5);
-            } else {
-                throw new Error('getter : ' + action + ' is not a valid.');
-            }
-        }
-    }, {
-        key: "addModule",
-        value: function addModule(ModuleClass) {
-            return new ModuleClass(this);
-        }
-    }, {
-        key: "on",
-        value: function on(event, originalCallback, context) {
-            var delay = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 0;
-
-            var callback = delay > 0 ? debounce(originalCallback, delay) : originalCallback;
-            this.callbacks.push({ event: event, callback: callback, context: context, originalCallback: originalCallback });
-        }
-    }, {
-        key: "off",
-        value: function off(event, originalCallback) {
-
-            if (arguments.length == 0) {
-                this.callbacks = [];
-                this.cachedCallback = {};
-            } else if (arguments.length == 1) {
-                this.callbacks = this.callbacks.filter(function (f) {
-                    return f.event != event;
-                });
-                this.cachedCallback = {};
-            } else if (arguments.length == 2) {
-                this.callbacks = this.callbacks.filter(function (f) {
-                    return !(f.event == event && f.originalCallback == originalCallback);
-                });
-                this.cachedCallback = {};
-            }
-        }
-    }, {
-        key: "sendMessage",
-        value: function sendMessage(source, event, $2, $3, $4, $5) {
-            var _this8 = this;
-
-            setTimeout(function () {
-                var list = _this8.cachedCallback[event];
-
-                for (var i = 0, len = list.length; i < len; i++) {
-                    var f = list[i];
-                    if (f.originalCallback.source != source) {
-                        // console.log(f);
-                        f.callback($2, $3, $4, $5);
-                    }
-                }
-            }, 0);
-        }
-    }, {
-        key: "emit",
-        value: function emit($1, $2, $3, $4, $5) {
-            var event = $1;
-
-            if (!this.cachedCallback[event]) {
-                this.cachedCallback[event] = this.callbacks.filter(function (f) {
-                    return f.event == event;
-                });
-            }
-
-            this.sendMessage(this.source, $1, $2, $3, $4, $5);
-        }
-    }]);
-    return BaseStore;
+      this.makeCachedCallback(event);
+      this.triggerMessage(this.source, $1, $2, $3, $4, $5);
+    }
+  }]);
+  return BaseStore;
 }();
 
 var ITEM_SET = 'item/set';
@@ -7865,11 +8234,11 @@ var State = function () {
   return State;
 }();
 
-var _templateObject = taggedTemplateLiteral(['', ''], ['', '']);
+var _templateObject = taggedTemplateLiteral(["\n        ", "\n      "], ["\n        ", "\n      "]);
 
-var REFERENCE_PROPERTY = 'ref';
+var REFERENCE_PROPERTY = "ref";
 var TEMP_DIV = new Dom("div");
-var QUERY_PROPERTY = '[' + REFERENCE_PROPERTY + ']';
+var QUERY_PROPERTY = "[" + REFERENCE_PROPERTY + "]";
 
 var matchPath = function matchPath(el, selector) {
   if (el) {
@@ -7886,7 +8255,6 @@ var hasDelegate = function hasDelegate(e, eventObject) {
 };
 
 var makeCallback = function makeCallback(context, eventObject, callback) {
-
   if (eventObject.delegate) {
     return makeDelegateCallback(context, eventObject, callback);
   } else {
@@ -7908,7 +8276,7 @@ var makeDelegateCallback = function makeDelegateCallback(context, eventObject, c
     var delegateTarget = hasDelegate(e, eventObject);
 
     if (delegateTarget) {
-      // delegate target 이 있는 경우만 callback 실행 
+      // delegate target 이 있는 경우만 callback 실행
       e.$delegateTarget = new Dom(delegateTarget);
 
       var returnValue = runEventCallback(context, e, eventObject, callback);
@@ -7942,20 +8310,19 @@ var runEventCallback = function runEventCallback(context, e, eventObject, callba
 };
 
 var checkEventType = function checkEventType(context, e, eventObject) {
-
-  // 특정 keycode 를 가지고 있는지 체크 
+  // 특정 keycode 를 가지고 있는지 체크
   var hasKeyCode = true;
   if (eventObject.codes.length) {
     hasKeyCode = (e.code ? eventObject.codes.includes(e.code.toLowerCase()) : false) || (e.key ? eventObject.codes.includes(e.key.toLowerCase()) : false);
   }
 
-  // 체크 메소드들은 모든 메소드를 다 적용해야한다. 
+  // 체크 메소드들은 모든 메소드를 다 적용해야한다.
   var isAllCheck = true;
   if (eventObject.checkMethodList.length) {
     isAllCheck = eventObject.checkMethodList.every(function (field) {
       var fieldValue = context[field];
       if (isFunction(fieldValue) && fieldValue) {
-        // check method 
+        // check method
         return fieldValue.call(context, e);
       } else if (isNotUndefined(fieldValue)) {
         // check field value
@@ -7985,12 +8352,11 @@ var getDefaultDomElement = function getDefaultDomElement(context, dom) {
 };
 
 var splitMethodByKeyword = function splitMethodByKeyword(arr, keyword) {
-
   var filterKeys = arr.filter(function (code) {
-    return code.indexOf(keyword + '(') > -1;
+    return code.indexOf(keyword + "(") > -1;
   });
   var filterMaps = filterKeys.map(function (code) {
-    var _code$split$1$split$ = code.split(keyword + '(')[1].split(')')[0].trim().split(' '),
+    var _code$split$1$split$ = code.split(keyword + "(")[1].split(")")[0].trim().split(" "),
         _code$split$1$split$2 = slicedToArray(_code$split$1$split$, 2),
         target = _code$split$1$split$2[0],
         param = _code$split$1$split$2[1];
@@ -8004,33 +8370,33 @@ var splitMethodByKeyword = function splitMethodByKeyword(arr, keyword) {
 var getDefaultEventObject = function getDefaultEventObject(context, eventName, checkMethodFilters) {
   var arr = checkMethodFilters;
 
-  // context 에 속한 변수나 메소드 리스트 체크 
+  // context 에 속한 변수나 메소드 리스트 체크
   var checkMethodList = arr.filter(function (code) {
     return !!context[code];
   });
 
-  // 이벤트 정의 시점에 적용 되어야 하는 것들은 모두 method() 화 해서 정의한다.  
+  // 이벤트 정의 시점에 적용 되어야 하는 것들은 모두 method() 화 해서 정의한다.
 
-  var _splitMethodByKeyword = splitMethodByKeyword(arr, 'after'),
+  var _splitMethodByKeyword = splitMethodByKeyword(arr, "after"),
       _splitMethodByKeyword2 = slicedToArray(_splitMethodByKeyword, 2),
       afters = _splitMethodByKeyword2[0],
       afterMethods = _splitMethodByKeyword2[1];
 
-  var _splitMethodByKeyword3 = splitMethodByKeyword(arr, 'before'),
+  var _splitMethodByKeyword3 = splitMethodByKeyword(arr, "before"),
       _splitMethodByKeyword4 = slicedToArray(_splitMethodByKeyword3, 2),
       befores = _splitMethodByKeyword4[0],
       beforeMethods = _splitMethodByKeyword4[1];
 
-  var _splitMethodByKeyword5 = splitMethodByKeyword(arr, 'debounce'),
+  var _splitMethodByKeyword5 = splitMethodByKeyword(arr, "debounce"),
       _splitMethodByKeyword6 = slicedToArray(_splitMethodByKeyword5, 2),
       debounces = _splitMethodByKeyword6[0],
       debounceMethods = _splitMethodByKeyword6[1];
 
-  var _splitMethodByKeyword7 = splitMethodByKeyword(arr, 'capture'),
+  var _splitMethodByKeyword7 = splitMethodByKeyword(arr, "capture"),
       _splitMethodByKeyword8 = slicedToArray(_splitMethodByKeyword7, 1),
       captures = _splitMethodByKeyword8[0];
 
-  // 위의 5개 필터 이외에 있는 코드들은 keycode 로 인식한다. 
+  // 위의 5개 필터 이외에 있는 코드들은 keycode 로 인식한다.
 
 
   var filteredList = [].concat(toConsumableArray(checkMethodList), toConsumableArray(afters), toConsumableArray(befores), toConsumableArray(debounces), toConsumableArray(captures));
@@ -8041,7 +8407,15 @@ var getDefaultEventObject = function getDefaultEventObject(context, eventName, c
     return code.toLowerCase();
   });
 
-  return { eventName: eventName, codes: codes, captures: captures, afterMethods: afterMethods, beforeMethods: beforeMethods, debounceMethods: debounceMethods, checkMethodList: checkMethodList };
+  return {
+    eventName: eventName,
+    codes: codes,
+    captures: captures,
+    afterMethods: afterMethods,
+    beforeMethods: beforeMethods,
+    debounceMethods: debounceMethods,
+    checkMethodList: checkMethodList
+  };
 };
 
 var addEvent = function addEvent(context, eventObject, callback) {
@@ -8112,7 +8486,7 @@ var EventMachine = function () {
   }
 
   createClass(EventMachine, [{
-    key: 'render',
+    key: "render",
     value: function render($container) {
       this.$el = this.parseTemplate(html(_templateObject, this.template()));
       this.refs.$el = this.$el;
@@ -8124,18 +8498,18 @@ var EventMachine = function () {
       this.afterRender();
     }
   }, {
-    key: 'initialize',
+    key: "initialize",
     value: function initialize() {}
   }, {
-    key: 'afterRender',
+    key: "afterRender",
     value: function afterRender() {}
   }, {
-    key: 'components',
+    key: "components",
     value: function components() {
       return {};
     }
   }, {
-    key: 'parseTemplate',
+    key: "parseTemplate",
     value: function parseTemplate(html$$1, isLoad) {
       var _this = this;
 
@@ -8147,7 +8521,7 @@ var EventMachine = function () {
       var list = TEMP_DIV.html(html$$1).children();
 
       list.forEach(function ($el) {
-        // ref element 정리 
+        // ref element 정리
         if ($el.attr(REFERENCE_PROPERTY)) {
           _this.refs[$el.attr(REFERENCE_PROPERTY)] = $el;
         }
@@ -8165,14 +8539,14 @@ var EventMachine = function () {
       return TEMP_DIV.createChildrenFragment();
     }
   }, {
-    key: 'parseComponent',
+    key: "parseComponent",
     value: function parseComponent() {
       var _this2 = this;
 
       var $el = this.$el;
       keyEach(this.childComponents, function (ComponentName, Component) {
-        var targets = $el.$$('' + ComponentName.toLowerCase());
-        [].concat(toConsumableArray(targets)).forEach(function ($dom) {
+        var targets = $el.$$("" + ComponentName.toLowerCase());
+        targets.forEach(function ($dom) {
           var props = {};
 
           [].concat(toConsumableArray($dom.el.attributes)).filter(function (t) {
@@ -8184,9 +8558,7 @@ var EventMachine = function () {
           var refName = $dom.attr(REFERENCE_PROPERTY) || ComponentName;
 
           if (refName) {
-
             if (Component) {
-
               var instance = new Component(_this2, props);
 
               if (_this2.children[refName]) {
@@ -8207,7 +8579,7 @@ var EventMachine = function () {
       });
     }
   }, {
-    key: 'load',
+    key: "load",
     value: function load() {
       var _this3 = this;
 
@@ -8218,7 +8590,6 @@ var EventMachine = function () {
       this._loadMethods.forEach(function (callbackName) {
         var elName = callbackName.split(LOAD_SAPARATOR)[1];
         if (_this3.refs[elName]) {
-
           var oldTemplate = _this3[callbackName].t || EMPTY_STRING;
           var newTemplate = _this3[callbackName].call(_this3);
 
@@ -8226,14 +8597,16 @@ var EventMachine = function () {
             newTemplate = newTemplate.join(EMPTY_STRING);
           }
 
-          // LOAD 로 생성한 html 문자열에 변화가 없으면 업데이트 하지 않는다. 
+          // LOAD 로 생성한 html 문자열에 변화가 없으면 업데이트 하지 않는다.
           if (oldTemplate != newTemplate) {
             _this3[callbackName].t = newTemplate;
             var fragment = _this3.parseTemplate(newTemplate, true);
 
-            // fragment 와 이전 el children 을 비교해서 필요한 것만 갱신한다. 
-            // 이건 비교 알고리즘을 넣어도 괜찮을 듯 
-            _this3.refs[elName].htmlDiff(fragment);
+            // fragment 와 이전 el children 을 비교해서 필요한 것만 갱신한다.
+            // 이건 비교 알고리즘을 넣어도 괜찮을 듯
+            _this3.refs[elName].html(fragment);
+
+            // ref 를 중복해서 로드 하게 되면 이전 객체가 그대로 살아 있을 확률이 커지기 때문에 정상적으로 싱크가 맞지 않음
           }
         }
       });
@@ -8241,23 +8614,23 @@ var EventMachine = function () {
       this.parseComponent();
     }
 
-    // 기본 템플릿 지정 
+    // 기본 템플릿 지정
 
   }, {
-    key: 'template',
+    key: "template",
     value: function template() {
       var className = this.templateClass();
-      var classString = className ? 'class="' + className + '"' : EMPTY_STRING;
+      var classString = className ? "class=\"" + className + "\"" : EMPTY_STRING;
 
-      return '<div ' + classString + '></div>';
+      return "<div " + classString + "></div>";
     }
   }, {
-    key: 'templateClass',
+    key: "templateClass",
     value: function templateClass() {
       return null;
     }
   }, {
-    key: 'eachChildren',
+    key: "eachChildren",
     value: function eachChildren(callback) {
       if (!isFunction(callback)) return;
 
@@ -8267,43 +8640,43 @@ var EventMachine = function () {
     }
 
     /**
-     * 이벤트를 초기화한다. 
+     * 이벤트를 초기화한다.
      */
 
   }, {
-    key: 'initializeEvent',
+    key: "initializeEvent",
     value: function initializeEvent() {
       this.initializeEventMachin();
 
-      // 자식 이벤트도 같이 초기화 한다. 
-      // 그래서 이 메소드는 부모에서 한번만 불려도 된다. 
+      // 자식 이벤트도 같이 초기화 한다.
+      // 그래서 이 메소드는 부모에서 한번만 불려도 된다.
       this.eachChildren(function (Component) {
         Component.initializeEvent();
       });
     }
 
     /**
-     * 자원을 해제한다. 
-     * 이것도 역시 자식 컴포넌트까지 제어하기 때문에 가장 최상위 부모에서 한번만 호출되도 된다. 
+     * 자원을 해제한다.
+     * 이것도 역시 자식 컴포넌트까지 제어하기 때문에 가장 최상위 부모에서 한번만 호출되도 된다.
      */
 
   }, {
-    key: 'destroy',
+    key: "destroy",
     value: function destroy() {
       this.destroyEventMachin();
-      // this.refs = {} 
+      // this.refs = {}
 
       this.eachChildren(function (Component) {
         Component.destroy();
       });
     }
   }, {
-    key: 'destroyEventMachin',
+    key: "destroyEventMachin",
     value: function destroyEventMachin() {
       this.removeEventAll();
     }
   }, {
-    key: 'initializeEventMachin',
+    key: "initializeEventMachin",
     value: function initializeEventMachin() {
       var _this4 = this;
 
@@ -8313,14 +8686,13 @@ var EventMachine = function () {
     }
 
     /**
-     * property 수집하기 
-     * 상위 클래스의 모든 property 를 수집해서 리턴한다. 
+     * property 수집하기
+     * 상위 클래스의 모든 property 를 수집해서 리턴한다.
      */
 
   }, {
-    key: 'collectProps',
+    key: "collectProps",
     value: function collectProps() {
-
       if (!this.collapsedProps) {
         var p = this.__proto__;
         var results = [];
@@ -8335,7 +8707,7 @@ var EventMachine = function () {
       return this.collapsedProps;
     }
   }, {
-    key: 'filterProps',
+    key: "filterProps",
     value: function filterProps(pattern) {
       return this.collectProps().filter(function (key) {
         return key.match(pattern);
@@ -8345,27 +8717,27 @@ var EventMachine = function () {
     /* magic check method  */
 
   }, {
-    key: 'self',
+    key: "self",
     value: function self(e) {
       return e && e.$delegateTarget && e.$delegateTarget.is(e.target);
     }
   }, {
-    key: 'isAltKey',
+    key: "isAltKey",
     value: function isAltKey(e) {
       return e.altKey;
     }
   }, {
-    key: 'isCtrlKey',
+    key: "isCtrlKey",
     value: function isCtrlKey(e) {
       return e.ctrlKey;
     }
   }, {
-    key: 'isShiftKey',
+    key: "isShiftKey",
     value: function isShiftKey(e) {
       return e.shiftKey;
     }
   }, {
-    key: 'isMetaKey',
+    key: "isMetaKey",
     value: function isMetaKey(e) {
       return e.metaKey;
     }
@@ -8379,26 +8751,26 @@ var EventMachine = function () {
     /* after check method */
 
   }, {
-    key: 'preventDefault',
+    key: "preventDefault",
     value: function preventDefault(e) {
       e.preventDefault();
       return true;
     }
   }, {
-    key: 'stopPropagation',
+    key: "stopPropagation",
     value: function stopPropagation(e) {
       e.stopPropagation();
       return true;
     }
   }, {
-    key: 'bodyMouseMove',
+    key: "bodyMouseMove",
     value: function bodyMouseMove(e, methodName) {
       if (this[methodName]) {
         this.emit(ADD_BODY_MOUSEMOVE, this[methodName], this, e.xy);
       }
     }
   }, {
-    key: 'bodyMouseUp',
+    key: "bodyMouseUp",
     value: function bodyMouseUp(e, methodName) {
       if (this[methodName]) {
         this.emit(ADD_BODY_MOUSEUP, this[methodName], this, e.xy);
@@ -8407,9 +8779,8 @@ var EventMachine = function () {
     /* after check method */
 
   }, {
-    key: 'getBindings',
+    key: "getBindings",
     value: function getBindings() {
-
       if (!this._bindings) {
         this.initBindings();
       }
@@ -8417,17 +8788,17 @@ var EventMachine = function () {
       return this._bindings;
     }
   }, {
-    key: 'addBinding',
+    key: "addBinding",
     value: function addBinding(obj) {
       this.getBindings().push(obj);
     }
   }, {
-    key: 'initBindings',
+    key: "initBindings",
     value: function initBindings() {
       this._bindings = [];
     }
   }, {
-    key: 'removeEventAll',
+    key: "removeEventAll",
     value: function removeEventAll() {
       var _this5 = this;
 
@@ -8437,7 +8808,7 @@ var EventMachine = function () {
       this.initBindings();
     }
   }, {
-    key: 'removeEvent',
+    key: "removeEvent",
     value: function removeEvent(_ref3) {
       var eventName = _ref3.eventName,
           dom = _ref3.dom,
@@ -8452,173 +8823,180 @@ var EventMachine = function () {
 // const CHECK_STORE_PATTERN = /^@/
 var CHECK_STORE_MULTI_PATTERN = /^ME@/;
 
-var PREFIX = '@';
-var MULTI_PREFIX = 'ME@';
-var SPLITTER = '|';
+var PREFIX = "@";
+var MULTI_PREFIX = "ME@";
+var SPLITTER = "|";
 
 var PIPE = function PIPE() {
-    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-        args[_key] = arguments[_key];
-    }
+  for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+    args[_key] = arguments[_key];
+  }
 
-    return args.join(SPLITTER);
+  return args.join(SPLITTER);
 };
 
 var EVENT = function EVENT() {
-    return MULTI_PREFIX + PIPE.apply(undefined, arguments);
+  return MULTI_PREFIX + PIPE.apply(undefined, arguments);
 };
 
 var UIElement = function (_EventMachine) {
-    inherits(UIElement, _EventMachine);
+  inherits(UIElement, _EventMachine);
 
-    function UIElement(opt, props) {
-        classCallCheck(this, UIElement);
+  function UIElement(opt, props) {
+    classCallCheck(this, UIElement);
 
-        var _this = possibleConstructorReturn(this, (UIElement.__proto__ || Object.getPrototypeOf(UIElement)).call(this, opt));
+    var _this = possibleConstructorReturn(this, (UIElement.__proto__ || Object.getPrototypeOf(UIElement)).call(this, opt));
 
-        _this.opt = opt || {};
-        _this.parent = _this.opt;
-        _this.props = props || {};
-        _this.source = uuid();
-        _this.sourceName = _this.constructor.name;
-        // window[this.source] = this; 
+    _this.opt = opt || {};
+    _this.parent = _this.opt;
+    _this.props = props || {};
+    _this.source = uuid();
+    _this.sourceName = _this.constructor.name;
+    // window[this.source] = this;
 
-        if (opt && opt.$store) {
-            _this.$store = opt.$store;
-        }
-
-        _this.created();
-
-        _this.initialize();
-
-        _this.initializeStoreEvent();
-        return _this;
+    if (opt && opt.$store) {
+      _this.$store = opt.$store;
     }
 
-    createClass(UIElement, [{
-        key: "created",
-        value: function created() {}
-    }, {
-        key: "getRealEventName",
-        value: function getRealEventName(e) {
-            var s = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : PREFIX;
+    _this.created();
 
-            var startIndex = e.indexOf(s);
-            return e.substr(startIndex == 0 ? 0 : startIndex + s.length);
-        }
+    _this.initialize();
 
-        /**
-         * initialize store event 
-         * 
-         * you can define '@xxx' method(event) in UIElement 
-         * 
-         * 
-         */
+    _this.initializeStoreEvent();
+    return _this;
+  }
 
-    }, {
-        key: "initializeStoreEvent",
-        value: function initializeStoreEvent() {
-            var _this2 = this;
+  createClass(UIElement, [{
+    key: "created",
+    value: function created() {}
+  }, {
+    key: "getRealEventName",
+    value: function getRealEventName(e) {
+      var s = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : PREFIX;
 
-            this.storeEvents = {};
+      var startIndex = e.indexOf(s);
+      return e.substr(startIndex == 0 ? 0 : startIndex + s.length);
+    }
 
-            this.filterProps(CHECK_STORE_MULTI_PATTERN).forEach(function (key) {
-                var events = _this2.getRealEventName(key, MULTI_PREFIX);
+    /**
+     * initialize store event
+     *
+     * you can define '@xxx' method(event) in UIElement
+     *
+     *
+     */
 
-                events.split(SPLITTER).forEach(function (e) {
-                    e = _this2.getRealEventName(e);
-                    var callback = _this2[key].bind(_this2);
-                    callback.displayName = e;
-                    callback.source = _this2.source;
-                    _this2.storeEvents[e] = callback;
-                    _this2.$store.on(e, _this2.storeEvents[e], _this2);
-                });
-            });
-        }
-    }, {
-        key: "destoryStoreEvent",
-        value: function destoryStoreEvent() {
-            var _this3 = this;
+  }, {
+    key: "initializeStoreEvent",
+    value: function initializeStoreEvent() {
+      var _this2 = this;
 
-            keyEach(this.storeEvents, function (event, eventValue) {
-                _this3.$store.off(event, eventValue);
-            });
-        }
-    }, {
-        key: "get",
-        value: function get$$1(id) {
-            return this.$store.items[id] || {};
-        }
-    }, {
-        key: "read",
-        value: function read($1, $2, $3, $4, $5) {
-            return this.$store.read($1, $2, $3, $4, $5);
-        }
-    }, {
-        key: "mapGetters",
-        value: function mapGetters() {
-            var _$store;
+      this.storeEvents = {};
 
-            return (_$store = this.$store).mapGetters.apply(_$store, arguments);
-        }
-    }, {
-        key: "mapActions",
-        value: function mapActions() {
-            var _$store2;
+      this.filterProps(CHECK_STORE_MULTI_PATTERN).forEach(function (key) {
+        var events = _this2.getRealEventName(key, MULTI_PREFIX);
 
-            return (_$store2 = this.$store).mapActions.apply(_$store2, arguments);
-        }
-    }, {
-        key: "mapDispatches",
-        value: function mapDispatches() {
-            var _$store3;
+        events.split(SPLITTER).forEach(function (e) {
+          e = _this2.getRealEventName(e);
+          var callback = _this2[key].bind(_this2);
+          callback.displayName = e;
+          callback.source = _this2.source;
+          _this2.storeEvents[e] = callback;
+          _this2.$store.on(e, _this2.storeEvents[e], _this2);
+        });
+      });
+    }
+  }, {
+    key: "destoryStoreEvent",
+    value: function destoryStoreEvent() {
+      var _this3 = this;
 
-            return (_$store3 = this.$store).mapDispatches.apply(_$store3, arguments);
-        }
-    }, {
-        key: "i18n",
-        value: function i18n($1, $2, $3, $4, $5) {
-            return this.read('i18n/get', $1, $2, $3, $4, $5);
-        }
-    }, {
-        key: "config",
-        value: function config($1, $2, $3, $4, $5) {
-            if (arguments.length == 1) {
-                return this.$store.tool[$1];
-            }
+      keyEach(this.storeEvents, function (event, eventValue) {
+        _this3.$store.off(event, eventValue);
+      });
+    }
+  }, {
+    key: "get",
+    value: function get$$1(id) {
+      return this.$store.items[id] || {};
+    }
+  }, {
+    key: "read",
+    value: function read($1, $2, $3, $4, $5) {
+      return this.$store.read($1, $2, $3, $4, $5);
+    }
+  }, {
+    key: "mapGetters",
+    value: function mapGetters() {
+      var _$store;
 
-            this.dispatch(TOOL_SET, $1, $2, $3, $4, $5);
-        }
-    }, {
-        key: "initConfig",
-        value: function initConfig($1, $2) {
-            this.$store.tool[$1] = $2;
-        }
-    }, {
-        key: "run",
-        value: function run($1, $2, $3, $4, $5) {
-            return this.$store.run($1, $2, $3, $4, $5);
-        }
-    }, {
-        key: "dispatch",
-        value: function dispatch($1, $2, $3, $4, $5) {
-            this.$store.source = this.source;
-            return this.$store.dispatch($1, $2, $3, $4, $5);
-        }
-    }, {
-        key: "emit",
-        value: function emit($1, $2, $3, $4, $5) {
-            this.$store.source = this.source;
-            this.$store.emit($1, $2, $3, $4, $5);
-        }
-    }, {
-        key: "commit",
-        value: function commit(eventType, $1, $2, $3, $4, $5) {
-            this.run(ITEM_SET, $1, $2, $3, $4, $5);
-            this.emit(eventType, $1, $2, $3, $4, $5);
-        }
-    }]);
-    return UIElement;
+      return (_$store = this.$store).mapGetters.apply(_$store, arguments);
+    }
+  }, {
+    key: "mapActions",
+    value: function mapActions() {
+      var _$store2;
+
+      return (_$store2 = this.$store).mapActions.apply(_$store2, arguments);
+    }
+  }, {
+    key: "mapDispatches",
+    value: function mapDispatches() {
+      var _$store3;
+
+      return (_$store3 = this.$store).mapDispatches.apply(_$store3, arguments);
+    }
+  }, {
+    key: "i18n",
+    value: function i18n($1, $2, $3, $4, $5) {
+      return this.read("i18n/get", $1, $2, $3, $4, $5);
+    }
+  }, {
+    key: "config",
+    value: function config($1, $2, $3, $4, $5) {
+      if (arguments.length == 1) {
+        return this.$store.tool[$1];
+      }
+
+      this.dispatch(TOOL_SET, $1, $2, $3, $4, $5);
+    }
+  }, {
+    key: "initConfig",
+    value: function initConfig($1, $2) {
+      this.$store.tool[$1] = $2;
+    }
+  }, {
+    key: "run",
+    value: function run($1, $2, $3, $4, $5) {
+      return this.$store.run($1, $2, $3, $4, $5);
+    }
+  }, {
+    key: "dispatch",
+    value: function dispatch($1, $2, $3, $4, $5) {
+      this.$store.source = this.source;
+      return this.$store.dispatch($1, $2, $3, $4, $5);
+    }
+  }, {
+    key: "emit",
+    value: function emit($1, $2, $3, $4, $5) {
+      this.$store.source = this.source;
+      this.$store.emit($1, $2, $3, $4, $5);
+    }
+  }, {
+    key: "trigger",
+    value: function trigger($1, $2, $3, $4, $5) {
+      this.$store.source = this.source;
+      this.$store.trigger($1, $2, $3, $4, $5);
+    }
+  }, {
+    key: "commit",
+    value: function commit(eventType, $1, $2, $3, $4, $5) {
+      console.warn("deprecated", this, "commit");
+      this.run(ITEM_SET, $1, $2, $3, $4, $5);
+      this.emit(eventType, $1, $2, $3, $4, $5);
+    }
+  }]);
+  return UIElement;
 }(EventMachine);
 
 var config = new Map();
@@ -8659,372 +9037,6 @@ var Config = function () {
     return Config;
 }();
 
-var _stringToPercent = {
-    'center': 50,
-    'top': 0,
-    'left': 0,
-    'right': 100,
-    'bottom': 100
-};
-
-var Position = function Position() {
-    classCallCheck(this, Position);
-};
-
-Position.CENTER = 'center';
-Position.TOP = 'top';
-Position.RIGHT = 'right';
-Position.LEFT = 'left';
-Position.BOTTOM = 'bottom';
-
-var CSS_UNIT_REG = /([\d.]+)(px|pt|fr|em|deg|vh|vw|%)/ig;
-
-var Length$1 = function () {
-    function Length() {
-        var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-        var unit = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '';
-        classCallCheck(this, Length);
-
-        this.value = value;
-        this.unit = unit;
-    }
-
-    createClass(Length, [{
-        key: Symbol.toPrimitive,
-        value: function value(hint) {
-            if (hint == 'number') {
-                return this.value;
-            }
-
-            return this.toString();
-        }
-    }, {
-        key: 'toString',
-        value: function toString() {
-            if (this.isCalc()) {
-                return 'calc(' + this.value + ')';
-            }
-
-            return this.value + this.unit;
-        }
-    }, {
-        key: 'isCalc',
-        value: function isCalc() {
-            return this.unit == 'calc';
-        }
-    }, {
-        key: 'isFr',
-        value: function isFr() {
-            return this.unit == 'fr';
-        }
-    }, {
-        key: 'isPercent',
-        value: function isPercent() {
-            return this.unit == '%';
-        }
-    }, {
-        key: 'isPx',
-        value: function isPx() {
-            return this.unit == 'px';
-        }
-    }, {
-        key: 'isEm',
-        value: function isEm() {
-            return this.unit == 'em';
-        }
-    }, {
-        key: 'isDeg',
-        value: function isDeg() {
-            return this.unit == 'deg';
-        }
-    }, {
-        key: 'isString',
-        value: function isString$$1() {
-            return this.unit === '';
-        }
-    }, {
-        key: 'set',
-        value: function set$$1(value) {
-            this.value = value;
-        }
-    }, {
-        key: 'add',
-        value: function add(obj) {
-            this.value += +obj;
-            return this;
-        }
-    }, {
-        key: 'sub',
-        value: function sub(obj) {
-            return this.add(-1 * obj);
-        }
-    }, {
-        key: 'mul',
-        value: function mul(obj) {
-            this.value *= +obj;
-            return this;
-        }
-    }, {
-        key: 'div',
-        value: function div(obj) {
-            this.value /= +obj;
-            return this;
-        }
-    }, {
-        key: 'mod',
-        value: function mod(obj) {
-            this.value %= +obj;
-            return this;
-        }
-    }, {
-        key: 'clone',
-        value: function clone$$1() {
-            return new Length(this.value, this.unit);
-        }
-    }, {
-        key: 'getUnitName',
-        value: function getUnitName() {
-            return this.unit === '%' ? 'percent' : this.unit;
-        }
-    }, {
-        key: 'toJSON',
-        value: function toJSON() {
-            return { value: this.value, unit: this.unit };
-        }
-    }, {
-        key: 'rate',
-        value: function rate(value) {
-            return value / this.value;
-        }
-    }, {
-        key: 'stringToPercent',
-        value: function stringToPercent() {
-
-            if (isNotUndefined(_stringToPercent[this.value])) {
-                return Length.percent(_stringToPercent[this.value]);
-            }
-
-            return Length.percent(0);
-        }
-    }, {
-        key: 'stringToEm',
-        value: function stringToEm(maxValue) {
-            return this.stringToPercent().toEm(maxValue);
-        }
-    }, {
-        key: 'stringToPx',
-        value: function stringToPx(maxValue) {
-            return this.stringToPercent().toPx(maxValue);
-        }
-    }, {
-        key: 'toPercent',
-        value: function toPercent(maxValue) {
-            var fontSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 16;
-
-            if (this.isPercent()) {
-                return this;
-            } else if (this.isPx()) {
-                return Length.percent(this.value * 100 / maxValue);
-            } else if (this.isEm()) {
-                return Length.percent(this.value * fontSize * 100 / maxValue);
-            } else if (this.isString()) {
-                return this.stringToPercent(maxValue);
-            }
-        }
-    }, {
-        key: 'toEm',
-        value: function toEm(maxValue) {
-            var fontSize = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 16;
-
-            if (this.isPercent()) {
-                return Length.em(this.value / 100 * maxValue / fontSize);
-            } else if (this.isPx()) {
-                return Length.em(this.value / fontSize);
-            } else if (this.isEm()) {
-                return this;
-            } else if (this.isString()) {
-                return this.stringToEm(maxValue);
-            }
-        }
-    }, {
-        key: 'toPx',
-        value: function toPx(maxValue) {
-            if (this.isPercent()) {
-                return Length.px(this.value / 100 * maxValue);
-            } else if (this.isPx()) {
-                return this;
-            } else if (this.isEm()) {
-                return Length.px(this.value / 100 * maxValue / 16);
-            } else if (this.isString()) {
-                return this.stringToPx(maxValue);
-            }
-        }
-    }], [{
-        key: 'min',
-        value: function min() {
-            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-                args[_key] = arguments[_key];
-            }
-
-            var min = args.shift();
-
-            for (var i = 0, len = args.length; i < len; i++) {
-                if (min.value > args[i].value) {
-                    min = args[i];
-                }
-            }
-
-            return min;
-        }
-    }, {
-        key: 'max',
-        value: function max() {
-            for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-                args[_key2] = arguments[_key2];
-            }
-
-            var max = args.shift();
-
-            for (var i = 0, len = args.length; i < len; i++) {
-                if (max.value < args[i].value) {
-                    max = args[i];
-                }
-            }
-
-            return max;
-        }
-    }, {
-        key: 'string',
-        value: function string(value) {
-            return new Length(value + "", '');
-        }
-    }, {
-        key: 'px',
-        value: function px(value) {
-            return new Length(+value, 'px');
-        }
-    }, {
-        key: 'em',
-        value: function em(value) {
-            return new Length(+value, 'em');
-        }
-    }, {
-        key: 'percent',
-        value: function percent(value) {
-            return new Length(+value, '%');
-        }
-    }, {
-        key: 'deg',
-        value: function deg(value) {
-            return new Length(+value, 'deg');
-        }
-    }, {
-        key: 'fr',
-        value: function fr(value) {
-            return new Length(+value, 'fr');
-        }
-    }, {
-        key: 'auto',
-        value: function auto() {
-            return Length.string('auto');
-        }
-
-        /**
-         * return calc()  css fuction string 
-         * 
-         * Length.calc(`${Length.percent(100)} - ${Length.px(10)}`)
-         * 
-         * @param {*} str 
-         */
-
-    }, {
-        key: 'calc',
-        value: function calc(str) {
-            return new Length(str, 'calc');
-        }
-    }, {
-        key: 'parse',
-        value: function parse(obj) {
-
-            if (isString(obj)) {
-
-                if (obj.indexOf('calc(') > -1) {
-                    return new Length(obj.split('calc(')[1].split(')')[0], 'calc');
-                } else {
-
-                    var arr = obj.replace(CSS_UNIT_REG, '$1 $2').split(' ');
-                    var isNumberString = +arr[0] == arr[0];
-                    if (isNumberString) {
-                        return new Length(+arr[0], arr[1]);
-                    } else {
-                        return new Length(arr[0]);
-                    }
-                }
-            }
-
-            if (obj instanceof Length) {
-                return obj;
-            } else if (obj.unit) {
-                if (obj.unit == '%' || obj.unit == 'percent') {
-
-                    var value = 0;
-
-                    if (isNotUndefined(obj.percent)) {
-                        value = obj.percent;
-                    } else if (isNotUndefined(obj.value)) {
-                        value = obj.value;
-                    }
-
-                    return Length.percent(value);
-                } else if (obj.unit == 'px') {
-                    var value = 0;
-
-                    if (isNotUndefined(obj.px)) {
-                        value = obj.px;
-                    } else if (isNotUndefined(obj.value)) {
-                        value = obj.value;
-                    }
-
-                    return Length.px(value);
-                } else if (obj.unit == 'em') {
-                    var value = 0;
-
-                    if (isNotUndefined(obj.em)) {
-                        value = obj.em;
-                    } else if (isNotUndefined(obj.value)) {
-                        value = obj.value;
-                    }
-
-                    return Length.em(value);
-                } else if (obj.unit == 'deg') {
-                    var value = 0;
-
-                    if (isNotUndefined(obj.deg)) {
-                        value = obj.deg;
-                    } else if (isNotUndefined(obj.value)) {
-                        value = obj.value;
-                    }
-
-                    return Length.deg(value);
-                } else if (obj.unit === '' || obj.unit === 'string') {
-                    var value = '';
-
-                    if (isNotUndefined(obj.str)) {
-                        value = obj.str;
-                    } else if (isNotUndefined(obj.value)) {
-                        value = obj.value;
-                    }
-
-                    return Length.string(value);
-                }
-            }
-
-            return Length.string(obj);
-        }
-    }]);
-    return Length;
-}();
-
 /* event trigger */
 
 var CHANGE_TOOL = 'CHANGE_TOOL';
@@ -9051,7 +9063,7 @@ var CHANGE_IMAGE = 'CHANGE_IMAGE';
 
 var CHANGE_BOXSHADOW = 'CHANGE_BOXSHADOW';
 var CHANGE_TEXTSHADOW = 'CHANGE_TEXTSHADOW';
-var CHANGE_COLORSTEP = 'CHANGE_COLORSTEP';
+var CHANGE_COLORSTEP$1 = 'CHANGE_COLORSTEP';
 
 var ADD_TIMELINE = 'ADD_TIMELINE';
 
@@ -9697,972 +9709,968 @@ var RectItem = function () {
 }();
 
 var Selection = function () {
-    function Selection(editor) {
-        classCallCheck(this, Selection);
+  function Selection(editor) {
+    classCallCheck(this, Selection);
 
-        this.editor = editor;
+    this.editor = editor;
 
-        this._mode = '';
-        this._ids = [];
-        this._idSet = new Set();
-        this.currentRect = null;
+    this._mode = "";
+    this._ids = [];
+    this._idSet = new Set();
+    this.currentRect = null;
+  }
+
+  createClass(Selection, [{
+    key: "initialize",
+    value: function initialize() {
+      this._mode = "";
+      this._ids = [];
+      this._idSet.clear();
     }
 
-    createClass(Selection, [{
-        key: "initialize",
-        value: function initialize() {
-            this._mode = '';
-            this._ids = [];
-            this._idSet.clear();
+    /**
+     * get id string list for selected items
+     */
+
+  }, {
+    key: "updateLayer",
+    value: function updateLayer(event) {
+      var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+      var layer = this.currentLayer;
+      if (layer) {
+        layer.reset(attrs);
+      }
+      (context || this.editor).emit(event, layer);
+    }
+  }, {
+    key: "updateRect",
+    value: function updateRect(event) {
+      var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+      var rect = this.currentRect;
+      if (rect) {
+        rect.reset(attrs);
+      }
+      (context || this.editor).emit(event, rect);
+    }
+  }, {
+    key: "updateArtBoard",
+    value: function updateArtBoard(event) {
+      var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+      var artboard = this.currentArtBoard;
+      if (artboard) {
+        artboard.reset(attrs);
+      }
+      (context || this.editor).emit(event, artboard);
+    }
+  }, {
+    key: "updateDirectory",
+    value: function updateDirectory(event) {
+      var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+      var directory = this.currentDirectory;
+      if (directory) {
+        directory.reset(attrs);
+      }
+      (context || this.editor).emit(event, directory);
+    }
+  }, {
+    key: "updateProject",
+    value: function updateProject(event) {
+      var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+      var project = this.currentProject;
+      if (project) {
+        project.reset(attrs);
+      }
+      (context || this.editor).emit(event, project);
+    }
+  }, {
+    key: "check",
+    value: function check(id) {
+      var hasKey = this._idSet.has(id);
+
+      if (!hasKey) {
+        var isArtBoard = this._artboard && this._artboard.id == id;
+        if (isArtBoard) {
+          return true;
         }
 
-        /**
-         * get id string list for selected items 
-         */
+        var isProject = this._project && this._project.id == id;
+        if (isProject) return true;
 
-    }, {
-        key: "updateLayer",
-        value: function updateLayer(event) {
-            var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-            var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+        return false;
+      }
 
-            var layer = this.currentLayer;
-            if (layer) {
-                layer.reset(attrs);
-            }
-            (context || this.editor).emit(event, layer);
-        }
-    }, {
-        key: "updateRect",
-        value: function updateRect(event) {
-            var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-            var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+      return true;
+    }
+  }, {
+    key: "checkOne",
+    value: function checkOne(id) {
+      return this._idSet.has(id);
+    }
+  }, {
+    key: "isEmpty",
+    value: function isEmpty() {
+      return this._ids.length === 0;
+    }
+  }, {
+    key: "isNotEmpty",
+    value: function isNotEmpty() {
+      return this._ids.length > 0;
+    }
+  }, {
+    key: "count",
+    value: function count() {
+      return this._ids.length;
+    }
+  }, {
+    key: "unitValues",
+    value: function unitValues() {
+      return this.items.map(function (item) {
+        var x = item.x.value;
+        var y = item.y.value;
+        var width = item.width.value;
+        var height = item.height.value;
+        var id = item.id;
 
-            var rect = this.currentRect;
-            if (rect) {
-                rect.reset(attrs);
-            }
-            (context || this.editor).emit(event, rect);
-        }
-    }, {
-        key: "updateArtBoard",
-        value: function updateArtBoard(event) {
-            var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-            var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+        return {
+          id: id,
+          x: x,
+          y: y,
+          width: width,
+          height: height,
+          x2: x + width,
+          y2: y + height,
+          centerX: x + width / 2,
+          centerY: y + height / 2
+        };
+      });
+    }
+  }, {
+    key: "search",
+    value: function search(itemType) {
+      return this.items.filter(function (item) {
+        return item.itemType === itemType;
+      });
+    }
+  }, {
+    key: "is",
+    value: function is(mode) {
+      return this._mode === mode;
+    }
+  }, {
+    key: "select",
+    value: function select() {
+      var _this = this;
 
-            var artboard = this.currentArtBoard;
-            if (artboard) {
-                artboard.reset(attrs);
-            }
-            (context || this.editor).emit(event, artboard);
-        }
-    }, {
-        key: "updateDirectory",
-        value: function updateDirectory(event) {
-            var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-            var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
 
-            var directory = this.currentDirectory;
-            if (directory) {
-                directory.reset(attrs);
-            }
-            (context || this.editor).emit(event, directory);
-        }
-    }, {
-        key: "updateProject",
-        value: function updateProject(event) {
-            var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-            var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+      var isAll = args.map(function (id) {
+        return _this._idSet.has(id);
+      }).every(function (it) {
+        return it;
+      });
 
-            var project = this.currentProject;
-            if (project) {
-                project.reset(attrs);
-            }
-            (context || this.editor).emit(event, project);
-        }
-    }, {
-        key: "check",
-        value: function check(id) {
-            var hasKey = this._idSet.has(id);
-
-            if (!hasKey) {
-                var isArtBoard = this._artboard && this._artboard.id == id;
-                if (isArtBoard) {
-                    return true;
-                }
-
-                var isProject = this._project && this._project.id == id;
-                if (isProject) return true;
-
-                return false;
-            }
-
-            return true;
-        }
-    }, {
-        key: "checkOne",
-        value: function checkOne(id) {
-            return this._idSet.has(id);
-        }
-    }, {
-        key: "isEmpty",
-        value: function isEmpty() {
-            return this._ids.length === 0;
-        }
-    }, {
-        key: "isNotEmpty",
-        value: function isNotEmpty() {
-            return this._ids.length > 0;
-        }
-    }, {
-        key: "count",
-        value: function count() {
-            return this._ids.length;
-        }
-    }, {
-        key: "unitValues",
-        value: function unitValues() {
-            return this.items.map(function (item) {
-
-                var x = item.x.value;
-                var y = item.y.value;
-                var width = item.width.value;
-                var height = item.height.value;
-                var id = item.id;
-
-                return {
-                    id: id, x: x, y: y, width: width, height: height,
-                    x2: x + width,
-                    y2: y + height,
-                    centerX: x + width / 2,
-                    centerY: y + height / 2
-                };
-            });
-        }
-    }, {
-        key: "search",
-        value: function search(itemType) {
-            return this.items.filter(function (item) {
-                return item.itemType === itemType;
-            });
-        }
-    }, {
-        key: "is",
-        value: function is(mode) {
-            return this._mode === mode;
-        }
-    }, {
-        key: "select",
-        value: function select() {
-            var _this = this;
-
-            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-                args[_key] = arguments[_key];
-            }
-
-            var isAll = args.map(function (id) {
-                return _this._idSet.has(id);
-            }).every(function (it) {
-                return it;
-            });
-
-            this._ids = args.map(function (it) {
-                if (it.id) {
-                    return it.id;
-                }
-
-                return it;
-            }).filter(function (id) {
-                return _this.editor.has(id);
-            });
-            this._idSet = new Set(this._ids);
-
-            this.generateCache();
-
-            if (!isAll) {
-                this.editor.send(CHANGE_SELECTION);
-            }
-
-            this.initRect();
-        }
-    }, {
-        key: "refresh",
-        value: function refresh() {
-            var _this2 = this;
-
-            this.select.apply(this, toConsumableArray(this._ids.filter(function (id) {
-                return _this2.editor.get(id);
-            })));
-        }
-    }, {
-        key: "generateCache",
-        value: function generateCache() {
-
-            if (this._ids.length) {
-                var parents = this.editor.get(this._ids[0]).path();
-
-                this._layer = parents.filter(function (it) {
-                    return it.itemType === 'layer';
-                })[0];
-                this._directory = parents.filter(function (it) {
-                    return it.itemType === 'directory';
-                })[0];
-                this._artboard = parents.filter(function (it) {
-                    return it.itemType === 'artboard';
-                })[0];
-                this._project = parents.filter(function (it) {
-                    return it.itemType === 'project';
-                })[0];
-            } else {
-
-                this._layer = null;
-                this._directory = null;
-                this._artboard = null;
-                this._project = null;
-            }
-        }
-    }, {
-        key: "area",
-        value: function area(rect) {
-            var selectItems = this.editor.layers.filter(function (layer) {
-                return !layer.isLayoutItem() && !layer.lock && layer.checkInArea(rect);
-            }).map(function (it) {
-                return it.id;
-            });
-
-            if (selectItems) {
-                this.select.apply(this, toConsumableArray(selectItems));
-            } else {
-                var project = this.currentProject;
-                project && project.select();
-            }
-        }
-    }, {
-        key: "initRect",
-        value: function initRect() {
-            this.currentRect = this.rect();
-        }
-    }, {
-        key: "rect",
-        value: function rect() {
-            var minX = Number.MAX_SAFE_INTEGER;
-            var minY = Number.MAX_SAFE_INTEGER;
-            var maxX = Number.MIN_SAFE_INTEGER;
-            var maxY = Number.MIN_SAFE_INTEGER;
-
-            this.items.forEach(function (item) {
-
-                if (!item.screenX) return;
-
-                var x = item.screenX.value;
-                var y = item.screenY.value;
-                var x2 = item.screenX2.value;
-                var y2 = item.screenY2.value;
-
-                if (minX > x) minX = x;
-                if (minY > y) minY = y;
-                if (maxX < x2) maxX = x2;
-                if (maxY < y2) maxY = y2;
-            });
-
-            if (this.isEmpty()) {
-                minX = 0;
-                minY = 0;
-                maxX = 0;
-                maxY = 0;
-            }
-
-            var x = minX;
-            var y = minY;
-            var x2 = maxX;
-            var y2 = maxY;
-
-            var width = x2 - x;
-            var height = y2 - y;
-
-            x = Length$1.px(x);
-            y = Length$1.px(y);
-            width = Length$1.px(width);
-            height = Length$1.px(height);
-
-            return new RectItem({ x: x, y: y, width: width, height: height });
-        }
-    }, {
-        key: "ids",
-        get: function get() {
-            return this._ids;
+      this._ids = args.map(function (it) {
+        if (it.id) {
+          return it.id;
         }
 
-        /**
-         * get item instance 
-         */
+        return it;
+      }).filter(function (id) {
+        return _this.editor.has(id);
+      });
+      this._idSet = new Set(this._ids);
 
-    }, {
-        key: "items",
-        get: function get() {
-            var _this3 = this;
+      this.generateCache();
 
-            return this._ids.map(function (id) {
-                return _this3.editor.get(id);
-            });
-        }
+      if (!isAll) {
+        this.editor.send(CHANGE_SELECTION);
+      }
 
-        /**
-         * get first item instance 
-         */
+      this.initRect();
+    }
+  }, {
+    key: "refresh",
+    value: function refresh() {
+      var _this2 = this;
 
-    }, {
-        key: "current",
-        get: function get() {
-            var item = this.editor.get(this.ids[0]);
-            if (!item) return null;
+      this.select.apply(this, toConsumableArray(this._ids.filter(function (id) {
+        return _this2.editor.get(id);
+      })));
+    }
+  }, {
+    key: "generateCache",
+    value: function generateCache() {
+      if (this._ids.length) {
+        var parents = this.editor.get(this._ids[0]).path();
 
-            return item.itemType == 'project' ? null : item;
-        }
-    }, {
-        key: "layers",
-        get: function get() {
-            return this.search('layer');
-        }
-    }, {
-        key: "layer",
-        get: function get() {
-            return this.layers[0];
-        }
-    }, {
-        key: "artboards",
-        get: function get() {
-            return this.search('artboard');
-        }
-    }, {
-        key: "artboard",
-        get: function get() {
-            return this.artboards[0];
-        }
-    }, {
-        key: "projects",
-        get: function get() {
-            return this.search('project');
-        }
-    }, {
-        key: "project",
-        get: function get() {
-            return this.projects[0];
-        }
-    }, {
-        key: "directories",
-        get: function get() {
-            return this.search('directory');
-        }
-    }, {
-        key: "directory",
-        get: function get() {
-            return this.directories[0];
-        }
-    }, {
-        key: "currentDirectory",
-        get: function get() {
-            return this._directory;
-        }
-    }, {
-        key: "currentArtBoard",
-        get: function get() {
-            return this._artboard;
-        }
-    }, {
-        key: "currentProject",
-        get: function get() {
-            return this._project;
-        }
-    }, {
-        key: "currentLayer",
-        get: function get() {
-            return this._layer;
-        }
-    }, {
-        key: "mode",
-        get: function get() {
-            return this._mode;
-        },
-        set: function set$$1(mode) {
-            if (this._mode != mode) {
-                this._mode = mode;
-            }
-        }
-    }]);
-    return Selection;
+        this._layer = parents.filter(function (it) {
+          return it.itemType === "layer";
+        })[0];
+        this._directory = parents.filter(function (it) {
+          return it.itemType === "directory";
+        })[0];
+        this._artboard = parents.filter(function (it) {
+          return it.itemType === "artboard";
+        })[0];
+        this._project = parents.filter(function (it) {
+          return it.itemType === "project";
+        })[0];
+      } else {
+        this._layer = null;
+        this._directory = null;
+      }
+    }
+  }, {
+    key: "area",
+    value: function area(rect) {
+      var selectItems = this.editor.layers.filter(function (layer) {
+        return !layer.isLayoutItem() && !layer.lock && layer.checkInArea(rect);
+      }).map(function (it) {
+        return it.id;
+      });
+
+      if (selectItems) {
+        this.select.apply(this, toConsumableArray(selectItems));
+      } else {
+        var project = this.currentProject;
+        project && project.select();
+      }
+    }
+  }, {
+    key: "initRect",
+    value: function initRect() {
+      this.currentRect = this.rect();
+    }
+  }, {
+    key: "rect",
+    value: function rect() {
+      var minX = Number.MAX_SAFE_INTEGER;
+      var minY = Number.MAX_SAFE_INTEGER;
+      var maxX = Number.MIN_SAFE_INTEGER;
+      var maxY = Number.MIN_SAFE_INTEGER;
+
+      this.items.forEach(function (item) {
+        if (!item.screenX) return;
+
+        var x = item.screenX.value;
+        var y = item.screenY.value;
+        var x2 = item.screenX2.value;
+        var y2 = item.screenY2.value;
+
+        if (minX > x) minX = x;
+        if (minY > y) minY = y;
+        if (maxX < x2) maxX = x2;
+        if (maxY < y2) maxY = y2;
+      });
+
+      if (this.isEmpty()) {
+        minX = 0;
+        minY = 0;
+        maxX = 0;
+        maxY = 0;
+      }
+
+      var x = minX;
+      var y = minY;
+      var x2 = maxX;
+      var y2 = maxY;
+
+      var width = x2 - x;
+      var height = y2 - y;
+
+      x = Length$1.px(x);
+      y = Length$1.px(y);
+      width = Length$1.px(width);
+      height = Length$1.px(height);
+
+      return new RectItem({ x: x, y: y, width: width, height: height });
+    }
+  }, {
+    key: "ids",
+    get: function get() {
+      return this._ids;
+    }
+
+    /**
+     * get item instance
+     */
+
+  }, {
+    key: "items",
+    get: function get() {
+      var _this3 = this;
+
+      return this._ids.map(function (id) {
+        return _this3.editor.get(id);
+      });
+    }
+
+    /**
+     * get first item instance
+     */
+
+  }, {
+    key: "current",
+    get: function get() {
+      var item = this.editor.get(this.ids[0]);
+      if (!item) return null;
+
+      return item.itemType == "project" ? null : item;
+    }
+  }, {
+    key: "layers",
+    get: function get() {
+      return this.search("layer");
+    }
+  }, {
+    key: "layer",
+    get: function get() {
+      return this.layers[0];
+    }
+  }, {
+    key: "artboards",
+    get: function get() {
+      return this.search("artboard");
+    }
+  }, {
+    key: "artboard",
+    get: function get() {
+      return this.artboards[0];
+    }
+  }, {
+    key: "projects",
+    get: function get() {
+      return this.search("project");
+    }
+  }, {
+    key: "project",
+    get: function get() {
+      return this.projects[0];
+    }
+  }, {
+    key: "directories",
+    get: function get() {
+      return this.search("directory");
+    }
+  }, {
+    key: "directory",
+    get: function get() {
+      return this.directories[0];
+    }
+  }, {
+    key: "currentDirectory",
+    get: function get() {
+      return this._directory;
+    }
+  }, {
+    key: "currentArtBoard",
+    get: function get() {
+      return this._artboard;
+    }
+  }, {
+    key: "currentProject",
+    get: function get() {
+      return this._project;
+    }
+  }, {
+    key: "currentLayer",
+    get: function get() {
+      return this._layer;
+    }
+  }, {
+    key: "mode",
+    get: function get() {
+      return this._mode;
+    },
+    set: function set$$1(mode) {
+      if (this._mode != mode) {
+        this._mode = mode;
+      }
+    }
+  }]);
+  return Selection;
 }();
 
 var items = new Map();
 var linkedItems = new Map();
 
 function traverse(item, results, parentId) {
-    var newItem = item.clone(true);
-    editor$1.set(newItem.id, newItem);
+  var newItem = item.clone(true);
+  editor$1.set(newItem.id, newItem);
 
-    newItem.parentId = parentId;
-    linkedItems[item.id] = newItem.id;
-    results.push(newItem);
+  newItem.parentId = parentId;
+  linkedItems[item.id] = newItem.id;
+  results.push(newItem);
 
-    item.children.forEach(function (child) {
-        traverse(child, results, newItem.id);
-    });
+  item.children.forEach(function (child) {
+    traverse(child, results, newItem.id);
+  });
 }
 
 function tree(id) {
-    var item = editor$1.get(id);
-    var newItem = item.clone(true);
-    editor$1.set(newItem.id, newItem);
+  var item = editor$1.get(id);
+  var newItem = item.clone(true);
+  editor$1.set(newItem.id, newItem);
 
-    linkedItems[item.id] = newItem.id;
-    var results = [newItem];
+  linkedItems[item.id] = newItem.id;
+  var results = [newItem];
 
-    item.children.forEach(function (item) {
-        traverse(item, results, newItem.id);
-    });
+  item.children.forEach(function (item) {
+    traverse(item, results, newItem.id);
+  });
 
-    return results;
+  return results;
 }
 
-var EDITOR_ID = '';
+var EDITOR_ID = "";
 var editor$1 = new (function () {
-    function _class() {
-        classCallCheck(this, _class);
+  function _class() {
+    classCallCheck(this, _class);
 
-        this.config = new Config(this);
-        this.selection = new Selection(this);
+    this.config = new Config(this);
+    this.selection = new Selection(this);
+  }
+
+  createClass(_class, [{
+    key: "initPicker",
+    value: function initPicker(picker) {
+      this.picker = picker;
+    }
+  }, {
+    key: "setStore",
+    value: function setStore($store) {
+      this.$store = $store;
+    }
+  }, {
+    key: "send",
+    value: function send() {
+      this.emit.apply(this, arguments);
+    }
+  }, {
+    key: "emit",
+    value: function emit() {
+      if (this.$store) {
+        var _$store;
+
+        this.$store.source = "EDITOR_ID";
+        (_$store = this.$store).emit.apply(_$store, arguments);
+      }
     }
 
-    createClass(_class, [{
-        key: "setStore",
-        value: function setStore($store) {
-            this.$store = $store;
+    /**
+     * add Project
+     *
+     * @param {Project} project
+     */
+
+  }, {
+    key: "addProject",
+    value: function addProject(project) {
+      return this.add(EDITOR_ID, project);
+    }
+  }, {
+    key: "filter",
+    value: function filter(itemType) {
+      var results = [];
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = items[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var _ref = _step.value;
+
+          var _ref2 = slicedToArray(_ref, 2);
+
+          var id = _ref2[0];
+          var item = _ref2[1];
+
+          if (item.itemType === itemType) {
+            results[results.length] = item;
+          }
         }
-    }, {
-        key: "send",
-        value: function send() {
-            this.emit.apply(this, arguments);
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
         }
-    }, {
-        key: "emit",
-        value: function emit() {
-            if (this.$store) {
-                var _$store;
+      }
 
-                this.$store.source = 'EDITOR_ID';
-                (_$store = this.$store).emit.apply(_$store, arguments);
-            }
+      return results;
+    }
+
+    /**
+     * get project list
+     */
+
+  }, {
+    key: "add",
+
+
+    /**
+     * add item
+     *
+     * @param {string} parentId
+     * @param {Item} item
+     * @return {Item}
+     */
+    value: function add(parentId, item) {
+      item.parentId = parentId;
+      items.set(item.id, item);
+
+      this.sort(item.itemType);
+
+      return item;
+    }
+
+    /**
+     * remove Item  with all children
+     *
+     * @param {string} id
+     */
+
+  }, {
+    key: "remove",
+    value: function remove(id) {
+      var isDeleteChildren = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+      if (isDeleteChildren) this.removeChildren(id);
+
+      items.delete(id);
+    }
+  }, {
+    key: "copy",
+    value: function copy() {
+      var _this = this;
+
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      // 선택된 id 를 copy 한다.
+      // 하위 자식도 카피한다.
+      // 다만 하위 자식도 selection 에 들어 있을 수 있다.
+      // 그래서 selection 에 들어있는 id 들에 대해서 path 를 미리 수집한다.
+      // 수집한 패스에서 상위가 존재 하는 애들은 카피 패스에서 뺀다.
+      // 이거 은근히 복잡한데?
+      var ids = args.length ? args : this.selection.ids;
+      var checkIds = {};
+      ids.forEach(function (id) {
+        checkIds[id] = true;
+      });
+
+      var copiedIds = ids.filter(function (id) {
+        var hasTreeParentNode = _this.get(id).path().some(function (item) {
+          return item.id != id && checkIds[item.id];
+        });
+
+        return !hasTreeParentNode;
+      });
+
+      linkedItems.clear();
+      copiedIds.forEach(function (itemId) {
+        var data = tree(itemId, uuidShort());
+
+        if (data.length) {
+          data[0].index = data[0].index + 1;
+          data[0].parent().sort();
         }
+      });
 
-        /**
-         * add Project
-         * 
-         * @param {Project} project 
-         */
+      return ids.map(function (id) {
+        return linkedItems[id];
+      });
+    }
+  }, {
+    key: "clear",
+    value: function clear() {
+      items.clear();
+    }
+  }, {
+    key: "removeChildren",
 
-    }, {
-        key: "addProject",
-        value: function addProject(project) {
-            return this.add(EDITOR_ID, project);
+
+    /**
+     * remove all children
+     *
+     * @param {string} parentId
+     */
+    value: function removeChildren() {
+      var _this2 = this;
+
+      var parentId = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : EDITOR_ID;
+      var parentObject = arguments[1];
+
+      var children = [];
+
+      if (parentId == EDITOR_ID) {
+        children = this.projects;
+      } else {
+        var parent = this.get(parentId);
+        if (parent) {
+          children = parent.children;
+        } else if (parentObject) {
+          children = parentObject.children;
         }
-    }, {
-        key: "filter",
-        value: function filter(itemType) {
-            var results = [];
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
+      }
 
-            try {
-                for (var _iterator = items[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var _ref = _step.value;
+      if (children.length) {
+        children.forEach(function (child) {
+          _this2.removeChildren(child.id);
+          _this2.remove(child.id);
+        });
+      }
+    }
 
-                    var _ref2 = slicedToArray(_ref, 2);
+    /**
+     * get item
+     *
+     * @param {String} key
+     */
 
-                    var id = _ref2[0];
-                    var item = _ref2[1];
+  }, {
+    key: "get",
+    value: function get(key) {
+      return items.get(key);
+    }
 
-                    if (item.itemType === itemType) {
-                        results[results.length] = item;
-                    }
-                }
-            } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
-                    }
-                } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
-                    }
-                }
-            }
+    /**
+     * set Item
+     *
+     * @param {string} key
+     * @param {Item} value
+     */
 
-            return results;
+  }, {
+    key: "set",
+    value: function set$$1(key, value) {
+      items.set(key, value);
+    }
+
+    /**
+     * check item id
+     *
+     * @param {string|Item} key
+     */
+
+  }, {
+    key: "has",
+    value: function has(key) {
+      return items.has(key);
+    }
+
+    /**
+     * get children by searchObj
+     *
+     * @param {object} searchObj
+     */
+
+  }, {
+    key: "search",
+    value: function search(searchObj) {
+      var keys = Object.keys(searchObj);
+      var results = [];
+
+      var _loop = function _loop(id, item) {
+        isItem = keys.every(function (searchField) {
+          return searchObj[searchField] === item[searchField];
+        });
+
+        if (isItem) {
+          results[results.length] = item;
         }
+      };
 
-        /**
-         * get project list 
-         */
+      var _iteratorNormalCompletion2 = true;
+      var _didIteratorError2 = false;
+      var _iteratorError2 = undefined;
 
-    }, {
-        key: "add",
+      try {
+        for (var _iterator2 = items[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          var _ref3 = _step2.value;
 
+          var _ref4 = slicedToArray(_ref3, 2);
 
-        /**
-         * add item 
-         * 
-         * @param {string} parentId 
-         * @param {Item} item 
-         * @return {Item} 
-         */
-        value: function add(parentId, item) {
-            item.parentId = parentId;
-            items.set(item.id, item);
+          var id = _ref4[0];
+          var item = _ref4[1];
+          var isItem;
 
-            this.sort(item.itemType);
-
-            return item;
+          _loop(id, item);
         }
-
-        /**
-         * remove Item  with all children 
-         * 
-         * @param {string} id 
-         */
-
-    }, {
-        key: "remove",
-        value: function remove(id) {
-            var isDeleteChildren = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-
-
-            if (isDeleteChildren) this.removeChildren(id);
-
-            items.delete(id);
+      } catch (err) {
+        _didIteratorError2 = true;
+        _iteratorError2 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion2 && _iterator2.return) {
+            _iterator2.return();
+          }
+        } finally {
+          if (_didIteratorError2) {
+            throw _iteratorError2;
+          }
         }
-    }, {
-        key: "copy",
-        value: function copy() {
-            var _this = this;
+      }
 
-            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-                args[_key] = arguments[_key];
-            }
+      results.sort(function (a, b) {
+        return a.index > b.index ? 1 : -1;
+      });
 
-            // 선택된 id 를 copy 한다. 
-            // 하위 자식도 카피한다. 
-            // 다만 하위 자식도 selection 에 들어 있을 수 있다. 
-            // 그래서 selection 에 들어있는 id 들에 대해서 path 를 미리 수집한다. 
-            // 수집한 패스에서 상위가 존재 하는 애들은 카피 패스에서 뺀다. 
-            // 이거 은근히 복잡한데? 
-            var ids = args.length ? args : this.selection.ids;
-            var checkIds = {};
-            ids.forEach(function (id) {
-                checkIds[id] = true;
-            });
+      return results;
+    }
+  }, {
+    key: "sort",
+    value: function sort(itemType) {
+      var children = [];
 
-            var copiedIds = ids.filter(function (id) {
-                var hasTreeParentNode = _this.get(id).path().some(function (item) {
-                    return item.id != id && checkIds[item.id];
-                });
+      if (itemType === "project") children = this.projects;
 
-                return !hasTreeParentNode;
-            });
+      children.sort(function (a, b) {
+        if (a.index === b.index) return 0;
+        return a.index > b.index ? 1 : -1;
+      });
 
-            linkedItems.clear();
-            copiedIds.forEach(function (itemId) {
+      children.forEach(function (it, index) {
+        it.index = index * 100;
+      });
+    }
 
-                var data = tree(itemId, uuidShort());
+    /**
+     * get children
+     *
+     * @param {string} parentId
+     */
 
-                if (data.length) {
-                    data[0].index = data[0].index + 1;
-                    data[0].parent().sort();
-                }
-            });
+  }, {
+    key: "children",
+    value: function children(parentId) {
+      var results = [];
+      var _iteratorNormalCompletion3 = true;
+      var _didIteratorError3 = false;
+      var _iteratorError3 = undefined;
 
-            return ids.map(function (id) {
-                return linkedItems[id];
-            });
+      try {
+        for (var _iterator3 = items[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+          var _ref5 = _step3.value;
+
+          var _ref6 = slicedToArray(_ref5, 2);
+
+          var id = _ref6[0];
+          var item = _ref6[1];
+
+          if (item.parentId === parentId) {
+            results[results.length] = item;
+          }
         }
-    }, {
-        key: "clear",
-        value: function clear() {
-            items.clear();
+      } catch (err) {
+        _didIteratorError3 = true;
+        _iteratorError3 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion3 && _iterator3.return) {
+            _iterator3.return();
+          }
+        } finally {
+          if (_didIteratorError3) {
+            throw _iteratorError3;
+          }
         }
-    }, {
-        key: "removeChildren",
+      }
 
-
-        /**
-         * remove all children 
-         * 
-         * @param {string} parentId 
-         */
-        value: function removeChildren() {
-            var _this2 = this;
-
-            var parentId = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : EDITOR_ID;
-            var parentObject = arguments[1];
-
-
-            var children = [];
-
-            if (parentId == EDITOR_ID) {
-                children = this.projects;
-            } else {
-                var parent = this.get(parentId);
-                if (parent) {
-                    children = parent.children;
-                } else if (parentObject) {
-                    children = parentObject.children;
-                }
-            }
-
-            if (children.length) {
-                children.forEach(function (child) {
-                    _this2.removeChildren(child.id);
-                    _this2.remove(child.id);
-                });
-            }
-        }
-
-        /**
-         * get item 
-         * 
-         * @param {String} key 
-         */
-
-    }, {
-        key: "get",
-        value: function get(key) {
-            return items.get(key);
-        }
-
-        /**
-         * set Item 
-         * 
-         * @param {string} key 
-         * @param {Item} value 
-         */
-
-    }, {
-        key: "set",
-        value: function set$$1(key, value) {
-            items.set(key, value);
-        }
-
-        /**
-         * check item id 
-         * 
-         * @param {string|Item} key 
-         */
-
-    }, {
-        key: "has",
-        value: function has(key) {
-            return items.has(key);
-        }
-
-        /**
-         * get children by searchObj  
-         * 
-         * @param {object} searchObj 
-         */
-
-    }, {
-        key: "search",
-        value: function search(searchObj) {
-            var keys = Object.keys(searchObj);
-            var results = [];
-
-            var _loop = function _loop(id, item) {
-                isItem = keys.every(function (searchField) {
-                    return searchObj[searchField] === item[searchField];
-                });
-
-                if (isItem) {
-                    results[results.length] = item;
-                }
-            };
-
-            var _iteratorNormalCompletion2 = true;
-            var _didIteratorError2 = false;
-            var _iteratorError2 = undefined;
-
-            try {
-                for (var _iterator2 = items[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-                    var _ref3 = _step2.value;
-
-                    var _ref4 = slicedToArray(_ref3, 2);
-
-                    var id = _ref4[0];
-                    var item = _ref4[1];
-                    var isItem;
-
-                    _loop(id, item);
-                }
-            } catch (err) {
-                _didIteratorError2 = true;
-                _iteratorError2 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                        _iterator2.return();
-                    }
-                } finally {
-                    if (_didIteratorError2) {
-                        throw _iteratorError2;
-                    }
-                }
-            }
-
-            results.sort(function (a, b) {
-                return a.index > b.index ? 1 : -1;
-            });
-
-            return results;
-        }
-    }, {
-        key: "sort",
-        value: function sort(itemType) {
-
-            var children = [];
-
-            if (itemType === 'project') children = this.projects;
-
-            children.sort(function (a, b) {
-                if (a.index === b.index) return 0;
-                return a.index > b.index ? 1 : -1;
-            });
-
-            children.forEach(function (it, index) {
-                it.index = index * 100;
-            });
-        }
-
-        /**
-         * get children 
-         * 
-         * @param {string} parentId 
-         */
-
-    }, {
-        key: "children",
-        value: function children(parentId) {
-            var results = [];
-            var _iteratorNormalCompletion3 = true;
-            var _didIteratorError3 = false;
-            var _iteratorError3 = undefined;
-
-            try {
-                for (var _iterator3 = items[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                    var _ref5 = _step3.value;
-
-                    var _ref6 = slicedToArray(_ref5, 2);
-
-                    var id = _ref6[0];
-                    var item = _ref6[1];
-
-
-                    if (item.parentId === parentId) {
-                        results[results.length] = item;
-                    }
-                }
-            } catch (err) {
-                _didIteratorError3 = true;
-                _iteratorError3 = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion3 && _iterator3.return) {
-                        _iterator3.return();
-                    }
-                } finally {
-                    if (_didIteratorError3) {
-                        throw _iteratorError3;
-                    }
-                }
-            }
-
-            return results;
-        }
-    }, {
-        key: "projects",
-        get: function get() {
-            return this.filter('project');
-        }
-    }, {
-        key: "artboards",
-        get: function get() {
-            return this.filter('artboard');
-        }
-    }, {
-        key: "layers",
-        get: function get() {
-            return this.filter('layer');
-        }
-    }, {
-        key: "all",
-        get: function get() {
-            return items;
-        }
-    }]);
-    return _class;
+      return results;
+    }
+  }, {
+    key: "projects",
+    get: function get() {
+      return this.filter("project");
+    }
+  }, {
+    key: "artboards",
+    get: function get() {
+      return this.filter("artboard");
+    }
+  }, {
+    key: "layers",
+    get: function get() {
+      return this.filter("layer");
+    }
+  }, {
+    key: "all",
+    get: function get() {
+      return items;
+    }
+  }]);
+  return _class;
 }())();
 
 var EMPTY_POS = { x: 0, y: 0 };
 var MOVE_CHECK_MS = 10;
 
 var start = function start(opt) {
-    var App = function (_UIElement) {
-        inherits(App, _UIElement);
+  var App = function (_UIElement) {
+    inherits(App, _UIElement);
 
-        function App() {
-            classCallCheck(this, App);
-            return possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
+    function App() {
+      classCallCheck(this, App);
+      return possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
+    }
+
+    createClass(App, [{
+      key: "initialize",
+      value: function initialize() {
+        var modules = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
+        this.$store = new BaseStore({
+          modules: [].concat(toConsumableArray(this.getModuleList()), toConsumableArray(modules))
+        });
+
+        editor$1.setStore(this.$store);
+
+        this.$container = new Dom(this.getContainer());
+        this.$container.addClass(this.getClassName());
+
+        this.render(this.$container);
+
+        // 이벤트 연결
+        this.initializeEvent();
+
+        this.initBodyMoves();
+      }
+    }, {
+      key: "initBodyMoves",
+      value: function initBodyMoves() {
+        this.moves = new Set();
+        this.ends = new Set();
+
+        this.modifyBodyMoveSecond(MOVE_CHECK_MS);
+      }
+    }, {
+      key: "modifyBodyMoveSecond",
+      value: function modifyBodyMoveSecond() {
+        var ms = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : MOVE_CHECK_MS;
+
+        editor$1.config.set("body.move.ms", ms);
+        this.funcBodyMoves = debounce(this.loopBodyMoves.bind(this), editor$1.config.get("body.move.ms"));
+      }
+    }, {
+      key: EVENT("modifyBodyMoveSeconds"),
+      value: function value(ms) {
+        this.modifyBodyMoveSecond(ms);
+      }
+    }, {
+      key: "loopBodyMoves",
+      value: function loopBodyMoves() {
+        var oldPos = editor$1.config.get("oldPos");
+        var pos = editor$1.config.get("pos");
+        var isRealMoved = oldPos.x != pos.x || oldPos.y != pos.y;
+
+        if (isRealMoved && this.moves.size) {
+          this.moves.forEach(function (v) {
+            var dx = pos.x - v.xy.x;
+            var dy = pos.y - v.xy.y;
+            if (dx != 0 || dy != 0) {
+              //  변화가 있을 때만 호출 한다.
+              v.func.call(v.context, dx, dy);
+            }
+          });
         }
+        requestAnimationFrame(this.funcBodyMoves);
+      }
+    }, {
+      key: "removeBodyMoves",
+      value: function removeBodyMoves() {
+        var pos = editor$1.config.get("pos");
+        this.ends.forEach(function (v) {
+          v.func.call(v.context, pos.x - v.xy.x, pos.y - v.xy.y);
+        });
 
-        createClass(App, [{
-            key: "initialize",
-            value: function initialize() {
-                var modules = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+        this.moves.clear();
+        this.ends.clear();
+      }
+    }, {
+      key: EVENT(ADD_BODY_MOUSEMOVE),
+      value: function value(func, context, xy) {
+        this.moves.add({ func: func, context: context, xy: xy });
+      }
+    }, {
+      key: EVENT(ADD_BODY_MOUSEUP),
+      value: function value(func, context, xy) {
+        this.ends.add({ func: func, context: context, xy: xy });
+      }
+    }, {
+      key: "getModuleList",
+      value: function getModuleList() {
+        return opt.modules || [];
+      }
+    }, {
+      key: "getClassName",
+      value: function getClassName() {
+        return opt.className || "csseditor";
+      }
+    }, {
+      key: "getContainer",
+      value: function getContainer() {
+        return opt.container || document.body;
+      }
+    }, {
+      key: "template",
+      value: function template() {
+        return "<div>" + opt.template + "</div>";
+      }
+    }, {
+      key: "components",
+      value: function components() {
+        return opt.components || {};
+      }
+    }, {
+      key: POINTERMOVE("document"),
+      value: function value(e) {
+        var oldPos = editor$1.config.get("pos") || EMPTY_POS;
+        var newPos = e.xy || EMPTY_POS;
 
-                this.$store = new BaseStore({
-                    modules: [].concat(toConsumableArray(this.getModuleList()), toConsumableArray(modules))
-                });
+        this.bodyMoved = !(oldPos.x == newPos.x && oldPos.y == newPos.y);
+        editor$1.config.set("bodyEvent", e);
+        editor$1.config.set("pos", newPos);
+        editor$1.config.set("oldPos", oldPos);
 
-                editor$1.setStore(this.$store);
+        if (!this.requestId) {
+          this.requestId = requestAnimationFrame(this.funcBodyMoves);
+        }
+      }
+    }, {
+      key: POINTEREND("document"),
+      value: function value(e) {
+        var newPos = e.xy || EMPTY_POS;
+        editor$1.config.set("bodyEvent", e);
+        editor$1.config.set("pos", newPos);
+        this.removeBodyMoves();
+        this.requestId = null;
+      }
+    }]);
+    return App;
+  }(UIElement);
 
-                this.$body = new Dom(this.getContainer());
-                this.$root = new Dom('div', this.getClassName());
-
-                this.$body.append(this.$root);
-
-                this.render(this.$root);
-
-                // 이벤트 연결 
-                this.initializeEvent();
-
-                this.initBodyMoves();
-            }
-        }, {
-            key: "initBodyMoves",
-            value: function initBodyMoves() {
-                this.moves = new Set();
-                this.ends = new Set();
-
-                this.modifyBodyMoveSecond(MOVE_CHECK_MS);
-            }
-        }, {
-            key: "modifyBodyMoveSecond",
-            value: function modifyBodyMoveSecond() {
-                var ms = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : MOVE_CHECK_MS;
-
-                editor$1.config.set('body.move.ms', ms);
-                this.funcBodyMoves = debounce(this.loopBodyMoves.bind(this), editor$1.config.get('body.move.ms'));
-            }
-        }, {
-            key: EVENT('modifyBodyMoveSeconds'),
-            value: function value(ms) {
-                this.modifyBodyMoveSecond(ms);
-            }
-        }, {
-            key: "loopBodyMoves",
-            value: function loopBodyMoves() {
-                var oldPos = editor$1.config.get('oldPos');
-                var pos = editor$1.config.get('pos');
-                var isRealMoved = oldPos.x != pos.x || oldPos.y != pos.y;
-
-                if (isRealMoved && this.moves.size) {
-                    this.moves.forEach(function (v) {
-                        var dx = pos.x - v.xy.x;
-                        var dy = pos.y - v.xy.y;
-                        if (dx != 0 || dy != 0) {
-                            //  변화가 있을 때만 호출 한다. 
-                            v.func.call(v.context, dx, dy);
-                        }
-                    });
-                }
-                requestAnimationFrame(this.funcBodyMoves);
-            }
-        }, {
-            key: "removeBodyMoves",
-            value: function removeBodyMoves() {
-                var pos = editor$1.config.get('pos');
-                this.ends.forEach(function (v) {
-                    v.func.call(v.context, pos.x - v.xy.x, pos.y - v.xy.y);
-                });
-
-                this.moves.clear();
-                this.ends.clear();
-            }
-        }, {
-            key: EVENT(ADD_BODY_MOUSEMOVE),
-            value: function value(func, context, xy) {
-                this.moves.add({ func: func, context: context, xy: xy });
-            }
-        }, {
-            key: EVENT(ADD_BODY_MOUSEUP),
-            value: function value(func, context, xy) {
-                this.ends.add({ func: func, context: context, xy: xy });
-            }
-        }, {
-            key: "getModuleList",
-            value: function getModuleList() {
-                return opt.modules || [];
-            }
-        }, {
-            key: "getClassName",
-            value: function getClassName() {
-                return opt.className || 'csseditor';
-            }
-        }, {
-            key: "getContainer",
-            value: function getContainer() {
-                return opt.container || document.body;
-            }
-        }, {
-            key: "template",
-            value: function template() {
-                return "<div>" + opt.template + "</div>";
-            }
-        }, {
-            key: "components",
-            value: function components() {
-                return opt.components || {};
-            }
-        }, {
-            key: POINTERMOVE('document'),
-            value: function value(e) {
-                var oldPos = editor$1.config.get('pos') || EMPTY_POS;
-                var newPos = e.xy || EMPTY_POS;
-
-                this.bodyMoved = !(oldPos.x == newPos.x && oldPos.y == newPos.y);
-                editor$1.config.set('bodyEvent', e);
-                editor$1.config.set('pos', newPos);
-                editor$1.config.set('oldPos', oldPos);
-
-                if (!this.requestId) {
-                    this.requestId = requestAnimationFrame(this.funcBodyMoves);
-                }
-            }
-        }, {
-            key: POINTEREND('document'),
-            value: function value(e) {
-                var newPos = e.xy || EMPTY_POS;
-                editor$1.config.set('bodyEvent', e);
-                editor$1.config.set('pos', newPos);
-                this.removeBodyMoves();
-                this.requestId = null;
-            }
-        }]);
-        return App;
-    }(UIElement);
-
-    return new App(opt);
+  return new App(opt);
 };
 
 
@@ -11388,85 +11396,85 @@ var BaseColorPicker = function (_UIElement) {
 }(UIElement);
 
 var BaseBox = function (_UIElement) {
-    inherits(BaseBox, _UIElement);
+  inherits(BaseBox, _UIElement);
 
-    function BaseBox() {
-        classCallCheck(this, BaseBox);
-        return possibleConstructorReturn(this, (BaseBox.__proto__ || Object.getPrototypeOf(BaseBox)).apply(this, arguments));
+  function BaseBox() {
+    classCallCheck(this, BaseBox);
+    return possibleConstructorReturn(this, (BaseBox.__proto__ || Object.getPrototypeOf(BaseBox)).apply(this, arguments));
+  }
+
+  createClass(BaseBox, [{
+    key: "refresh",
+    value: function refresh() {}
+  }, {
+    key: "refreshColorUI",
+    value: function refreshColorUI(e) {}
+
+    /** push change event  */
+
+  }, {
+    key: "changeColor",
+    value: function changeColor(opt) {
+      this.dispatch("changeColor", opt || {});
     }
 
-    createClass(BaseBox, [{
-        key: 'refresh',
-        value: function refresh() {}
-    }, {
-        key: 'refreshColorUI',
-        value: function refreshColorUI(e) {}
+    // Event Bindings
 
-        /** push change event  */
+  }, {
+    key: POINTEREND("document"),
+    value: function value(e) {
+      this.onDragEnd(e);
+    }
+  }, {
+    key: POINTERMOVE("document"),
+    value: function value(e) {
+      this.onDragMove(e);
+    }
+  }, {
+    key: POINTERSTART("$bar"),
+    value: function value(e) {
+      e.preventDefault();
+      this.isDown = true;
+    }
+  }, {
+    key: POINTERSTART("$container"),
+    value: function value(e) {
+      this.isDown = true;
+      this.onDragStart(e);
+    }
+  }, {
+    key: "onDragStart",
+    value: function onDragStart(e) {
+      this.isDown = true;
+      this.refreshColorUI(e);
+    }
+  }, {
+    key: "onDragMove",
+    value: function onDragMove(e) {
+      if (this.isDown) {
+        this.refreshColorUI(e);
+      }
+    }
 
-    }, {
-        key: 'changeColor',
-        value: function changeColor(opt) {
-            this.dispatch('changeColor', opt || {});
-        }
+    /* called when mouse is ended move  */
 
-        // Event Bindings 
-
-    }, {
-        key: POINTEREND('document'),
-        value: function value(e) {
-            this.onDragEnd(e);
-        }
-    }, {
-        key: POINTERMOVE('document'),
-        value: function value(e) {
-            this.onDragMove(e);
-        }
-    }, {
-        key: POINTERSTART('$bar'),
-        value: function value(e) {
-            e.preventDefault();
-            this.isDown = true;
-        }
-    }, {
-        key: POINTERSTART('$container'),
-        value: function value(e) {
-            this.isDown = true;
-            this.onDragStart(e);
-        }
-    }, {
-        key: 'onDragStart',
-        value: function onDragStart(e) {
-            this.isDown = true;
-            this.refreshColorUI(e);
-        }
-    }, {
-        key: 'onDragMove',
-        value: function onDragMove(e) {
-            if (this.isDown) {
-                this.refreshColorUI(e);
-            }
-        }
-
-        /* called when mouse is ended move  */
-
-    }, {
-        key: 'onDragEnd',
-        value: function onDragEnd(e) {
-            this.isDown = false;
-        }
-    }, {
-        key: EVENT('changeColor'),
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT('initColor'),
-        value: function value() {
-            this.refresh();
-        }
-    }]);
-    return BaseBox;
+  }, {
+    key: "onDragEnd",
+    value: function onDragEnd(e) {
+      this.isDown = false;
+    }
+  }, {
+    key: EVENT("changeColor"),
+    value: function value() {
+      this.refresh();
+    }
+  }, {
+    key: EVENT("initColor"),
+    value: function value() {
+      this.refresh();
+    }
+  }]);
+  return BaseBox;
 }(UIElement);
 
 var BaseSlider = function (_BaseBox) {
@@ -12505,144 +12513,146 @@ var Hue = function (_BaseSlider) {
 }(BaseSlider);
 
 var ColorPalette = function (_UIElement) {
-    inherits(ColorPalette, _UIElement);
+  inherits(ColorPalette, _UIElement);
 
-    function ColorPalette() {
-        classCallCheck(this, ColorPalette);
-        return possibleConstructorReturn(this, (ColorPalette.__proto__ || Object.getPrototypeOf(ColorPalette)).apply(this, arguments));
+  function ColorPalette() {
+    classCallCheck(this, ColorPalette);
+    return possibleConstructorReturn(this, (ColorPalette.__proto__ || Object.getPrototypeOf(ColorPalette)).apply(this, arguments));
+  }
+
+  createClass(ColorPalette, [{
+    key: "template",
+    value: function template() {
+      return "\n        <div class=\"color-panel\">\n            <div ref=\"$saturation\" class=\"saturation\">\n                <div ref=\"$value\" class=\"value\">\n                    <div ref=\"$drag_pointer\" class=\"drag-pointer\"></div>\n                </div>\n            </div>        \n        </div>        \n        ";
     }
+  }, {
+    key: "setBackgroundColor",
+    value: function setBackgroundColor(color) {
+      this.$el.css("background-color", color);
+    }
+  }, {
+    key: "refresh",
+    value: function refresh() {
+      this.setColorUI();
+    }
+  }, {
+    key: "calculateSV",
+    value: function calculateSV() {
+      var pos = this.drag_pointer_pos || { x: 0, y: 0 };
 
-    createClass(ColorPalette, [{
-        key: 'template',
-        value: function template() {
-            return '\n        <div class="color-panel">\n            <div ref="$saturation" class="saturation">\n                <div ref="$value" class="value">\n                    <div ref="$drag_pointer" class="drag-pointer"></div>\n                </div>\n            </div>        \n        </div>        \n        ';
-        }
-    }, {
-        key: 'setBackgroundColor',
-        value: function setBackgroundColor(color) {
-            this.$el.css("background-color", color);
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            this.setColorUI();
-        }
-    }, {
-        key: 'calculateSV',
-        value: function calculateSV() {
-            var pos = this.drag_pointer_pos || { x: 0, y: 0 };
+      var width = this.$el.width();
+      var height = this.$el.height();
 
-            var width = this.$el.width();
-            var height = this.$el.height();
+      var s = pos.x / width;
+      var v = (height - pos.y) / height;
 
-            var s = pos.x / width;
-            var v = (height - pos.y) / height;
+      this.dispatch("changeColor", {
+        type: "hsv",
+        s: s,
+        v: v
+      });
+    }
+  }, {
+    key: "setColorUI",
+    value: function setColorUI() {
+      var x = this.state.get("$el.width") * this.$store.hsv.s,
+          y = this.state.get("$el.height") * (1 - this.$store.hsv.v);
 
-            this.dispatch('changeColor', {
-                type: 'hsv',
-                s: s,
-                v: v
-            });
-        }
-    }, {
-        key: 'setColorUI',
-        value: function setColorUI() {
-            var x = this.state.get('$el.width') * this.$store.hsv.s,
-                y = this.state.get('$el.height') * (1 - this.$store.hsv.v);
+      this.refs.$drag_pointer.px("left", x);
+      this.refs.$drag_pointer.px("top", y);
 
-            this.refs.$drag_pointer.px('left', x);
-            this.refs.$drag_pointer.px('top', y);
+      this.drag_pointer_pos = { x: x, y: y };
 
-            this.drag_pointer_pos = { x: x, y: y };
+      this.setBackgroundColor(this.read("getHueColor"));
+    }
+  }, {
+    key: "setMainColor",
+    value: function setMainColor(e) {
+      // e.preventDefault();
+      var pos = this.$el.offset();
+      var w = this.state.get("$el.contentWidth");
+      var h = this.state.get("$el.contentHeight");
 
-            this.setBackgroundColor(this.read('getHueColor'));
-        }
-    }, {
-        key: 'setMainColor',
-        value: function setMainColor(e) {
-            // e.preventDefault();
-            var pos = this.state.get('$el.offset');
-            var w = this.state.get('$el.contentWidth');
-            var h = this.state.get('$el.contentHeight');
+      var x = Event.pos(e).pageX - pos.left;
+      var y = Event.pos(e).pageY - pos.top;
 
-            var x = Event.pos(e).pageX - pos.left;
-            var y = Event.pos(e).pageY - pos.top;
+      if (x < 0) x = 0;else if (x > w) x = w;
 
-            if (x < 0) x = 0;else if (x > w) x = w;
+      if (y < 0) y = 0;else if (y > h) y = h;
 
-            if (y < 0) y = 0;else if (y > h) y = h;
+      this.refs.$drag_pointer.px("left", x);
+      this.refs.$drag_pointer.px("top", y);
 
-            this.refs.$drag_pointer.px('left', x);
-            this.refs.$drag_pointer.px('top', y);
+      this.drag_pointer_pos = { x: x, y: y };
 
-            this.drag_pointer_pos = { x: x, y: y };
-
-            this.calculateSV();
-        }
-    }, {
-        key: EVENT('changeColor'),
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: EVENT('initColor'),
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: POINTEREND('document'),
-        value: function value(e) {
-            this.isDown = false;
-        }
-    }, {
-        key: POINTERMOVE('document'),
-        value: function value(e) {
-            if (this.isDown) {
-                this.setMainColor(e);
-            }
-        }
-    }, {
-        key: POINTERSTART(),
-        value: function value(e) {
-            this.isDown = true;
-            this.setMainColor(e);
-        }
-    }, {
-        key: POINTEREND(),
-        value: function value(e) {
-            this.isDown = false;
-        }
-    }]);
-    return ColorPalette;
+      this.calculateSV();
+    }
+  }, {
+    key: EVENT("changeColor"),
+    value: function value() {
+      this.refresh();
+    }
+  }, {
+    key: EVENT("initColor"),
+    value: function value() {
+      this.refresh();
+    }
+  }, {
+    key: POINTEREND("document"),
+    value: function value(e) {
+      this.isDown = false;
+    }
+  }, {
+    key: POINTERMOVE("document"),
+    value: function value(e) {
+      if (this.isDown) {
+        this.setMainColor(e);
+      }
+    }
+  }, {
+    key: POINTERSTART(),
+    value: function value(e) {
+      this.isDown = true;
+      this.setMainColor(e);
+    }
+  }, {
+    key: POINTEREND(),
+    value: function value(e) {
+      this.isDown = false;
+    }
+  }]);
+  return ColorPalette;
 }(UIElement);
 
 var ChromeDevToolColorPicker = function (_BaseColorPicker) {
-    inherits(ChromeDevToolColorPicker, _BaseColorPicker);
+  inherits(ChromeDevToolColorPicker, _BaseColorPicker);
 
-    function ChromeDevToolColorPicker() {
-        classCallCheck(this, ChromeDevToolColorPicker);
-        return possibleConstructorReturn(this, (ChromeDevToolColorPicker.__proto__ || Object.getPrototypeOf(ChromeDevToolColorPicker)).apply(this, arguments));
+  function ChromeDevToolColorPicker() {
+    classCallCheck(this, ChromeDevToolColorPicker);
+    return possibleConstructorReturn(this, (ChromeDevToolColorPicker.__proto__ || Object.getPrototypeOf(ChromeDevToolColorPicker)).apply(this, arguments));
+  }
+
+  createClass(ChromeDevToolColorPicker, [{
+    key: "template",
+    value: function template() {
+      return "<div class='colorpicker-body'>\n            <Palette />\n            <div class=\"control\">\n                <Hue />\n                <Opacity />\n                <div class=\"empty\"></div>\n                <ColorView />\n            </div>\n            <Information />\n            <CurrentColorSets />\n            <ColorSetsChooser />\n            <ContextMenu />\n        </div>";
     }
-
-    createClass(ChromeDevToolColorPicker, [{
-        key: 'template',
-        value: function template() {
-            return '<div class=\'colorpicker-body\'>\n            <Palette />\n            <div class="control">\n                <Hue />\n                <Opacity />\n                <div class="empty"></div>\n                <ColorView />\n            </div>\n            <Information />\n            <CurrentColorSets />\n            <ColorSetsChooser />\n            <ContextMenu />\n        </div>';
-        }
-    }, {
-        key: 'components',
-        value: function components() {
-            return {
-                Hue: Hue, Opacity: Opacity, ColorView: ColorView,
-                Palette: ColorPalette,
-                Information: ColorInformation,
-                CurrentColorSets: CurrentColorSets,
-                ColorSetsChooser: ColorSetsChooser,
-                ContextMenu: CurrentColorSetsContextMenu
-            };
-        }
-    }]);
-    return ChromeDevToolColorPicker;
+  }, {
+    key: "components",
+    value: function components() {
+      return {
+        Hue: Hue,
+        Opacity: Opacity,
+        ColorView: ColorView,
+        Palette: ColorPalette,
+        Information: ColorInformation,
+        CurrentColorSets: CurrentColorSets,
+        ColorSetsChooser: ColorSetsChooser,
+        ContextMenu: CurrentColorSetsContextMenu
+      };
+    }
+  }]);
+  return ChromeDevToolColorPicker;
 }(BaseColorPicker);
 
 var MiniColorPicker = function (_BaseColorPicker) {
@@ -13094,36 +13104,36 @@ var XDTabColorPicker = function (_BaseColorPicker) {
 }(BaseColorPicker);
 
 var ColorPicker = {
-    create: function create(opts) {
-        switch (opts.type) {
-            case 'macos':
-                return new MacOSColorPicker(opts);
-            case 'xd':
-                return new XDColorPicker(opts);
-            case 'xd-tab':
-                return new XDTabColorPicker(opts);
-            case 'ring':
-                return new RingColorPicker(opts);
-            case 'ring-tab':
-                return new RingTabColorPicker(opts);
-            case 'mini':
-                return new MiniColorPicker(opts);
-            case 'mini-vertical':
-                return new MiniColorPicker$2(opts);
-            case 'sketch':
-            case 'palette':
-            default:
-                return new ChromeDevToolColorPicker(opts);
-        }
-    },
+  create: function create(opts) {
+    switch (opts.type) {
+      case "macos":
+        return new MacOSColorPicker(opts);
+      case "xd":
+        return new XDColorPicker(opts);
+      case "xd-tab":
+        return new XDTabColorPicker(opts);
+      case "ring":
+        return new RingColorPicker(opts);
+      case "ring-tab":
+        return new RingTabColorPicker(opts);
+      case "mini":
+        return new MiniColorPicker(opts);
+      case "mini-vertical":
+        return new MiniColorPicker$2(opts);
+      case "sketch":
+      case "palette":
+      default:
+        return new ChromeDevToolColorPicker(opts);
+    }
+  },
 
-    ColorPicker: ChromeDevToolColorPicker,
-    ChromeDevToolColorPicker: ChromeDevToolColorPicker,
-    MacOSColorPicker: MacOSColorPicker,
-    RingColorPicker: RingColorPicker,
-    MiniColorPicker: MiniColorPicker,
-    MiniVerticalColorPicker: MiniColorPicker$2,
-    XDColorPicker: XDColorPicker
+  ColorPicker: ChromeDevToolColorPicker,
+  ChromeDevToolColorPicker: ChromeDevToolColorPicker,
+  MacOSColorPicker: MacOSColorPicker,
+  RingColorPicker: RingColorPicker,
+  MiniColorPicker: MiniColorPicker,
+  MiniVerticalColorPicker: MiniColorPicker$2,
+  XDColorPicker: XDColorPicker
 };
 
 var ITEM_MOVE_LAST = 'item/move/last';
@@ -13169,7 +13179,7 @@ var ImageListView = function (_UIElement) {
         // individual effect
 
     }, {
-        key: EVENT(CHANGE_IMAGE, CHANGE_COLORSTEP, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_IMAGE, CHANGE_COLORSTEP$1, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value$$1(newValue) {
             this.refresh();
         }
@@ -15649,618 +15659,695 @@ var Property = function (_Item) {
 }(Item);
 
 var ImageResource = function (_Property) {
-    inherits(ImageResource, _Property);
+  inherits(ImageResource, _Property);
 
-    function ImageResource() {
-        classCallCheck(this, ImageResource);
-        return possibleConstructorReturn(this, (ImageResource.__proto__ || Object.getPrototypeOf(ImageResource)).apply(this, arguments));
+  function ImageResource() {
+    classCallCheck(this, ImageResource);
+    return possibleConstructorReturn(this, (ImageResource.__proto__ || Object.getPrototypeOf(ImageResource)).apply(this, arguments));
+  }
+
+  createClass(ImageResource, [{
+    key: "getDefaultObject",
+    value: function getDefaultObject() {
+      var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      return get$1(ImageResource.prototype.__proto__ || Object.getPrototypeOf(ImageResource.prototype), "getDefaultObject", this).call(this, _extends({
+        itemType: "image-resource",
+        type: "image"
+      }, obj));
     }
-
-    createClass(ImageResource, [{
-        key: "getDefaultObject",
-        value: function getDefaultObject() {
-            var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-            return get$1(ImageResource.prototype.__proto__ || Object.getPrototypeOf(ImageResource.prototype), "getDefaultObject", this).call(this, _extends({ itemType: 'image-resource' }, obj));
-        }
-    }, {
-        key: "isGradient",
-        value: function isGradient() {
-            return false;
-        }
-    }, {
-        key: "isLinear",
-        value: function isLinear() {
-            return false;
-        }
-    }, {
-        key: "isRadial",
-        value: function isRadial() {
-            return false;
-        }
-    }, {
-        key: "isConic",
-        value: function isConic() {
-            return false;
-        }
-    }, {
-        key: "isStatic",
-        value: function isStatic() {
-            return false;
-        }
-    }, {
-        key: "isImage",
-        value: function isImage() {
-            return false;
-        }
-    }, {
-        key: "hasAngle",
-        value: function hasAngle() {
-            return false;
-        }
-    }, {
-        key: "isUrl",
-        value: function isUrl() {
-            return false;
-        }
-    }, {
-        key: "isFile",
-        value: function isFile() {
-            return false;
-        }
-    }, {
-        key: "isAttribute",
-        value: function isAttribute() {
-            return true;
-        }
-    }]);
-    return ImageResource;
+  }, {
+    key: "isGradient",
+    value: function isGradient() {
+      return false;
+    }
+  }, {
+    key: "isLinear",
+    value: function isLinear() {
+      return false;
+    }
+  }, {
+    key: "isRadial",
+    value: function isRadial() {
+      return false;
+    }
+  }, {
+    key: "isConic",
+    value: function isConic() {
+      return false;
+    }
+  }, {
+    key: "isStatic",
+    value: function isStatic() {
+      return false;
+    }
+  }, {
+    key: "isImage",
+    value: function isImage() {
+      return false;
+    }
+  }, {
+    key: "hasAngle",
+    value: function hasAngle() {
+      return false;
+    }
+  }, {
+    key: "isUrl",
+    value: function isUrl() {
+      return false;
+    }
+  }, {
+    key: "isFile",
+    value: function isFile() {
+      return false;
+    }
+  }, {
+    key: "isAttribute",
+    value: function isAttribute() {
+      return true;
+    }
+  }, {
+    key: "toString",
+    value: function toString() {
+      return "none";
+    }
+  }]);
+  return ImageResource;
 }(Property);
 
 var ColorStep = function (_Item) {
-    inherits(ColorStep, _Item);
+  inherits(ColorStep, _Item);
 
-    function ColorStep() {
-        classCallCheck(this, ColorStep);
-        return possibleConstructorReturn(this, (ColorStep.__proto__ || Object.getPrototypeOf(ColorStep)).apply(this, arguments));
+  function ColorStep() {
+    classCallCheck(this, ColorStep);
+    return possibleConstructorReturn(this, (ColorStep.__proto__ || Object.getPrototypeOf(ColorStep)).apply(this, arguments));
+  }
+
+  createClass(ColorStep, [{
+    key: "getDefaultObject",
+    value: function getDefaultObject() {
+      return get$1(ColorStep.prototype.__proto__ || Object.getPrototypeOf(ColorStep.prototype), "getDefaultObject", this).call(this, {
+        cut: false,
+        percent: 0,
+        unit: "%",
+        px: 0,
+        em: 0,
+        color: "rgba(0, 0, 0, 0)"
+      });
+    }
+  }, {
+    key: "on",
+    value: function on() {
+      this.json.cut = true;
+    }
+  }, {
+    key: "off",
+    value: function off() {
+      this.json.cut = false;
+    }
+  }, {
+    key: "toggle",
+    value: function toggle() {
+      this.json.cut = !this.json.cut;
+    }
+  }, {
+    key: "changeUnit",
+    value: function changeUnit(unit, unitValue, maxValue) {
+      this.json.unit = unit;
+      this.json[unit] = unitValue;
+      this.reset(this.getUnitValue(maxValue));
+    }
+  }, {
+    key: "getUnit",
+    value: function getUnit() {
+      return this.json.unit == "%" ? "percent" : this.json.unit;
+    }
+  }, {
+    key: "getUnitValue",
+    value: function getUnitValue(maxValue) {
+      if (this.isPX) {
+        return {
+          px: this.json.px,
+          percent: +Length$1.px(this.json.px).toPercent(maxValue),
+          em: +Length$1.px(this.json.px).toEm(maxValue)
+        };
+      } else if (this.isEm) {
+        return {
+          em: this.json.em,
+          percent: +Length$1.em(this.json.em).toPercent(maxValue),
+          px: +Length$1.em(this.json.em).toPx(maxValue)
+        };
+      }
+
+      return {
+        percent: this.json.percent,
+        px: +Length$1.percent(this.json.percent).toPx(maxValue),
+        em: +Length$1.percent(this.json.percent).toEm(maxValue)
+      };
+    }
+  }, {
+    key: "add",
+    value: function add(num) {
+      var unit = this.getUnit();
+      this.json[unit] += +num;
+
+      return this;
+    }
+  }, {
+    key: "sub",
+    value: function sub(num) {
+      var unit = this.getUnit();
+      this.json[unit] -= +num;
+
+      return this;
+    }
+  }, {
+    key: "mul",
+    value: function mul(num) {
+      var unit = this.getUnit();
+      this.json[unit] *= +num;
+
+      return this;
+    }
+  }, {
+    key: "div",
+    value: function div(num) {
+      var unit = this.getUnit();
+      this.json[unit] /= +num;
+
+      return this;
+    }
+  }, {
+    key: "mod",
+    value: function mod(num) {
+      var unit = this.getUnit();
+      this.json[unit] %= +num;
+
+      return this;
+    }
+  }, {
+    key: "toLength",
+
+
+    /**
+     * convert Length instance
+     * @return {Length}
+     */
+    value: function toLength(maxValue) {
+      // TODO: apply maxValue
+      return Length$1.parse(this.json);
     }
 
-    createClass(ColorStep, [{
-        key: "getDefaultObject",
-        value: function getDefaultObject() {
-            return get$1(ColorStep.prototype.__proto__ || Object.getPrototypeOf(ColorStep.prototype), "getDefaultObject", this).call(this, {
-                cut: false,
-                percent: 0,
-                unit: '%',
-                px: 0,
-                em: 0,
-                color: 'rgba(0, 0, 0, 0)'
-            });
-        }
-    }, {
-        key: "on",
-        value: function on() {
-            this.json.cut = true;
-        }
-    }, {
-        key: "off",
-        value: function off() {
-            this.json.cut = false;
-        }
-    }, {
-        key: "toggle",
-        value: function toggle() {
-            this.json.cut = !this.json.cut;
-        }
-    }, {
-        key: "changeUnit",
-        value: function changeUnit(unit, maxValue) {
-            this.json.unit = unit;
-            this.reset(this.getUnitValue(maxValue));
-        }
-    }, {
-        key: "getUnit",
-        value: function getUnit() {
-            return this.json.unit == '%' ? 'percent' : this.json.unit;
-        }
-    }, {
-        key: "getUnitValue",
-        value: function getUnitValue(maxValue) {
-            if (this.isPX) {
-                return {
-                    px: this.json.px,
-                    percent: +Length$1.px(this.json.px).toPercent(maxValue),
-                    em: +Length$1.px(this.json.px).toEm(maxValue)
-                };
-            } else if (this.isEm) {
-                return {
-                    em: this.json.em,
-                    percent: +Length$1.em(this.json.em).toPercent(maxValue),
-                    px: +Length$1.em(this.json.em).toPx(maxValue)
-                };
+    /**
+     * get color string
+     *
+     * return {string}
+     */
+
+  }, {
+    key: "toString",
+    value: function toString() {
+      return this.json.color + " " + this.toLength();
+    }
+  }, {
+    key: "reset",
+    value: function reset(json) {
+      get$1(ColorStep.prototype.__proto__ || Object.getPrototypeOf(ColorStep.prototype), "reset", this).call(this, json);
+      if (this.parent()) {
+        this.parent().sortColorStep();
+      }
+    }
+  }, {
+    key: "isPx",
+    get: function get() {
+      return this.json.unit == "px";
+    }
+  }, {
+    key: "isPercent",
+    get: function get() {
+      return this.json.unit == "%" || this.json.unit === "percent";
+    }
+  }, {
+    key: "isEm",
+    get: function get() {
+      return this.json.unit == "em";
+    }
+  }], [{
+    key: "createByPercent",
+    value: function createByPercent(colorsteps, percent) {
+      if (!colorsteps.length) {
+        colorsteps.push(new ColorStep({ color: "rgba(216,216,216, 0)", percent: percent, index: 0 }));
+        colorsteps.push(new ColorStep({
+          color: "rgba(216,216,216, 0)",
+          percent: 100,
+          index: 100
+        }));
+      } else if (percent < colorsteps[0].percent) {
+        colorsteps[0].index = 1;
+
+        colorsteps.push(new ColorStep({ index: 0, color: colorsteps[0].color, percent: percent }));
+      } else {
+        var lastIndex = colorsteps.length - 1;
+        if (colorsteps[lastIndex].percent < percent) {
+          var color = colorsteps[lastIndex].color;
+          var index = colorsteps[lastIndex].index + 1;
+
+          colorsteps.push(new ColorStep({ index: index, color: color, percent: percent }));
+        } else {
+          for (var i = 0, len = colorsteps.length - 1; i < len; i++) {
+            var step = colorsteps[i];
+            var nextStep = colorsteps[i + 1];
+
+            if (step.percent <= percent && percent <= nextStep.percent) {
+              var color = Color$1.mix(step.color, nextStep.color, (percent - step.percent) / (nextStep.percent - step.percent), "rgb");
+
+              colorsteps.push(new ColorStep({ index: step.index + 1, color: color, percent: percent }));
             }
+          }
+        }
+      }
 
-            return {
-                percent: this.json.percent,
-                px: +Length$1.percent(this.json.percent).toPx(maxValue),
-                em: +Length$1.percent(this.json.percent).toEm(maxValue)
-            };
-        }
-    }, {
-        key: "add",
-        value: function add(num) {
-            var unit = this.getUnit();
-            this.json[unit] += +num;
+      ColorStep.sort(colorsteps);
+    }
+  }, {
+    key: "sort",
+    value: function sort(colorsteps) {
+      colorsteps.sort(function (a, b) {
+        if (a.percent === b.percent) {
+          if (a.index === b.index) return 0;
 
-            return this;
+          return a.index > b.index ? 1 : -1;
         }
-    }, {
-        key: "sub",
-        value: function sub(num) {
-            var unit = this.getUnit();
-            this.json[unit] -= +num;
+        return a.percent > b.percent ? 1 : -1;
+      });
 
-            return this;
-        }
-    }, {
-        key: "mul",
-        value: function mul(num) {
-            var unit = this.getUnit();
-            this.json[unit] *= +num;
-
-            return this;
-        }
-    }, {
-        key: "div",
-        value: function div(num) {
-            var unit = this.getUnit();
-            this.json[unit] /= +num;
-
-            return this;
-        }
-    }, {
-        key: "mod",
-        value: function mod(num) {
-            var unit = this.getUnit();
-            this.json[unit] %= +num;
-
-            return this;
-        }
-    }, {
-        key: "toLength",
-
-
-        /**
-         * convert Length instance 
-         * @return {Length}
-         */
-        value: function toLength(maxValue) {
-            // TODO: apply maxValue
-            return Length$1.parse(this.json);
-        }
-
-        /**
-         * get color string 
-         * 
-         * return {string}
-         */
-
-    }, {
-        key: "toString",
-        value: function toString() {
-            return this.json.color + " " + this.toLength();
-        }
-    }, {
-        key: "reset",
-        value: function reset(json) {
-            get$1(ColorStep.prototype.__proto__ || Object.getPrototypeOf(ColorStep.prototype), "reset", this).call(this, json);
-            if (this.parent()) {
-                this.parent().sortColorStep();
-            }
-        }
-    }, {
-        key: "isPx",
-        get: function get() {
-            return this.json.unit == 'px';
-        }
-    }, {
-        key: "isPercent",
-        get: function get() {
-            return this.json.unit == '%' || this.json.unit === 'percent';
-        }
-    }, {
-        key: "isEm",
-        get: function get() {
-            return this.json.unit == 'em';
-        }
-    }]);
-    return ColorStep;
+      colorsteps.forEach(function (step, index) {
+        step.index = index * 100;
+      });
+    }
+  }, {
+    key: "select",
+    value: function select(colorsteps, selectedId) {
+      colorsteps.forEach(function (step) {
+        step.selected = step.id === selectedId;
+      });
+    }
+  }]);
+  return ColorStep;
 }(Item);
 
 var DEFINED_ANGLES$1 = {
-    'to top': 0,
-    'to top right': 45,
-    'to right': 90,
-    'to bottom right': 135,
-    'to bottom': 180,
-    'to bottom left': 225,
-    'to left': 270,
-    'to top left': 315
-
+  "to top": 0,
+  "to top right": 45,
+  "to right": 90,
+  "to bottom right": 135,
+  "to bottom": 180,
+  "to bottom left": 225,
+  "to left": 270,
+  "to top left": 315
 };
 
 var Gradient = function (_ImageResource) {
-    inherits(Gradient, _ImageResource);
+  inherits(Gradient, _ImageResource);
 
-    function Gradient() {
-        classCallCheck(this, Gradient);
-        return possibleConstructorReturn(this, (Gradient.__proto__ || Object.getPrototypeOf(Gradient)).apply(this, arguments));
+  function Gradient() {
+    classCallCheck(this, Gradient);
+    return possibleConstructorReturn(this, (Gradient.__proto__ || Object.getPrototypeOf(Gradient)).apply(this, arguments));
+  }
+
+  createClass(Gradient, [{
+    key: "isGradient",
+    value: function isGradient() {
+      return true;
+    }
+  }, {
+    key: "toString",
+    value: function toString() {
+      return "none";
     }
 
-    createClass(Gradient, [{
-        key: "isGradient",
-        value: function isGradient() {
-            return true;
+    /**
+     * colorsteps = [
+     *    new ColorStep({color: 'red', percent: 0}),
+     *    new ColorStep({color: 'red', percent: 0})
+     * ]
+     *
+     * @param {*} obj
+     */
+
+  }, {
+    key: "getDefaultObject",
+    value: function getDefaultObject() {
+      var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      return get$1(Gradient.prototype.__proto__ || Object.getPrototypeOf(Gradient.prototype), "getDefaultObject", this).call(this, _extends({
+        type: "gradient",
+        colorsteps: []
+      }, obj));
+    }
+  }, {
+    key: "convert",
+    value: function convert(json) {
+      json.colorsteps = json.colorsteps.map(function (c) {
+        return new ColorStep(c);
+      });
+
+      return json;
+    }
+  }, {
+    key: "calculateAngle",
+    value: function calculateAngle() {
+      var angle = this.json.angle;
+      return isUndefined$1(DEFINED_ANGLES$1[angle]) ? angle : DEFINED_ANGLES$1[angle] || 0;
+    }
+
+    /**
+     * add ColorStep
+     *
+     * @param {ColorStep} colorstep
+     * @param {boolean} isSort
+     */
+
+  }, {
+    key: "addColorStep",
+    value: function addColorStep(colorstep) {
+      var isSort = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
+      this.json.colorsteps.push(colorstep);
+
+      if (isSort) this.sortColorStep();
+
+      return colorstep;
+    }
+  }, {
+    key: "insertColorStep",
+    value: function insertColorStep(percent$$1) {
+      var startColor = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "rgba(216,216,216,0)";
+      var endColor = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "rgba(216,216,216,1)";
+
+      var colorsteps = this.colorsteps;
+      if (!colorsteps.length) {
+        this.addColorStepList([new ColorStep({ color: startColor, percent: percent$$1, index: 0 }), new ColorStep({ color: endColor, percent: 100, index: 100 })]);
+        return;
+      }
+
+      if (percent$$1 < colorsteps[0].percent) {
+        colorsteps[0].index = 1;
+
+        this.addColorStep(new ColorStep({ index: 0, color: colorsteps[0].color, percent: percent$$1 }));
+        return;
+      }
+
+      var lastIndex = colorsteps.length - 1;
+      if (colorsteps[lastIndex].percent < percent$$1) {
+        var color$$1 = colorsteps[lastIndex].color;
+        var index = colorsteps[lastIndex].index + 1;
+
+        this.addColorStep(new ColorStep({ index: index, color: color$$1, percent: percent$$1 }));
+
+        return;
+      }
+
+      for (var i = 0, len = colorsteps.length - 1; i < len; i++) {
+        var step = colorsteps[i];
+        var nextStep = colorsteps[i + 1];
+
+        if (step.percent <= percent$$1 && percent$$1 <= nextStep.percent) {
+          var color$$1 = Color$1.mix(step.color, nextStep.color, (percent$$1 - step.percent) / (nextStep.percent - step.percent), "rgb");
+
+          this.addColorStep(new ColorStep({ index: step.index + 1, color: color$$1, percent: percent$$1 }));
+
+          return;
         }
-    }, {
-        key: "toString",
-        value: function toString() {
-            return "none";
+      }
+    }
+  }, {
+    key: "sortColorStep",
+    value: function sortColorStep() {
+      var children = this.colorsteps;
+
+      children.sort(function (a, b) {
+        if (a.percent > b.percent) return 1;
+        if (a.percent < b.percent) return -1;
+        if (a.percent == b.percent) {
+          if (a.index === b.index) return 0;
+          return a.index > b.index ? 1 : -1;
+        }
+      });
+
+      children.forEach(function (it, index) {
+        it.index = index * 100;
+      });
+    }
+
+    /**
+     * add ColorStep List
+     * @param {Array<ColorStep>} colorstepList
+     */
+
+  }, {
+    key: "addColorStepList",
+    value: function addColorStepList() {
+      var _this2 = this;
+
+      var colorstepList = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
+      colorstepList.forEach(function (c) {
+        _this2.addColorStep(c, false);
+      });
+
+      this.sortColorStep();
+    }
+
+    /**
+     * get color step by id
+     *
+     * @param {string} id
+     */
+
+  }, {
+    key: "getColorStep",
+    value: function getColorStep(id) {
+      return this.json.colorsteps.filter(function (c) {
+        return c.id == id;
+      })[0];
+    }
+  }, {
+    key: "clear",
+    value: function clear() {
+      if (arguments.length) {
+        this.json.colorsteps.splice(+(arguments.length <= 0 ? undefined : arguments[0]), 1);
+      } else {
+        this.json.colorsteps = [];
+      }
+    }
+
+    /**
+     * get colorstep list
+     *
+     * @return {Array<ColorStep>}
+     */
+
+  }, {
+    key: "getColorString",
+
+
+    /**
+     * get color string
+     *
+     * @return {string}
+     */
+    value: function getColorString() {
+      var colorsteps = this.colorsteps;
+      if (!colorsteps.length) return EMPTY_STRING;
+
+      var newColors = [];
+      colorsteps.forEach(function (c, index) {
+        if (c.cut && index > 0) {
+          var prevItem = colorsteps[index - 1];
+          newColors.push(new ColorStep({
+            color: c.color,
+            unit: prevItem.unit,
+            percent: prevItem.percent,
+            px: prevItem.px,
+            em: prevItem.em
+          }));
         }
 
-        /**
-         * colorsteps = [ 
-         *    new ColorStep({color: 'red', percent: 0}),
-         *    new ColorStep({color: 'red', percent: 0}) 
-         * ] 
-         * 
-         * @param {*} obj 
-         */
+        newColors.push(c);
+      });
 
-    }, {
-        key: "getDefaultObject",
-        value: function getDefaultObject() {
-            var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-            return get$1(Gradient.prototype.__proto__ || Object.getPrototypeOf(Gradient.prototype), "getDefaultObject", this).call(this, _extends({
-                type: 'gradient',
-                colorsteps: []
-            }, obj));
-        }
-    }, {
-        key: "convert",
-        value: function convert(json) {
-
-            json.colorsteps = json.colorsteps.map(function (c) {
-                return new ColorStep(c);
-            });
-
-            return json;
-        }
-    }, {
-        key: "calculateAngle",
-        value: function calculateAngle() {
-            var angle = this.json.angle;
-            return isUndefined$1(DEFINED_ANGLES$1[angle]) ? angle : DEFINED_ANGLES$1[angle] || 0;
-        }
-
-        /**
-         * add ColorStep 
-         * 
-         * @param {ColorStep} colorstep 
-         * @param {boolean} isSort 
-         */
-
-    }, {
-        key: "addColorStep",
-        value: function addColorStep(colorstep) {
-            var isSort = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
-
-            this.json.colorsteps.push(colorstep);
-
-            if (isSort) this.sortColorStep();
-
-            return colorstep;
-        }
-    }, {
-        key: "insertColorStep",
-        value: function insertColorStep(percent$$1) {
-            var startColor = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'rgba(216,216,216,0)';
-            var endColor = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'rgba(216,216,216,1)';
-
-
-            var colorsteps = this.colorsteps;
-            if (!colorsteps.length) {
-
-                this.addColorStepList([new ColorStep({ color: startColor, percent: percent$$1, index: 0 }), new ColorStep({ color: endColor, percent: 100, index: 100 })]);
-                return;
-            }
-
-            if (percent$$1 < colorsteps[0].percent) {
-                colorsteps[0].index = 1;
-
-                this.addColorStep(new ColorStep({ index: 0, color: colorsteps[0].color, percent: percent$$1 }));
-                return;
-            }
-
-            var lastIndex = colorsteps.length - 1;
-            if (colorsteps[lastIndex].percent < percent$$1) {
-                var color$$1 = colorsteps[lastIndex].color;
-                var index = colorsteps[lastIndex].index + 1;
-
-                this.addColorStep(new ColorStep({ index: index, color: color$$1, percent: percent$$1 }));
-
-                return;
-            }
-
-            for (var i = 0, len = colorsteps.length - 1; i < len; i++) {
-                var step = colorsteps[i];
-                var nextStep = colorsteps[i + 1];
-
-                if (step.percent <= percent$$1 && percent$$1 <= nextStep.percent) {
-                    var color$$1 = Color$1.mix(step.color, nextStep.color, (percent$$1 - step.percent) / (nextStep.percent - step.percent), 'rgb');
-
-                    this.addColorStep(new ColorStep({ index: step.index + 1, color: color$$1, percent: percent$$1 }));
-
-                    return;
-                }
-            }
-        }
-    }, {
-        key: "sortColorStep",
-        value: function sortColorStep() {
-
-            var children = this.colorsteps;
-
-            children.sort(function (a, b) {
-
-                if (a.percent > b.percent) return 1;
-                if (a.percent < b.percent) return -1;
-                if (a.percent == b.percent) {
-                    if (a.index === b.index) return 0;
-                    return a.index > b.index ? 1 : -1;
-                }
-            });
-
-            children.forEach(function (it, index) {
-                it.index = index * 100;
-            });
-        }
-
-        /**
-         * add ColorStep List 
-         * @param {Array<ColorStep>} colorstepList 
-         */
-
-    }, {
-        key: "addColorStepList",
-        value: function addColorStepList() {
-            var _this2 = this;
-
-            var colorstepList = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
-
-            colorstepList.forEach(function (c) {
-                _this2.addColorStep(c, false);
-            });
-
-            this.sortColorStep();
-        }
-
-        /**
-         * get color step by id 
-         * 
-         * @param {string} id 
-         */
-
-    }, {
-        key: "getColorStep",
-        value: function getColorStep(id) {
-            return this.json.colorsteps.filter(function (c) {
-                return c.id == id;
-            })[0];
-        }
-    }, {
-        key: "clear",
-        value: function clear() {
-            if (arguments.length) {
-                this.json.colorsteps.splice(+(arguments.length <= 0 ? undefined : arguments[0]), 1);
-            } else {
-                this.json.colorsteps = [];
-            }
-        }
-
-        /**
-         * get colorstep list 
-         * 
-         * @return {Array<ColorStep>}
-         */
-
-    }, {
-        key: "getColorString",
-
-
-        /**
-         * get color string 
-         * 
-         * @return {string}
-         */
-        value: function getColorString() {
-
-            var colorsteps = this.colorsteps;
-            if (!colorsteps.length) return EMPTY_STRING;
-
-            var newColors = [];
-            colorsteps.forEach(function (c, index) {
-                if (c.cut && index > 0) {
-                    var prevItem = colorsteps[index - 1];
-                    newColors.push(new ColorStep({
-                        color: c.color,
-                        unit: prevItem.unit,
-                        percent: prevItem.percent,
-                        px: prevItem.px,
-                        em: prevItem.em
-                    }));
-                }
-
-                newColors.push(c);
-            });
-
-            return newColors.map(function (f) {
-                return "" + f;
-            }).join(',');
-        }
-    }, {
-        key: "colorsteps",
-        get: function get$$1() {
-            return this.json.colorsteps;
-        }
-    }]);
-    return Gradient;
+      return newColors.map(function (f) {
+        return "" + f;
+      }).join(",");
+    }
+  }, {
+    key: "colorsteps",
+    get: function get$$1() {
+      return this.json.colorsteps;
+    }
+  }]);
+  return Gradient;
 }(ImageResource);
 
-var RepeatList = ['repeat', 'no-repeat', 'repeat-x', 'repeat-y'];
+var RepeatList = ["repeat", "no-repeat", "repeat-x", "repeat-y"];
 
 var BackgroundImage = function (_Property) {
-    inherits(BackgroundImage, _Property);
+  inherits(BackgroundImage, _Property);
 
-    function BackgroundImage() {
-        classCallCheck(this, BackgroundImage);
-        return possibleConstructorReturn(this, (BackgroundImage.__proto__ || Object.getPrototypeOf(BackgroundImage)).apply(this, arguments));
+  function BackgroundImage() {
+    classCallCheck(this, BackgroundImage);
+    return possibleConstructorReturn(this, (BackgroundImage.__proto__ || Object.getPrototypeOf(BackgroundImage)).apply(this, arguments));
+  }
+
+  createClass(BackgroundImage, [{
+    key: "addImageResource",
+    value: function addImageResource(imageResource) {
+      this.clear("image-resource");
+      return this.addItem("image-resource", imageResource);
     }
+  }, {
+    key: "addGradient",
+    value: function addGradient(gradient) {
+      return this.addImageResource(gradient);
+    }
+  }, {
+    key: "getDefaultObject",
+    value: function getDefaultObject() {
+      return get$1(BackgroundImage.prototype.__proto__ || Object.getPrototypeOf(BackgroundImage.prototype), "getDefaultObject", this).call(this, {
+        itemType: "background-image",
+        type: "color",
+        color: "#FFFFFF",
+        checked: false,
+        opacity: 1,
+        blendMode: "normal",
+        size: "auto",
+        repeat: "repeat",
+        width: Length$1.percent(100),
+        height: Length$1.percent(100),
+        x: Length$1.percent(0),
+        y: Length$1.percent(0),
+        image: new ImageResource()
+      });
+    }
+  }, {
+    key: "convert",
+    value: function convert(json) {
+      json.x = Length$1.parse(json.x);
+      json.y = Length$1.parse(json.y);
 
-    createClass(BackgroundImage, [{
-        key: "addImageResource",
-        value: function addImageResource(imageResource) {
-            this.clear('image-resource');
-            return this.addItem('image-resource', imageResource);
-        }
-    }, {
-        key: "addGradient",
-        value: function addGradient(gradient) {
-            return this.addImageResource(gradient);
-        }
-    }, {
-        key: "getDefaultObject",
-        value: function getDefaultObject() {
-            return get$1(BackgroundImage.prototype.__proto__ || Object.getPrototypeOf(BackgroundImage.prototype), "getDefaultObject", this).call(this, {
-                itemType: 'background-image',
-                blendMode: 'normal',
-                size: 'auto',
-                repeat: 'repeat',
-                width: Length$1.percent(100),
-                height: Length$1.percent(100),
-                x: Position.CENTER,
-                y: Position.CENTER
-            });
-        }
-    }, {
-        key: "convert",
-        value: function convert(json) {
-            json.x = Length$1.parse(json.x);
-            json.y = Length$1.parse(json.y);
+      if (json.width) json.width = Length$1.parse(json.width);
+      if (json.height) json.height = Length$1.parse(json.height);
 
-            if (json.width) json.width = Length$1.parse(json.width);
-            if (json.height) json.height = Length$1.parse(json.height);
+      return json;
+    }
+  }, {
+    key: "checkField",
+    value: function checkField(key, value) {
+      if (key === "repeat") {
+        return RepeatList.includes(value);
+      }
 
-            return json;
-        }
-    }, {
-        key: "checkField",
-        value: function checkField(key, value) {
-            if (key === 'repeat') {
-                return RepeatList.includes(value);
-            }
+      return get$1(BackgroundImage.prototype.__proto__ || Object.getPrototypeOf(BackgroundImage.prototype), "checkField", this).call(this, key, value);
+    }
+  }, {
+    key: "toBackgroundImageCSS",
+    value: function toBackgroundImageCSS() {
+      if (!this.json.image) return {};
+      return {
+        "background-image": this.json.image + ""
+      };
+    }
+  }, {
+    key: "toBackgroundPositionCSS",
+    value: function toBackgroundPositionCSS() {
+      var json = this.json;
 
-            return get$1(BackgroundImage.prototype.__proto__ || Object.getPrototypeOf(BackgroundImage.prototype), "checkField", this).call(this, key, value);
-        }
-    }, {
-        key: "toBackgroundImageCSS",
-        value: function toBackgroundImageCSS() {
-            if (!this.image) return {};
-            return {
-                'background-image': this.image + ""
-            };
-        }
-    }, {
-        key: "toBackgroundPositionCSS",
-        value: function toBackgroundPositionCSS() {
-            var json = this.json;
+      return {
+        "background-position": json.x + " " + json.y
+      };
+    }
+  }, {
+    key: "toBackgroundSizeCSS",
+    value: function toBackgroundSizeCSS() {
+      var json = this.json;
+      var backgroundSize = "auto";
 
-            return {
-                'background-position': json.x + " " + json.y
-            };
+      if (json.size == "contain" || json.size == "cover") {
+        backgroundSize = json.size;
+      } else if (json.width.isPercent() && json.width.isPercent()) {
+        // 기본 사이즈가 아닌 것만 표시 (100% 100% 이 아닐 때 )
+        if (+json.width !== 100 || +json.height !== 100) {
+          backgroundSize = json.width + " " + json.height;
         }
-    }, {
-        key: "toBackgroundSizeCSS",
-        value: function toBackgroundSizeCSS() {
+      } else {
+        backgroundSize = json.width + " " + json.height;
+      }
 
-            var json = this.json;
-            var backgroundSize = 'auto';
+      return {
+        "background-size": backgroundSize
+      };
+    }
+  }, {
+    key: "toBackgroundRepeatCSS",
+    value: function toBackgroundRepeatCSS() {
+      var json = this.json;
+      return {
+        "background-repeat": json.repeat
+      };
+    }
+  }, {
+    key: "toBackgroundBlendCSS",
+    value: function toBackgroundBlendCSS() {
+      var json = this.json;
+      return {
+        "background-blend-mode": json.blendMode
+      };
+    }
+  }, {
+    key: "toBackgroundColorCSS",
+    value: function toBackgroundColorCSS() {
+      var json = this.json;
 
-            if (json.size == 'contain' || json.size == 'cover') {
-                backgroundSize = json.size;
-            } else if (json.width.isPercent() && json.width.isPercent()) {
-                // 기본 사이즈가 아닌 것만 표시 (100% 100% 이 아닐 때 )
-                if (+json.width !== 100 || +json.height !== 100) {
-                    backgroundSize = json.width + " " + json.height;
-                }
-            } else {
-                backgroundSize = json.width + " " + json.height;
-            }
+      return {
+        "background-color": json.color
+      };
+    }
+  }, {
+    key: "toCSS",
+    value: function toCSS() {
+      var json = this.json;
 
-            return {
-                'background-size': backgroundSize
-            };
-        }
-    }, {
-        key: "toBackgroundRepeatCSS",
-        value: function toBackgroundRepeatCSS() {
-            var json = this.json;
-            return {
-                'background-repeat': json.repeat
-            };
-        }
-    }, {
-        key: "toBackgroundBlendCSS",
-        value: function toBackgroundBlendCSS() {
-            var json = this.json;
-            return {
-                'background-blend-mode': json.blendMode
-            };
-        }
-    }, {
-        key: "toCSS",
-        value: function toCSS() {
+      if (json.type == "color") {
+        return _extends({}, this.toBackgroundColorCSS());
+      }
 
-            var results = _extends({}, this.toBackgroundImageCSS(), this.toBackgroundPositionCSS(), this.toBackgroundSizeCSS(), this.toBackgroundRepeatCSS(), this.toBackgroundBlendCSS());
+      var results = _extends({}, this.toBackgroundImageCSS(), this.toBackgroundPositionCSS(), this.toBackgroundSizeCSS(), this.toBackgroundRepeatCSS(), this.toBackgroundBlendCSS());
 
-            return results;
-        }
-    }, {
-        key: "toString",
-        value: function toString() {
-            return keyMap(this.toCSS(), function (key, value) {
-                return key + ": " + value;
-            }).join(';');
-        }
-    }, {
-        key: "image",
-        get: function get$$1() {
-            return this.one({ itemType: 'image-resource' }) || new Gradient();
-        }
-
-        //FIXME: why this method is not working 
-        ,
-        set: function set$$1(imageResource) {
-            this.addImageResource(imageResource);
-        }
-    }], [{
-        key: "parse",
-        value: function parse(obj) {
-            return new BackgroundImage(obj);
-        }
-    }]);
-    return BackgroundImage;
+      return results;
+    }
+  }, {
+    key: "toString",
+    value: function toString() {
+      return keyMap(this.toCSS(), function (key, value) {
+        return key + ": " + value;
+      }).join(";");
+    }
+  }, {
+    key: "image",
+    get: function get$$1() {
+      return this.json.image;
+    },
+    set: function set$$1(image) {
+      this.json.image = image;
+    }
+  }], [{
+    key: "parse",
+    value: function parse(obj) {
+      return new BackgroundImage(obj);
+    }
+  }]);
+  return BackgroundImage;
 }(Property);
 
 var IMAGE_LIST = ['jpg', 'jpeg', 'png', 'gif', 'svg'];
@@ -16465,532 +16552,1068 @@ var DropView = function (_UIElement) {
 }(UIElement);
 
 var DEFINED_DIRECTIONS$1 = {
-    '0': 'to top',
-    '45': 'to top right',
-    '90': 'to right',
-    '135': 'to bottom right',
-    '180': 'to bottom',
-    '225': 'to bottom left',
-    '270': 'to left',
-    '315': 'to top left'
+  "0": "to top",
+  "45": "to top right",
+  "90": "to right",
+  "135": "to bottom right",
+  "180": "to bottom",
+  "225": "to bottom left",
+  "270": "to left",
+  "315": "to top left"
 };
 
 var LinearGradient = function (_Gradient) {
-    inherits(LinearGradient, _Gradient);
+  inherits(LinearGradient, _Gradient);
 
-    function LinearGradient() {
-        classCallCheck(this, LinearGradient);
-        return possibleConstructorReturn(this, (LinearGradient.__proto__ || Object.getPrototypeOf(LinearGradient)).apply(this, arguments));
+  function LinearGradient() {
+    classCallCheck(this, LinearGradient);
+    return possibleConstructorReturn(this, (LinearGradient.__proto__ || Object.getPrototypeOf(LinearGradient)).apply(this, arguments));
+  }
+
+  createClass(LinearGradient, [{
+    key: "getDefaultObject",
+    value: function getDefaultObject(obj) {
+      return get$1(LinearGradient.prototype.__proto__ || Object.getPrototypeOf(LinearGradient.prototype), "getDefaultObject", this).call(this, _extends({
+        type: "linear-gradient",
+        angle: 0
+      }, obj));
     }
+  }, {
+    key: "isLinear",
+    value: function isLinear() {
+      return true;
+    }
+  }, {
+    key: "hasAngle",
+    value: function hasAngle() {
+      return true;
+    }
+  }, {
+    key: "toString",
+    value: function toString() {
+      var colorString = this.getColorString();
 
-    createClass(LinearGradient, [{
-        key: "getDefaultObject",
-        value: function getDefaultObject(obj) {
-            return get$1(LinearGradient.prototype.__proto__ || Object.getPrototypeOf(LinearGradient.prototype), "getDefaultObject", this).call(this, _extends({
-                type: 'linear-gradient',
-                angle: 0
-            }, obj));
-        }
-    }, {
-        key: "isLinear",
-        value: function isLinear() {
-            return true;
-        }
-    }, {
-        key: "hasAngle",
-        value: function hasAngle() {
-            return true;
-        }
-    }, {
-        key: "toString",
-        value: function toString() {
+      var opt = EMPTY_STRING;
+      var angle = this.json.angle;
 
-            var colorString = this.getColorString();
+      opt = angle;
 
-            var opt = EMPTY_STRING;
-            var angle = this.json.angle;
+      if (isNumber(opt)) {
+        opt = DEFINED_DIRECTIONS$1["" + opt] || opt;
+      }
 
-            opt = angle;
+      if (isNumber(opt)) {
+        opt = opt > 360 ? opt % 360 : opt;
 
-            if (isNumber(opt)) {
-                opt = DEFINED_DIRECTIONS$1["" + opt] || opt;
-            }
+        opt = opt + "deg";
+      }
 
-            if (isNumber(opt)) {
-                opt = opt > 360 ? opt % 360 : opt;
+      var result = this.json.type + "(" + opt + ", " + colorString + ")";
 
-                opt = opt + "deg";
-            }
+      return result;
+    }
+  }], [{
+    key: "toLinearGradient",
+    value: function toLinearGradient(colorsteps) {
+      if (colorsteps.length === 0) {
+        return "none";
+      }
 
-            var result = this.json.type + "(" + opt + ", " + colorString + ")";
+      var gradient = new LinearGradient({
+        angle: "to right",
+        colorsteps: colorsteps
+      });
 
-            return result;
-        }
-    }], [{
-        key: "toLinearGradient",
-        value: function toLinearGradient(image) {
-            if (image.isGradient()) {
-                var gradient = new LinearGradient({
-                    angle: 'to right',
-                    colorsteps: image.colorsteps
-                });
-
-                return gradient + "";
-            }
-
-            return '';
-        }
-    }]);
-    return LinearGradient;
+      return gradient + "";
+    }
+  }]);
+  return LinearGradient;
 }(Gradient);
 
-var GradientSteps = function (_UIElement) {
-    inherits(GradientSteps, _UIElement);
+var DEFINED_ANGLES$2 = {
+  "to top": 0,
+  "to top right": 45,
+  "to right": 90,
+  "to bottom right": 135,
+  "to bottom": 180,
+  "to bottom left": 225,
+  "to left": 270,
+  "to top left": 315
+};
 
-    function GradientSteps() {
-        classCallCheck(this, GradientSteps);
-        return possibleConstructorReturn(this, (GradientSteps.__proto__ || Object.getPrototypeOf(GradientSteps)).apply(this, arguments));
+var PredefinedLinearGradientAngle = function (_UIElement) {
+  inherits(PredefinedLinearGradientAngle, _UIElement);
+
+  function PredefinedLinearGradientAngle() {
+    classCallCheck(this, PredefinedLinearGradientAngle);
+    return possibleConstructorReturn(this, (PredefinedLinearGradientAngle.__proto__ || Object.getPrototypeOf(PredefinedLinearGradientAngle)).apply(this, arguments));
+  }
+
+  createClass(PredefinedLinearGradientAngle, [{
+    key: "template",
+    value: function template() {
+      return "\n            <div class=\"predefined-angluar-group\">\n                <button type=\"button\" data-value=\"to right\"></button>                          \n                <button type=\"button\" data-value=\"to left\"></button>                                                  \n                <button type=\"button\" data-value=\"to top\"></button>                            \n                <button type=\"button\" data-value=\"to bottom\"></button>                                        \n                <button type=\"button\" data-value=\"to top right\"></button>                                \n                <button type=\"button\" data-value=\"to bottom right\"></button>                                    \n                <button type=\"button\" data-value=\"to bottom left\"></button>\n                <button type=\"button\" data-value=\"to top left\"></button>\n            </div>\n        ";
     }
-
-    createClass(GradientSteps, [{
-        key: 'template',
-        value: function template() {
-            return '\n            <div class=\'gradient-steps\'>\n                <div class="hue-container" ref="$back"></div>            \n                <div class="hue" ref="$steps">\n                    <div class=\'step-list\' ref="$stepList"></div>\n                </div>\n            </div>\n        ';
-        }
-    }, {
-        key: 'getStepPosition',
-        value: function getStepPosition(step) {
-            var _getMinMax = this.getMinMax(),
-                min = _getMinMax.min,
-                max = _getMinMax.max;
-
-            var left = this.refs.$steps.offset().left;
-
-            min -= left;
-            max -= left;
-
-            if (step.isPx) {
-                return step.px;
-            }
-
-            return min + (max - min) * (step.percent / 100);
-        }
-    }, {
-        key: 'getUnitName',
-        value: function getUnitName(step) {
-            var unit$$1 = step.unit || UNIT_PERCENT;
-
-            if ([UNIT_PX, UNIT_EM].includes(unit$$1)) {
-                return unit$$1;
-            }
-
-            return UNIT_PERCENT;
-        }
-    }, {
-        key: 'getUnitSelect',
-        value: function getUnitSelect(step) {
-
-            return '\n        <select class=\'unit\' data-colorstep-id="' + step.id + '">\n            <option value=\'percent\' ' + (step.isPercent ? 'selected' : EMPTY_STRING) + '>%</option>\n            <option value=\'px\' ' + (step.isPx ? 'selected' : EMPTY_STRING) + '>px</option>\n            <option value=\'em\' ' + (step.isEm ? 'selected' : EMPTY_STRING) + '>em</option>\n        </select>\n        ';
-        }
-    }, {
-        key: 'getMaxValue',
-        value: function getMaxValue() {
-            return editor$1.config.get('step.width') || 400;
-        }
-
-        // load 후에 이벤트를 재설정 해야한다. 
-
-    }, {
-        key: LOAD('$stepList'),
-        value: function value$$1() {
-            var _this2 = this;
-
-            var item = editor$1.selection.image;
-            if (!item) return EMPTY_STRING;
-
-            if (!image.isGradient()) return EMPTY_STRING;
-
-            return image.colorsteps.map(function (step) {
-
-                var cut = step.cut ? 'cut' : EMPTY_STRING;
-                var unitValue$$1 = step.getUnitValue(_this2.getMaxValue());
-                return '\n                <div \n                    class=\'drag-bar ' + (step.selected ? 'selected' : EMPTY_STRING) + '\' \n                    id="' + step.id + '"\n                    style="left: ' + _this2.getStepPosition(step) + 'px;"\n                >   \n                    <div class="guide-step step" style=" border-color: ' + step.color + ';background-color: ' + step.color + ';"></div>\n                    <div class=\'guide-line\' \n                        style="background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), ' + step.color + ' 10%) ;"></div>\n                    <div class="guide-change ' + cut + '" data-colorstep-id="' + step.id + '"></div>\n                    <div class="guide-unit ' + step.getUnit() + '">\n                        <input type="number" class="percent" min="-100" max="100" step="0.1"  value="' + unitValue$$1.percent + '" data-colorstep-id="' + step.id + '"  />\n                        <input type="number" class="px" min="-100" max="1000" step="1"  value="' + unitValue$$1.px + '" data-colorstep-id="' + step.id + '"  />\n                        <input type="number" class="em" min="-100" max="500" step="0.1"  value="' + unitValue$$1.em + '" data-colorstep-id="' + step.id + '"  />\n                        ' + _this2.getUnitSelect(step) + '\n                    </div>       \n                </div>\n            ';
-            });
-        }
-    }, {
-        key: 'isShow',
-        value: function isShow() {
-
-            var item = editor$1.selection.image;
-            if (!item) return false;
-
-            return item.isGradient();
-        }
-    }, {
-        key: 'refresh',
-        value: function refresh() {
-            this.$el.toggle(this.isShow());
-
-            var item = editor$1.selection.image;
-            if (item && item.isGradient()) {
-                this.load();
-                this.setColorUI();
-            }
-        }
-    }, {
-        key: 'setColorUI',
-        value: function setColorUI() {
-            this.setBackgroundColor();
-        }
-    }, {
-        key: 'setBackgroundColor',
-        value: function setBackgroundColor() {
-
-            var item = editor$1.selection.image;
-            if (item && item.isGradient()) {
-                this.refs.$stepList.css('background-image', LinearGradient.toLinearGradient(item));
-            }
-        }
-
-        /* slide 영역 min,max 구하기  */
-
-    }, {
-        key: 'getMinMax',
-        value: function getMinMax() {
-            var min = this.refs.$steps.offsetLeft();
-            var width = this.refs.$steps.width();
-            var max = min + width;
-
-            return { min: min, max: max, width: width };
-        }
-
-        /* 현재 위치 구하기  */
-
-    }, {
-        key: 'getCurrent',
-        value: function getCurrent() {
-            var _getMinMax2 = this.getMinMax(),
-                min = _getMinMax2.min,
-                max = _getMinMax2.max;
-
-            var _editor$config$get = editor$1.config.get('pos'),
-                x = _editor$config$get.x;
-
-            var current = Math.min(Math.max(min, x), max);
-
-            return current;
-        }
-
-        /**
-         * 마우스 이벤트로 현재 위치 및 percent 설정, 전체  gradient 리프레쉬 
-         * 
-         * @param {*} e 
-         */
-
-    }, {
-        key: 'refreshColorUI',
-        value: function refreshColorUI(isUpdate) {
-            var _getMinMax3 = this.getMinMax(),
-                min = _getMinMax3.min,
-                max = _getMinMax3.max;
-
-            var current = this.getCurrent();
-
-            if (this.currentStep) {
-                var posX = Math.max(min, current);
-                var px$$1 = posX - this.refs.$steps.offsetLeft();
-
-                if (editor$1.config.get('bodyEvent').ctrlKey) {
-                    px$$1 = Math.floor(px$$1); // control + drag is floor number 
-                }
-                this.currentStepBox.px('left', px$$1);
-
-                var item = editor$1.get(this.currentStepBox.attr('id'));
-
-                if (item) {
-
-                    // item.px = px; 
-                    var maxValue = max - min;
-                    var percent$$1 = Length$1.px(px$$1).toPercent(maxValue);
-                    var em$$1 = Length$1.px(px$$1).toEm(maxValue);
-
-                    item.reset({ px: px$$1, percent: percent$$1, em: em$$1 });
-
-                    this.currentUnitPercent.val(percent$$1);
-                    this.currentUnitPx.val(px$$1);
-                    this.currentUnitEm.val(em$$1);
-
-                    editor$1.send(CHANGE_COLORSTEP, item);
-                    this.setBackgroundColor();
-                }
-            }
-        }
-    }, {
-        key: EVENT(CHANGE_COLORSTEP, CHANGE_EDITOR, CHANGE_SELECTION),
-        value: function value$$1() {
-            this.refresh();
-        }
-
-        // 이미 선언된 메소드를 사용하여 메타 데이타로 쓴다. 
-
-    }, {
-        key: CLICK('$back'),
-        value: function value$$1(e) {
-            this.addStep(e);
-        }
-    }, {
-        key: 'removeStep',
-        value: function removeStep(e) {
-
-            var id = e.$delegateTarget.attr('id');
-
-            editor$1.remove(id);
-            editor$1.send(CHANGE_LAYER, id);
-        }
-    }, {
-        key: 'addStep',
-        value: function addStep(e) {
-            var _getMinMax4 = this.getMinMax(),
-                min = _getMinMax4.min,
-                max = _getMinMax4.max;
-
-            var current = this.getCurrent(e);
-            var percent$$1 = Math.floor((current - min) / (max - min) * 100);
-            var item = editor$1.selection.image;
-            if (!item) return;
-
-            image.insertColorStep(percent$$1);
-            editor$1.send(CHANGE_LAYER, image);
-        }
-    }, {
-        key: 'getSortedStepList',
-        value: function getSortedStepList() {
-            var list = this.refs.$stepList.$$('.drag-bar').map(function (it) {
-                return { id: it.attr('id'), x: it.cssFloat('left') };
-            });
-
-            list.sort(function (a, b) {
-                if (a.x == b.x) return 0;
-                return a.x > b.x ? 1 : -1;
-            });
-
-            return list.map(function (it) {
-                return it.id;
-            });
-        }
-    }, {
-        key: 'selectStep',
-        value: function selectStep(e) {
-            var parent = e.$delegateTarget.parent();
-            var item = editor$1.get(parent.attr('id'));
-
-            item.select();
-            editor$1.send(CHANGE_COLORSTEP, item);
-
-            this.currentStepBox = this.currentStepBox || parent;
-            var $selected = this.refs.$stepList.$('.selected');
-            if ($selected && !$selected.is(this.currentStepBox)) {
-                $selected.removeClass('selected');
-            }
-
-            this.currentStepBox.addClass('selected');
-
-            this.setBackgroundColor();
-        }
-    }, {
-        key: CLICK('$steps .step') + SHIFT,
-        value: function value$$1(e) {
-            this.removeStep(e);
-        }
-    }, {
-        key: CLICK('$steps .step'),
-        value: function value$$1(e) {
-            this.selectStep(e);
-        }
-    }, {
-        key: CLICK('$steps .guide-change'),
-        value: function value$$1(e) {
-            var id = e.$delegateTarget.attr('data-colorstep-id');
-
-            var item = editor$1.get(id);
-
-            if (item) {
-                item.reset({ cut: !item.cut });
-                editor$1.send(CHANGE_COLORSTEP, item);
-            }
-        }
-    }, {
-        key: CHANGE('$steps .guide-unit select.unit'),
-        value: function value$$1(e) {
-
-            var unit$$1 = e.$delegateTarget.val();
-            var id = e.$delegateTarget.attr('data-colorstep-id');
-
-            var step = editor$1.get(id);
-
-            if (step) {
-                step.changeUnit(unit$$1, this.getMaxValue());
-                editor$1.send(CHANGE_COLORSTEP, step);
-
-                var $parent = e.$delegateTarget.parent();
-                $parent.removeClass(UNIT_PERCENT, UNIT_PX, UNIT_EM).addClass(step.getUnit());
-            }
-        }
-    }, {
-        key: INPUT('$steps input.percent'),
-        value: function value$$1(e) {
-            var item = editor$1.selection.colorstep;
-            if (!item) return;
-
-            var percent$$1 = +e.$delegateTarget.val();
-            var id = e.$delegateTarget.attr('data-colorstep-id');
-
-            var step = editor$1.get(id);
-
-            if (step) {
-
-                step.percent = percent$$1;
-                step.changeUnit('percent', this.getMaxValue());
-
-                this.currentStepBox.px('left', step.px);
-                this.currentUnitPx.val(step.px);
-                this.currentUnitEm.val(step.em);
-
-                editor$1.send(CHANGE_COLORSTEP, step);
-                this.setBackgroundColor();
-            }
-        }
-    }, {
-        key: INPUT('$steps input.px'),
-        value: function value$$1(e) {
-            var item = editor$1.selection.colorstep;
-            if (!item) return;
-
-            var px$$1 = +e.$delegateTarget.val();
-            var id = e.$delegateTarget.attr('data-colorstep-id');
-
-            var step = editor$1.get(id);
-
-            if (step) {
-
-                step.px = px$$1;
-                step.changeUnit('px', this.getMaxValue());
-
-                this.currentStepBox.px('left', step.px);
-                this.currentUnitPercent.val(step.percent);
-                this.currentUnitEm.val(step.em);
-
-                editor$1.send(CHANGE_COLORSTEP, step);
-                this.setBackgroundColor();
-            }
-        }
-    }, {
-        key: INPUT('$steps input.em'),
-        value: function value$$1(e) {
-            var item = editor$1.selection.colorstep;
-            if (!item) return;
-
-            var em$$1 = +e.$delegateTarget.val();
-            var id = e.$delegateTarget.attr('data-colorstep-id');
-
-            var step = editor$1.get(id);
-
-            if (step) {
-
-                step.em = em$$1;
-                step.changeUnit('em', this.getMaxValue());
-
-                this.currentStepBox.px('left', step.px);
-                this.currentUnitPercent.val(step.percent);
-                this.currentUnitPx.val(step.px);
-
-                editor$1.send(CHANGE_COLORSTEP, step);
-                this.setBackgroundColor();
-            }
-        }
-
-        // Event Bindings 
-
-    }, {
-        key: 'end',
-        value: function end() {
-            if (this.refs.$stepList) {
-                this.refs.$stepList.removeClass('mode-drag');
-            }
-        }
-    }, {
-        key: 'move',
-        value: function move() {
-            this.refreshColorUI(true);
-            this.refs.$stepList.addClass('mode-drag');
-        }
-    }, {
-        key: 'isStepElement',
-        value: function isStepElement(e) {
-            return new Dom(e.target).hasClass('step');
-        }
-    }, {
-        key: POINTERSTART('$steps .step') + IF('isStepElement') + MOVE() + END(),
-        value: function value$$1(e) {
-            e.preventDefault();
-
-            this.xy = e.xy;
-            this.currentStep = e.$delegateTarget;
-            this.currentStepBox = this.currentStep.parent();
-            this.currentUnit = this.currentStepBox.$(".guide-unit");
-            this.currentUnitPercent = this.currentUnit.$(".percent");
-            this.currentUnitPx = this.currentUnit.$(".px");
-            this.currentUnitEm = this.currentUnit.$(".em");
-
-            if (this.currentStep) {
-                this.selectStep(e);
-            }
-        }
-    }]);
-    return GradientSteps;
+  }, {
+    key: CLICK("$el button") + SELF,
+    value: function value(e) {
+      this.emit("changeGradientAngle", DEFINED_ANGLES$2[e.$delegateTarget.attr("data-value")]);
+    }
+  }, {
+    key: EVENT("showGradientAngle"),
+    value: function value() {
+      this.$el.show();
+    }
+  }, {
+    key: EVENT("hideGradientAngle"),
+    value: function value() {
+      this.$el.hide();
+    }
+  }]);
+  return PredefinedLinearGradientAngle;
 }(UIElement);
 
-var VerticalColorStep = function (_UIElement) {
-    inherits(VerticalColorStep, _UIElement);
+var GradientAngle = function (_UIElement) {
+  inherits(GradientAngle, _UIElement);
 
-    function VerticalColorStep() {
-        classCallCheck(this, VerticalColorStep);
-        return possibleConstructorReturn(this, (VerticalColorStep.__proto__ || Object.getPrototypeOf(VerticalColorStep)).apply(this, arguments));
+  function GradientAngle() {
+    classCallCheck(this, GradientAngle);
+    return possibleConstructorReturn(this, (GradientAngle.__proto__ || Object.getPrototypeOf(GradientAngle)).apply(this, arguments));
+  }
+
+  createClass(GradientAngle, [{
+    key: "initialize",
+    value: function initialize() {
+      get$1(GradientAngle.prototype.__proto__ || Object.getPrototypeOf(GradientAngle.prototype), "initialize", this).call(this);
+
+      this.angle = 0;
+    }
+  }, {
+    key: "template",
+    value: function template() {
+      return "\n            <div class='drag-angle-rect'>\n                <div class=\"drag-angle\" ref=\"$dragAngle\">\n                    <div class=\"angle-text\">\n                      <span contenteditable='true' ref=\"$angleText\"></span>\xB0\n                    </div>\n                    <div ref=\"$dragPointer\" class=\"drag-pointer\"></div>\n                </div>\n            </div>\n        ";
+    }
+  }, {
+    key: "getCurrentXY",
+    value: function getCurrentXY(isUpdate, angle, radius, centerX, centerY) {
+      return isUpdate ? editor$1.config.get("pos") : getXYInCircle(angle, radius, centerX, centerY);
+    }
+  }, {
+    key: "getRectangle",
+    value: function getRectangle() {
+      var width = this.refs.$dragAngle.width();
+      var height = this.refs.$dragAngle.height();
+      var radius = Math.floor(width / 2 * 0.7);
+
+      var _refs$$dragAngle$offs = this.refs.$dragAngle.offset(),
+          left = _refs$$dragAngle$offs.left,
+          top = _refs$$dragAngle$offs.top;
+
+      var minX = left;
+      var minY = top;
+      var centerX = minX + width / 2;
+      var centerY = minY + height / 2;
+
+      return { minX: minX, minY: minY, width: width, height: height, radius: radius, centerX: centerX, centerY: centerY };
+    }
+  }, {
+    key: "getDefaultValue",
+    value: function getDefaultValue() {
+      return this.angle - 90;
+    }
+  }, {
+    key: "refreshAngleText",
+    value: function refreshAngleText(angleText) {
+      this.refs.$angleText.text(angleText);
+    }
+  }, {
+    key: "refreshUI",
+    value: function refreshUI(isUpdate) {
+      var _getRectangle = this.getRectangle(),
+          minX = _getRectangle.minX,
+          minY = _getRectangle.minY,
+          radius = _getRectangle.radius,
+          centerX = _getRectangle.centerX,
+          centerY = _getRectangle.centerY;
+
+      var _getCurrentXY = this.getCurrentXY(isUpdate, this.getDefaultValue(), radius, centerX, centerY),
+          x = _getCurrentXY.x,
+          y = _getCurrentXY.y;
+
+      var rx = x - centerX,
+          ry = y - centerY,
+          angle = calculateAngle(rx, ry);
+
+      {
+        var _getCurrentXY2 = this.getCurrentXY(null, angle, radius, centerX, centerY),
+            x = _getCurrentXY2.x,
+            y = _getCurrentXY2.y;
+      }
+
+      // set drag pointer position
+      this.refs.$dragPointer.px("left", x - minX);
+      this.refs.$dragPointer.px("top", y - minY);
+
+      var lastAngle = Math.round(angle + 90) % 360;
+
+      this.refreshAngleText(lastAngle);
+
+      if (isUpdate) {
+        this.setAngle(lastAngle);
+      }
+    }
+  }, {
+    key: "getKeyTarget",
+    value: function getKeyTarget(key) {
+      switch (key) {
+        case "ArrowDown":
+          return "sub";
+        case "ArrowUp":
+          return "add";
+      }
+    }
+  }, {
+    key: "modifyAngle",
+    value: function modifyAngle(e, $el) {
+      var type = this.getKeyTarget(e.key || e.code);
+      var len = Length$1.deg(+$el.text());
+
+      len.calculate(type, 1);
+
+      return len;
+    }
+  }, {
+    key: "updateAngle",
+    value: function updateAngle(angle) {
+      this.angle = angle;
+      this.refreshUI();
+      this.setAngle(this.angle);
+    }
+  }, {
+    key: KEYDOWN("$angleText") + ARROW_DOWN + ARROW_UP + PREVENT + STOP,
+    value: function value(e) {
+      var len = this.modifyAngle(e, this.refs.$angleText);
+
+      this.updateAngle(len.value);
+      return false;
+    }
+  }, {
+    key: INPUT("$angleText"),
+    value: function value(e) {
+      this.updateAngle(+this.refs.$angleText.text().trim());
+    }
+  }, {
+    key: "setAngle",
+    value: function setAngle(angle) {
+      this.emit("changeGradientAngle", angle);
     }
 
-    createClass(VerticalColorStep, [{
-        key: "components",
-        value: function components() {
-            return {
-                // GradientSteps
-            };
-        }
-    }, {
-        key: "template",
-        value: function template() {
-            return "\n            <div class='vertical-colorstep-container'>\n                <div class='vertical-colorstep' ref=\"$verticalColorstep\">\n                    <GradientSteps />\n                </div>\n            </div>\n        ";
-        }
-    }, {
-        key: "refresh",
-        value: function refresh() {
-            this.$el.toggle(this.isShow());
-            this.refs.$verticalColorstep.px('width', editor$1.config.get('step.width'));
-        }
-    }, {
-        key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
-        value: function value() {
-            // this.refresh() 
-        }
-    }, {
-        key: "isShow",
-        value: function isShow() {
-            var item = editor$1.selection.backgroundImage;
-            if (!item) return false;
+    // Event Bindings
 
-            return item.isGradient();
+  }, {
+    key: "move",
+    value: function move() {
+      this.refreshUI(true);
+    }
+  }, {
+    key: POINTERSTART("$dragAngle") + MOVE(),
+    value: function value(e) {}
+  }, {
+    key: EVENT("showGradientAngle"),
+    value: function value(angle) {
+      this.angle = angle;
+      this.refreshUI();
+
+      this.$el.show();
+    }
+  }, {
+    key: EVENT("hideGradientAngle"),
+    value: function value() {
+      this.$el.hide();
+    }
+  }, {
+    key: EVENT("changeGradientAngle"),
+    value: function value(angle) {
+      this.angle = angle;
+      this.refreshUI();
+    }
+  }]);
+  return GradientAngle;
+}(UIElement);
+
+var PredefinedRadialGradientPosition = function (_UIElement) {
+  inherits(PredefinedRadialGradientPosition, _UIElement);
+
+  function PredefinedRadialGradientPosition() {
+    classCallCheck(this, PredefinedRadialGradientPosition);
+    return possibleConstructorReturn(this, (PredefinedRadialGradientPosition.__proto__ || Object.getPrototypeOf(PredefinedRadialGradientPosition)).apply(this, arguments));
+  }
+
+  createClass(PredefinedRadialGradientPosition, [{
+    key: "template",
+    value: function template() {
+      return " \n            <div class=\"predefined-angluar-group radial-position\">\n                <button type=\"button\" data-value=\"top\"></button>                          \n                <button type=\"button\" data-value=\"left\"></button>                                                  \n                <button type=\"button\" data-value=\"bottom\"></button>                            \n                <button type=\"button\" data-value=\"right\"></button>                                        \n            </div>\n        ";
+    }
+  }, {
+    key: CLICK("$el button"),
+    value: function value(e) {
+      var radialPosition = Length$1.string(e.$delegateTarget.attr("data-value"));
+
+      this.emit("changeGradientPosition", {
+        radialPosition: radialPosition
+      });
+    }
+  }, {
+    key: EVENT("showGradientPosition"),
+    value: function value() {
+      this.$el.show();
+    }
+  }, {
+    key: EVENT("hideGradientPosition"),
+    value: function value() {
+      this.$el.hide();
+    }
+  }]);
+  return PredefinedRadialGradientPosition;
+}(UIElement);
+
+var _DEFINE_POSITIONS;
+
+var DEFINE_POSITIONS = (_DEFINE_POSITIONS = {}, defineProperty(_DEFINE_POSITIONS, Position.CENTER, [Position.CENTER, Position.CENTER]), defineProperty(_DEFINE_POSITIONS, Position.RIGHT, [Position.RIGHT, Position.CENTER]), defineProperty(_DEFINE_POSITIONS, Position.TOP, [Position.CENTER, Position.TOP]), defineProperty(_DEFINE_POSITIONS, Position.LEFT, [Position.LEFT, Position.CENTER]), defineProperty(_DEFINE_POSITIONS, Position.BOTTOM, [Position.CENTER, Position.BOTTOM]), _DEFINE_POSITIONS);
+
+var GradientPosition = function (_UIElement) {
+  inherits(GradientPosition, _UIElement);
+
+  function GradientPosition() {
+    classCallCheck(this, GradientPosition);
+    return possibleConstructorReturn(this, (GradientPosition.__proto__ || Object.getPrototypeOf(GradientPosition)).apply(this, arguments));
+  }
+
+  createClass(GradientPosition, [{
+    key: "template",
+    value: function template() {
+      return "\n        <div class=\"drag-position\">\n            <div ref=\"$dragPointer\" class=\"drag-pointer\"></div>\n        </div>\n    ";
+    }
+  }, {
+    key: "refresh",
+    value: function refresh() {
+      this.refreshUI();
+    }
+  }, {
+    key: "getCurrentXY",
+    value: function getCurrentXY(isUpdate, position) {
+      if (isUpdate) {
+        var xy = editor$1.config.get("pos");
+
+        return [xy.x, xy.y];
+      }
+
+      var _getRectangle = this.getRectangle(),
+          minX = _getRectangle.minX,
+          minY = _getRectangle.minY,
+          maxX = _getRectangle.maxX,
+          maxY = _getRectangle.maxY,
+          width = _getRectangle.width,
+          height = _getRectangle.height;
+
+      var p = position;
+
+      if (isString(p) && DEFINE_POSITIONS[p]) {
+        p = DEFINE_POSITIONS[p];
+      } else if (isString(p)) {
+        p = p.split(WHITE_STRING$1);
+      }
+
+      p = p.map(function (item, index) {
+        if (item == Position.CENTER) {
+          if (index == 0) {
+            return minX + width / 2;
+          } else if (index == 1) {
+            return minY + height / 2;
+          }
+        } else if (item === Position.LEFT) {
+          return minX;
+        } else if (item === Position.RIGHT) {
+          return maxX;
+        } else if (item === Position.TOP) {
+          return minY;
+        } else if (item === Position.BOTTOM) {
+          return maxY;
+        } else {
+          if (index == 0) {
+            return minX + width * (+item / 100);
+          } else if (index == 1) {
+            return minY + height * (+item / 100);
+          }
         }
-    }]);
-    return VerticalColorStep;
+      });
+
+      return p;
+    }
+  }, {
+    key: "getRectangle",
+    value: function getRectangle() {
+      var width = this.$el.width();
+      var height = this.$el.height();
+      var minX = this.$el.offsetLeft();
+      var minY = this.$el.offsetTop();
+
+      var maxX = minX + width;
+      var maxY = minY + height;
+
+      return { minX: minX, minY: minY, maxX: maxX, maxY: maxY, width: width, height: height };
+    }
+  }, {
+    key: "getDefaultValue",
+    value: function getDefaultValue() {
+      return this.radialPosition || Position.CENTER;
+    }
+  }, {
+    key: "refreshUI",
+    value: function refreshUI(isUpdate) {
+      var _getRectangle2 = this.getRectangle(),
+          minX = _getRectangle2.minX,
+          minY = _getRectangle2.minY,
+          maxX = _getRectangle2.maxX,
+          maxY = _getRectangle2.maxY,
+          width = _getRectangle2.width,
+          height = _getRectangle2.height;
+
+      var _getCurrentXY = this.getCurrentXY(isUpdate, this.getDefaultValue()),
+          _getCurrentXY2 = slicedToArray(_getCurrentXY, 2),
+          x = _getCurrentXY2[0],
+          y = _getCurrentXY2[1];
+
+      x = Math.max(Math.min(maxX, x), minX);
+      y = Math.max(Math.min(maxY, y), minY);
+
+      var left = x - minX;
+      var top = y - minY;
+
+      this.refs.$dragPointer.px("left", left);
+      this.refs.$dragPointer.px("top", top);
+
+      if (isUpdate) {
+        this.setRadialPosition([Length$1.percent(Math.floor(left / width * 100)), Length$1.percent(Math.floor(top / height * 100))]);
+      }
+    }
+  }, {
+    key: "setRadialPosition",
+    value: function setRadialPosition(radialPosition) {
+      this.emit("changeGradientPosition", radialPosition);
+    }
+
+    // Event Bindings
+
+  }, {
+    key: "move",
+    value: function move() {
+      this.refreshUI(true);
+    }
+  }, {
+    key: POINTERSTART() + MOVE(),
+    value: function value$$1(e) {}
+  }, {
+    key: EVENT("showGradientPosition"),
+    value: function value$$1(radialPosition) {
+      this.radialPosition = radialPosition;
+      this.$el.show();
+      this.refresh();
+    }
+  }, {
+    key: EVENT("hideGradientPosition"),
+    value: function value$$1() {
+      this.$el.hide();
+    }
+  }]);
+  return GradientPosition;
+}(UIElement);
+
+/**
+ * Gradient Editor 를 구현한다.
+ * Gradient Editor 는 외부의 어떠한 데이타와도 연결 되지 않는다.
+ *
+ * 초기 셋팅된 colorsteps 을 가지고 변경한 이후
+ * 변경되 데이타만 이벤트로 전달한다.
+ *
+ * 순수한 UI Component 가 된다
+ */
+
+var VerticalColorStep = function (_UIElement) {
+  inherits(VerticalColorStep, _UIElement);
+
+  function VerticalColorStep() {
+    classCallCheck(this, VerticalColorStep);
+    return possibleConstructorReturn(this, (VerticalColorStep.__proto__ || Object.getPrototypeOf(VerticalColorStep)).apply(this, arguments));
+  }
+
+  createClass(VerticalColorStep, [{
+    key: "initialize",
+    value: function initialize() {
+      get$1(VerticalColorStep.prototype.__proto__ || Object.getPrototypeOf(VerticalColorStep.prototype), "initialize", this).call(this);
+
+      this.colorsteps = [new ColorStep({ color: "yellow", percent: 0, index: 0 }), new ColorStep({ color: "red", percent: 100, index: 100 })];
+    }
+  }, {
+    key: "components",
+    value: function components() {
+      return {
+        GradientAngle: GradientAngle,
+        PredefinedLinearGradientAngle: PredefinedLinearGradientAngle,
+        PredefinedRadialGradientPosition: PredefinedRadialGradientPosition,
+        GradientPosition: GradientPosition
+      };
+    }
+  }, {
+    key: "template",
+    value: function template() {
+      return "\n            <div class='vertical-colorstep-container'>\n                <div class='vertical-colorstep' ref=\"$verticalColorstep\">\n                    <div class='gradient-steps'>\n                        <div class=\"hue-container\" ref=\"$back\"></div>            \n                        <div class=\"hue\" ref=\"$steps\">\n                            <div class='step-list' ref=\"$stepList\"></div>\n                        </div>\n                    </div>\n                </div>\n                <div class='gradient-tools'>\n                    <button type=\"button\" class='guide-button' ref=\"$cutOff\"></button>\n                    <button type=\"button\" class='guide-button cut' ref=\"$cutOn\"></button>\n                    <span ref=\"$radialGradientTool\">\n                      <button type=\"button\" class=\"radial-gradient-shape circle\" data-value='circle' ref='$circle'></button>\n                      <button type=\"button\" class=\"radial-gradient-shape ellipse\" data-value='ellipse' ref='$ellipse'></button>\n                      <select ref=\"$selectRadialExtent\">\n                        <option value=\"\">none</option>\n                        <option value=\"closest-side\">closest-side</option>\n                        <option value=\"closest-corner\">closest-corner\t</option>\n                        <option value=\"farthest-side\">farthest-side\t</option>\n                        <option value=\"farthest-corner\">farthest-corner\t</option>\n                      </select>\n                    </span>\n                </div>           \n                <div class='gradient-editor'>\n                  <div class='angle-editor' ref='$angleEditor'>\n                    <PredefinedLinearGradientAngle />     \n                    <GradientAngle />\n                  </div>\n                  <div class='position-editor' ref='$positionEditor'>\n                    <PredefinedRadialGradientPosition />\n                    <GradientPosition />\n                  </div>\n                </div>              \n            </div>\n        ";
+    }
+  }, {
+    key: "setColorSteps",
+    value: function setColorSteps() {
+      var colorsteps = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
+
+      this.colorsteps = colorsteps;
+    }
+  }, {
+    key: "refresh",
+    value: function refresh() {
+      this.refs.$verticalColorstep.px("width", editor$1.config.get("step.width"));
+      this.setColorUI();
+    }
+  }, {
+    key: EVENT(CHANGE_EDITOR, CHANGE_SELECTION),
+    value: function value$$1() {
+      this.refresh();
+    }
+  }, {
+    key: "updateRadialShape",
+    value: function updateRadialShape(radialType) {
+      var _radialType$split = radialType.split(" "),
+          _radialType$split2 = slicedToArray(_radialType$split, 2),
+          shape = _radialType$split2[0],
+          extent = _radialType$split2[1];
+
+      if (shape === "circle") {
+        this.refs.$circle.addClass("selected");
+        this.refs.$ellipse.removeClass("selected");
+      } else {
+        this.refs.$circle.removeClass("selected");
+        this.refs.$ellipse.addClass("selected");
+      }
+      this.refs.$selectRadialExtent.val(extent);
+    }
+
+    /**
+     * Gradient 에디터를 보여주자.
+     * 옵션으로 { colorsteps } 을 넣을 수 있다.
+     *
+     * @param {object} opt
+     */
+
+  }, {
+    key: EVENT("showGradientEditor"),
+    value: function value$$1(opt, isUpdate) {
+      this.$el.show();
+      if (opt.colorsteps) {
+        this.setColorSteps(opt.colorsteps);
+      }
+
+      if (opt.selectColorStepId) {
+        ColorStep.select(this.colorsteps, opt.selectColorStepId);
+        this.currentColorStep = this.colorsteps.filter(function (step) {
+          return step.selected;
+        })[0];
+        this.emit("selectColorStep", this.currentColorStep.color);
+      }
+
+      this.gradientType = opt.type;
+      if (typeof opt.angle !== "undefined") {
+        this.angle = opt.angle;
+      }
+
+      if (typeof opt.radialPosition !== "undefined") {
+        this.radialPosition = opt.radialPosition;
+      }
+
+      switch (this.gradientType) {
+        case "linear":
+        case "linear-gradient":
+        case "repeating-linear":
+        case "repeating-linear-gradient":
+          this.refs.$angleEditor.show("inline-block");
+          this.refs.$positionEditor.hide();
+          this.refs.$radialGradientTool.hide();
+          this.emit("showGradientAngle", this.angle);
+
+          break;
+        case "radial":
+        case "radial-gradient":
+        case "repeating-radial":
+        case "repeating-radial-gradient":
+          this.refs.$angleEditor.hide();
+          this.refs.$positionEditor.show("inline-block");
+          this.updateRadialShape(opt.radialType || "ellipse");
+          this.refs.$radialGradientTool.show("inline-block");
+          this.emit("showGradientPosition", opt.radialPosition || this.radialPosition || Position.CENTER);
+
+          break;
+        case "conic":
+        case "conic-gradient":
+        case "repeating-conic":
+        case "repeating-conic-gradient":
+          this.refs.$angleEditor.show("inline-block");
+          this.refs.$positionEditor.show("inline-block");
+          this.refs.$radialGradientTool.hide();
+          this.emit("showGradientAngle", this.angle);
+          this.emit("showGradientPosition", opt.radialPosition || this.radialPosition || Position.CENTER);
+          break;
+        default:
+          this.refs.$angleEditor.hide();
+          this.refs.$positionEditor.hide();
+          this.refs.$radialGradientTool.hide();
+          break;
+      }
+
+      this.refresh();
+
+      if (isUpdate) {
+        this.updateColorStep();
+      }
+    }
+  }, {
+    key: EVENT("selectFillPickerTab"),
+    value: function value$$1(type) {
+      this.updateColorStep();
+    }
+  }, {
+    key: EVENT("hideGradientEditor"),
+    value: function value$$1() {
+      this.$el.hide();
+    }
+  }, {
+    key: "getStepPosition",
+    value: function getStepPosition(step) {
+      var _getMinMax = this.getMinMax(),
+          min = _getMinMax.min,
+          max = _getMinMax.max;
+
+      var left = this.refs.$steps.offset().left;
+
+      min -= left;
+      max -= left;
+
+      if (step.isPx) {
+        return step.px;
+      }
+
+      return min + (max - min) * (step.percent / 100);
+    }
+  }, {
+    key: "getUnitName",
+    value: function getUnitName(step) {
+      var unit$$1 = step.unit || UNIT_PERCENT;
+
+      if ([UNIT_PX, UNIT_EM].includes(unit$$1)) {
+        return unit$$1;
+      }
+
+      return UNIT_PERCENT;
+    }
+  }, {
+    key: "getUnitSelect",
+    value: function getUnitSelect(step) {
+      return "\n    <select class='unit' data-colorstep-id=\"" + step.id + "\">\n        <option value='percent' " + (step.isPercent ? "selected" : EMPTY_STRING) + ">%</option>\n        <option value='px' " + (step.isPx ? "selected" : EMPTY_STRING) + ">px</option>\n        <option value='em' " + (step.isEm ? "selected" : EMPTY_STRING) + ">em</option>\n    </select>\n    ";
+    }
+  }, {
+    key: "getMaxValue",
+    value: function getMaxValue() {
+      return editor$1.config.get("step.width") || 400;
+    }
+
+    // load 후에 이벤트를 재설정 해야한다.
+
+  }, {
+    key: LOAD("$stepList"),
+    value: function value$$1() {
+      var _this2 = this;
+
+      return this.colorsteps.map(function (step, index) {
+        var cut = step.cut ? "cut" : EMPTY_STRING;
+        var unitValue$$1 = step.getUnitValue(_this2.getMaxValue());
+        return "\n            <div \n                class='drag-bar " + (step.selected ? "selected" : EMPTY_STRING) + "' \n                id=\"" + step.id + "\"\n                style=\"left: " + _this2.getStepPosition(step) + "px;\"\n            >   \n                <div \n                    class=\"guide-step step\" \n                    data-index=\"" + index + "\" \n                    style=\" border-color: " + step.color + ";background-color: " + step.color + ";\"\n                ></div>\n                <div class='guide-line' \n                    style=\"background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 10%, " + step.color + " 100%) ;\"></div>\n                <div class=\"guide-change " + cut + "\" data-index=\"" + index + "\"></div>\n                <div class=\"guide-unit " + step.getUnit() + "\">\n                    <input type=\"number\" class=\"percent\" min=\"-100\" max=\"100\" step=\"0.1\"  value=\"" + unitValue$$1.percent + "\" data-index=\"" + index + "\"  />\n                    <input type=\"number\" class=\"px\" min=\"-100\" max=\"1000\" step=\"1\"  value=\"" + unitValue$$1.px + "\" data-index=\"" + index + "\"  />\n                    <input type=\"number\" class=\"em\" min=\"-100\" max=\"500\" step=\"0.1\"  value=\"" + unitValue$$1.em + "\" data-index=\"" + index + "\"  />\n                    " + _this2.getUnitSelect(step) + "\n                </div>       \n            </div>\n        ";
+      });
+    }
+  }, {
+    key: "refresh",
+    value: function refresh() {
+      this.load();
+      this.setColorUI();
+    }
+  }, {
+    key: "setColorUI",
+    value: function setColorUI() {
+      var test = [].concat(toConsumableArray(this.colorsteps));
+      ColorStep.sort(test);
+
+      this.refs.$stepList.css("background-image", LinearGradient.toLinearGradient(test));
+    }
+
+    /* slide 영역 min,max 구하기  */
+
+  }, {
+    key: "getMinMax",
+    value: function getMinMax() {
+      var min = this.refs.$steps.offsetLeft();
+      var width = this.refs.$steps.width();
+      var max = min + width;
+
+      return { min: min, max: max, width: width };
+    }
+
+    /* 현재 위치 구하기  */
+
+  }, {
+    key: "getCurrent",
+    value: function getCurrent() {
+      var _getMinMax2 = this.getMinMax(),
+          min = _getMinMax2.min,
+          max = _getMinMax2.max;
+
+      var _editor$config$get = editor$1.config.get("pos"),
+          x = _editor$config$get.x;
+
+      var current = Math.min(Math.max(min, x), max);
+
+      return current;
+    }
+
+    /**
+     * 마우스 이벤트로 현재 위치 및 percent 설정, 전체  gradient 리프레쉬
+     *
+     * @param {*} e
+     */
+
+  }, {
+    key: "refreshColorUI",
+    value: function refreshColorUI(isUpdate) {
+      var _getMinMax3 = this.getMinMax(),
+          min = _getMinMax3.min,
+          max = _getMinMax3.max;
+
+      var current = this.getCurrent();
+
+      if (this.currentStep) {
+        var posX = Math.max(min, current);
+        var px$$1 = posX - this.refs.$steps.offsetLeft();
+
+        if (editor$1.config.get("bodyEvent").ctrlKey) {
+          px$$1 = Math.floor(px$$1); // control + drag is floor number
+        }
+        this.currentStepBox.px("left", px$$1);
+
+        var maxValue = max - min;
+        var percent$$1 = Length$1.px(px$$1).toPercent(maxValue).value;
+        var em$$1 = Length$1.px(px$$1).toEm(maxValue).value;
+
+        this.currentColorStep.reset({ px: px$$1, percent: percent$$1, em: em$$1 });
+
+        this.currentUnitPercent.val(percent$$1);
+        this.currentUnitPx.val(px$$1);
+        this.currentUnitEm.val(em$$1);
+
+        this.updateColorStep();
+        this.setColorUI();
+      }
+    }
+
+    // 이미 선언된 메소드를 사용하여 메타 데이타로 쓴다.
+
+  }, {
+    key: CLICK("$back"),
+    value: function value$$1(e) {
+      this.addStep(e);
+    }
+  }, {
+    key: "removeStep",
+    value: function removeStep(e) {
+      var id = e.$delegateTarget.attr("id");
+      this.colorsteps = this.colorsteps.filter(function (step) {
+        return step.id != id;
+      });
+      this.refresh();
+      this.updateColorStep();
+    }
+  }, {
+    key: "addStep",
+    value: function addStep(e) {
+      var _getMinMax4 = this.getMinMax(),
+          min = _getMinMax4.min,
+          max = _getMinMax4.max;
+
+      var current = this.getCurrent(e);
+      var percent$$1 = Math.floor((current - min) / (max - min) * 100);
+
+      ColorStep.createByPercent(this.colorsteps, percent$$1);
+      this.refresh();
+      this.updateColorStep();
+    }
+  }, {
+    key: "getSortedStepList",
+    value: function getSortedStepList() {
+      var list = this.refs.$stepList.$$(".drag-bar").map(function (it) {
+        return { id: it.attr("id"), x: it.cssFloat("left") };
+      });
+
+      list.sort(function (a, b) {
+        if (a.x == b.x) return 0;
+        return a.x > b.x ? 1 : -1;
+      });
+
+      return list.map(function (it) {
+        return it.id;
+      });
+    }
+  }, {
+    key: "selectStep",
+    value: function selectStep(e) {
+      var _this3 = this;
+
+      var parent = e.$delegateTarget.parent();
+      this.currentStepBox = this.currentStepBox || parent;
+      var $selected = this.refs.$stepList.$(".selected");
+      if ($selected && !$selected.is(this.currentStepBox)) {
+        $selected.removeClass("selected");
+      }
+
+      this.colorsteps.forEach(function (step) {
+        step.selected = step.id === _this3.currentColorStep.id;
+      });
+
+      this.currentStepBox.addClass("selected");
+      this.setColorUI();
+
+      this.emit("selectColorStep", this.currentColorStep.color);
+    }
+  }, {
+    key: "getRadialType",
+    value: function getRadialType() {
+      var shape = this.refs.$circle.hasClass("selected") ? "circle" : "ellipse";
+      var extent = this.refs.$selectRadialExtent.value;
+
+      return shape + " " + extent;
+    }
+  }, {
+    key: "updateColorStep",
+    value: function updateColorStep() {
+      var opt = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      var colorsteps = [].concat(toConsumableArray(this.colorsteps));
+
+      // ui 랑 속성이 달라서 정렬된 데이타를  넘겨준다.
+      // 자, 여기서 질문 하나
+      // color step 을 하나 드래그 해서 다른 스텝으로 넘어가는 경우
+      // 데이타 순서를 어떻게 바꿔야 좋을까요?
+      ColorStep.sort(colorsteps);
+
+      this.emit("changeColorStep", _extends({
+        colorsteps: colorsteps,
+        angle: this.angle,
+        radialPosition: this.radialPosition,
+        radialType: this.getRadialType()
+      }, opt));
+    }
+  }, {
+    key: CLICK("$steps .step") + SHIFT,
+    value: function value$$1(e) {
+      this.removeStep(e);
+    }
+  }, {
+    key: CLICK("$steps .step"),
+    value: function value$$1(e) {
+      this.selectStep(e);
+    }
+  }, {
+    key: CLICK("$cutOff"),
+    value: function value$$1(e) {
+      this.colorsteps.forEach(function (step) {
+        step.cut = false;
+      });
+      this.setColorUI();
+      this.updateColorStep();
+    }
+  }, {
+    key: CLICK("$cutOn"),
+    value: function value$$1(e) {
+      this.colorsteps.forEach(function (step) {
+        step.cut = true;
+      });
+      this.setColorUI();
+      this.updateColorStep();
+    }
+  }, {
+    key: CLICK("$steps .guide-change"),
+    value: function value$$1(e) {
+      var index = +e.$delegateTarget.attr("data-index");
+
+      var step = this.colorsteps[index];
+
+      if (step) {
+        step.reset({ cut: !step.cut });
+        e.$delegateTarget.toggleClass("cut", step.cut);
+        this.setColorUI();
+
+        this.updateColorStep();
+      }
+    }
+  }, {
+    key: CHANGE("$steps .guide-unit select.unit"),
+    value: function value$$1(e) {
+      var unit$$1 = e.$delegateTarget.val();
+      var id = e.$delegateTarget.attr("data-colorstep-id");
+
+      var step = editor$1.get(id);
+
+      if (step) {
+        step.changeUnit(unit$$1, this.getMaxValue());
+        editor$1.send(CHANGE_COLORSTEP, step);
+
+        var $parent = e.$delegateTarget.parent();
+        $parent.removeClass(UNIT_PERCENT, UNIT_PX, UNIT_EM).addClass(step.getUnit());
+      }
+    }
+  }, {
+    key: INPUT("$steps input.percent"),
+    value: function value$$1(e) {
+      var value$$1 = +e.$delegateTarget.val();
+      var index = +e.$delegateTarget.attr("data-index");
+
+      var step = this.colorsteps[index];
+
+      if (step) {
+        step.changeUnit("percent", value$$1, this.getMaxValue());
+
+        this.currentStepBox.px("left", step.px);
+        this.currentUnitPx.val(step.px);
+        this.currentUnitEm.val(step.em);
+
+        this.updateColorStep();
+        this.setColorUI();
+      }
+    }
+  }, {
+    key: INPUT("$steps input.px"),
+    value: function value$$1(e) {
+      var value$$1 = +e.$delegateTarget.val();
+      var index = +e.$delegateTarget.attr("data-index");
+
+      var step = this.colorsteps[index];
+
+      if (step) {
+        step.changeUnit("px", value$$1, this.getMaxValue());
+
+        this.currentStepBox.px("left", step.px);
+        this.currentUnitPercent.val(step.percent);
+        this.currentUnitEm.val(step.em);
+
+        this.updateColorStep();
+        this.setColorUI();
+      }
+    }
+  }, {
+    key: INPUT("$steps input.em"),
+    value: function value$$1(e) {
+      var value$$1 = +e.$delegateTarget.val();
+      var index = +e.$delegateTarget.attr("data-index");
+
+      var step = this.colorsteps[index];
+
+      if (step) {
+        step.changeUnit("em", value$$1, this.getMaxValue());
+
+        this.currentStepBox.px("left", step.px);
+        this.currentUnitPercent.val(step.percent);
+        this.currentUnitPx.val(step.px);
+
+        this.updateColorStep();
+        this.setColorUI();
+      }
+    }
+
+    // Event Bindings
+
+  }, {
+    key: "end",
+    value: function end() {
+      if (this.refs.$stepList) {
+        this.refs.$stepList.removeClass("mode-drag");
+      }
+    }
+  }, {
+    key: "move",
+    value: function move() {
+      this.refreshColorUI(true);
+      this.refs.$stepList.addClass("mode-drag");
+    }
+  }, {
+    key: POINTERSTART("$steps .step") + PREVENT + MOVE() + END(),
+    value: function value$$1(e) {
+      this.xy = e.xy;
+      this.currentStep = e.$delegateTarget;
+      this.currentColorStep = this.colorsteps[+this.currentStep.attr("data-index")];
+      this.currentStepBox = this.currentStep.parent();
+      this.currentUnit = this.currentStepBox.$(".guide-unit");
+      this.currentUnitPercent = this.currentUnit.$(".percent");
+      this.currentUnitPx = this.currentUnit.$(".px");
+      this.currentUnitEm = this.currentUnit.$(".em");
+
+      if (this.currentStep) {
+        this.selectStep(e);
+      }
+    }
+  }, {
+    key: EVENT("changeColorPicker"),
+    value: function value$$1(color$$1) {
+      if (this.currentColorStep) {
+        this.currentColorStep.reset({ color: color$$1 });
+        this.refresh();
+        this.updateColorStep();
+      }
+    }
+  }, {
+    key: EVENT("changeGradientAngle"),
+    value: function value$$1(angle) {
+      this.angle = angle;
+      this.updateColorStep();
+    }
+  }, {
+    key: EVENT("changeGradientPosition"),
+    value: function value$$1(radialPosition) {
+      this.radialPosition = radialPosition;
+      this.updateColorStep();
+    }
+  }, {
+    key: CLICK("$circle"),
+    value: function value$$1(e) {
+      this.refs.$circle.addClass("selected");
+      this.refs.$ellipse.removeClass("selected");
+      this.updateColorStep();
+    }
+  }, {
+    key: CLICK("$ellipse"),
+    value: function value$$1(e) {
+      this.refs.$circle.removeClass("selected");
+      this.refs.$ellipse.addClass("selected");
+      this.updateColorStep();
+    }
+  }, {
+    key: CHANGE("$selectRadialExtent"),
+    value: function value$$1(e) {
+      this.updateColorStep();
+    }
+  }]);
+  return VerticalColorStep;
 }(UIElement);
 
 var _right;
@@ -18044,196 +18667,194 @@ var TextShadow = function (_Property) {
 }(Property);
 
 var Display = function (_Property) {
-    inherits(Display, _Property);
+  inherits(Display, _Property);
 
-    function Display() {
-        classCallCheck(this, Display);
-        return possibleConstructorReturn(this, (Display.__proto__ || Object.getPrototypeOf(Display)).apply(this, arguments));
+  function Display() {
+    classCallCheck(this, Display);
+    return possibleConstructorReturn(this, (Display.__proto__ || Object.getPrototypeOf(Display)).apply(this, arguments));
+  }
+
+  createClass(Display, [{
+    key: "getDefaultObject",
+    value: function getDefaultObject() {
+      return get$1(Display.prototype.__proto__ || Object.getPrototypeOf(Display.prototype), "getDefaultObject", this).call(this, {
+        itemType: "display",
+
+        type: "block",
+
+        // refer to https://developer.mozilla.org/docs/Web/CSS/flex-direction
+        direction: "row",
+
+        // refer to https://developer.mozilla.org/docs/Web/CSS/align-items
+        alignItems: "normal",
+
+        // refer to https://developer.mozilla.org/docs/Web/CSS/align-content
+        alignCentent: "normal",
+
+        // refer to https://developer.mozilla.org/docs/Web/CSS/flex-wrap
+        flexWrap: "nowrap",
+
+        justifyContent: "flex-start",
+
+        gap: Length$1.px(0),
+
+        rowGap: Length$1.percent(1),
+
+        columnGap: Length$1.percent(1),
+
+        columns: [Length$1.fr(1)],
+
+        rows: [Length$1.fr(1)],
+
+        areas: []
+      });
     }
+  }, {
+    key: "toCSS",
+    value: function toCSS() {
+      var json = this.json;
+      var css = {
+        display: json.type
+      };
 
-    createClass(Display, [{
-        key: "getDefaultObject",
-        value: function getDefaultObject() {
-            return get$1(Display.prototype.__proto__ || Object.getPrototypeOf(Display.prototype), "getDefaultObject", this).call(this, {
-                itemType: 'display',
-
-                type: 'block',
-
-                // refer to https://developer.mozilla.org/docs/Web/CSS/flex-direction            
-                direction: 'row',
-
-                // refer to https://developer.mozilla.org/docs/Web/CSS/align-items
-                alignItems: 'normal',
-
-                // refer to https://developer.mozilla.org/docs/Web/CSS/align-content
-                alignCentent: 'normal',
-
-                // refer to https://developer.mozilla.org/docs/Web/CSS/flex-wrap
-                wrap: 'nowrap',
-
-                justifyContent: 'flex-start',
-
-                gap: Length$1.px(0),
-
-                rowGap: Length$1.percent(1),
-
-                columnGap: Length$1.percent(1),
-
-                columns: [Length$1.fr(1)],
-
-                rows: [Length$1.fr(1)],
-
-                areas: []
-
-            });
+      if (css.display == "flex") {
+        if (json.direction != "row") {
+          css["flex-direction"] = json.direction;
         }
-    }, {
-        key: "toCSS",
-        value: function toCSS() {
-            var json = this.json;
-            var css = {
-                'display': json.type
-            };
 
-            if (css.display == 'flex') {
-
-                if (json.direction != 'row') {
-                    css['flex-direction'] = json.direction;
-                }
-
-                if (json.alignItems != 'normal') {
-                    css['align-items'] = json.alignItems;
-                }
-
-                if (json.alignContent != 'normal') {
-                    css['align-content'] = json.alignContent;
-                }
-
-                if (json.wrap != 'nowrap') {
-                    css['flex-wrap'] = json.wrap;
-                }
-
-                if (json.justifyContent != 'flex-start') {
-                    css['justify-content'] = json.justifyContent;
-                }
-            } else if (css.display == 'grid') {
-                if (json.gap.value > 0) {
-                    css['grid-gap'] = json.gap;
-                }
-
-                if (json.rowGap.value > 0) {
-                    css['grid-row-gap'] = json.rowGap;
-                }
-
-                if (json.columnGap.value > 0) {
-                    css['grid-column-gap'] = json.columnGap;
-                }
-
-                if (json.columns.length) {
-                    css['grid-template-columns'] = json.columns.join(WHITE_STRING$1);
-                }
-
-                if (json.rows.length) {
-                    css['grid-template-rows'] = json.rows.join(WHITE_STRING$1);
-                }
-
-                if (json.areas.length) {
-                    css['grid-template-areas'] = json.areas.map(function (it) {
-                        return "\"" + it.join(WHITE_STRING$1) + "\"";
-                    }).join(WHITE_STRING$1);
-                }
-                if (json.alignItems != 'normal') {
-                    css['align-items'] = json.alignItems;
-                }
-
-                if (json.alignContent != 'normal') {
-                    css['align-content'] = json.alignContent;
-                }
-                if (json.justifyContent != 'flex-start') {
-                    css['justify-content'] = json.justifyContent;
-                }
-            }
-
-            return css;
+        if (json.alignItems != "normal") {
+          css["align-items"] = json.alignItems;
         }
-    }, {
-        key: "isLayout",
-        value: function isLayout() {
-            return this.isGrid() || this.isFlex();
-        }
-    }, {
-        key: "isFlex",
-        value: function isFlex() {
-            return this.json.type == 'flex';
-        }
-    }, {
-        key: "isGrid",
-        value: function isGrid() {
-            return this.json.type == 'grid';
-        }
-    }, {
-        key: "isInline",
-        value: function isInline() {
-            return this.json.type == 'inline';
-        }
-    }, {
-        key: "isInlineBlock",
-        value: function isInlineBlock() {
-            return this.json.type == 'inline-block';
-        }
-    }, {
-        key: "isBlock",
-        value: function isBlock() {
-            return this.json.type == 'block';
-        }
-    }, {
-        key: "changeColumn",
-        value: function changeColumn(sourceIndex, targetIndex) {
-            var source = this.json.columns[sourceIndex];
-            var target = this.json.columns[targetIndex];
 
-            this.json.columns[targetIndex] = source;
-            this.json.columns[sourceIndex] = target;
+        if (json.alignContent != "normal") {
+          css["align-content"] = json.alignContent;
         }
-    }, {
-        key: "removeColumn",
-        value: function removeColumn(index) {
-            this.json.columns.splice(index, 1);
-        }
-    }, {
-        key: "updateColumn",
-        value: function updateColumn(index, len) {
-            this.json.columns[index] = len;
-        }
-    }, {
-        key: "changeRow",
-        value: function changeRow(sourceIndex, targetIndex) {
-            var source = this.json.rows[sourceIndex];
-            var target = this.json.rows[targetIndex];
 
-            this.json.rows[targetIndex] = source;
-            this.json.rows[sourceIndex] = target;
+        if (json.flexWrap != "nowrap") {
+          css["flex-wrap"] = json.flexWrap;
         }
-    }, {
-        key: "removeRow",
-        value: function removeRow(index) {
-            this.json.rows.splice(index, 1);
+
+        if (json.justifyContent != "flex-start") {
+          css["justify-content"] = json.justifyContent;
         }
-    }, {
-        key: "updateRow",
-        value: function updateRow(index, len) {
-            this.json.rows[index] = len;
+      } else if (css.display == "grid") {
+        if (json.gap.value > 0) {
+          css["grid-gap"] = json.gap;
         }
-    }]);
-    return Display;
+
+        if (json.rowGap.value > 0) {
+          css["grid-row-gap"] = json.rowGap;
+        }
+
+        if (json.columnGap.value > 0) {
+          css["grid-column-gap"] = json.columnGap;
+        }
+
+        if (json.columns.length) {
+          css["grid-template-columns"] = json.columns.join(WHITE_STRING$1);
+        }
+
+        if (json.rows.length) {
+          css["grid-template-rows"] = json.rows.join(WHITE_STRING$1);
+        }
+
+        if (json.areas.length) {
+          css["grid-template-areas"] = json.areas.map(function (it) {
+            return "\"" + it.join(WHITE_STRING$1) + "\"";
+          }).join(WHITE_STRING$1);
+        }
+        if (json.alignItems != "normal") {
+          css["align-items"] = json.alignItems;
+        }
+
+        if (json.alignContent != "normal") {
+          css["align-content"] = json.alignContent;
+        }
+        if (json.justifyContent != "flex-start") {
+          css["justify-content"] = json.justifyContent;
+        }
+      }
+
+      return css;
+    }
+  }, {
+    key: "isLayout",
+    value: function isLayout() {
+      return this.isGrid() || this.isFlex();
+    }
+  }, {
+    key: "isFlex",
+    value: function isFlex() {
+      return this.json.type == "flex";
+    }
+  }, {
+    key: "isGrid",
+    value: function isGrid() {
+      return this.json.type == "grid";
+    }
+  }, {
+    key: "isInline",
+    value: function isInline() {
+      return this.json.type == "inline";
+    }
+  }, {
+    key: "isInlineBlock",
+    value: function isInlineBlock() {
+      return this.json.type == "inline-block";
+    }
+  }, {
+    key: "isBlock",
+    value: function isBlock() {
+      return this.json.type == "block";
+    }
+  }, {
+    key: "changeColumn",
+    value: function changeColumn(sourceIndex, targetIndex) {
+      var source = this.json.columns[sourceIndex];
+      var target = this.json.columns[targetIndex];
+
+      this.json.columns[targetIndex] = source;
+      this.json.columns[sourceIndex] = target;
+    }
+  }, {
+    key: "removeColumn",
+    value: function removeColumn(index) {
+      this.json.columns.splice(index, 1);
+    }
+  }, {
+    key: "updateColumn",
+    value: function updateColumn(index, len) {
+      this.json.columns[index] = len;
+    }
+  }, {
+    key: "changeRow",
+    value: function changeRow(sourceIndex, targetIndex) {
+      var source = this.json.rows[sourceIndex];
+      var target = this.json.rows[targetIndex];
+
+      this.json.rows[targetIndex] = source;
+      this.json.rows[sourceIndex] = target;
+    }
+  }, {
+    key: "removeRow",
+    value: function removeRow(index) {
+      this.json.rows.splice(index, 1);
+    }
+  }, {
+    key: "updateRow",
+    value: function updateRow(index, len) {
+      this.json.rows[index] = len;
+    }
+  }]);
+  return Display;
 }(Property);
 
 Display.parse = function (obj) {
-    return new Display(obj);
+  return new Display(obj);
 };
 
 Display.isLayout = function (type) {
-    return type == 'flex' || type == 'grid';
+  return type == "flex" || type == "grid";
 };
 
 var MovableItem = function (_Item) {
@@ -18430,638 +19051,631 @@ var GroupItem = function (_MovableItem) {
     return GroupItem;
 }(MovableItem);
 
-var BLEND_LIST = ['normal', 'multiply', 'screen', 'overlay', 'darken', 'lighten', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity'];
+var BLEND_LIST = ["normal", "multiply", "screen", "overlay", "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion", "hue", "saturation", "color", "luminosity"];
 
 var Layer = function (_GroupItem) {
-    inherits(Layer, _GroupItem);
+  inherits(Layer, _GroupItem);
 
-    function Layer() {
-        classCallCheck(this, Layer);
-        return possibleConstructorReturn(this, (Layer.__proto__ || Object.getPrototypeOf(Layer)).apply(this, arguments));
+  function Layer() {
+    classCallCheck(this, Layer);
+    return possibleConstructorReturn(this, (Layer.__proto__ || Object.getPrototypeOf(Layer)).apply(this, arguments));
+  }
+
+  createClass(Layer, [{
+    key: "getDefaultObject",
+    value: function getDefaultObject() {
+      var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      return get$1(Layer.prototype.__proto__ || Object.getPrototypeOf(Layer.prototype), "getDefaultObject", this).call(this, _extends({
+        itemType: "layer",
+        width: Length$1.px(400),
+        height: Length$1.px(300),
+        backgroundColor: "rgba(222, 222, 222, 0.3)",
+        position: "absolute",
+        x: Length$1.px(0),
+        y: Length$1.px(0),
+        rotate: 0,
+        filters: [],
+        backdropFilters: [],
+        backgroundImages: [],
+        boxShadows: [],
+        textShadows: [],
+        clippath: new NoneClipPath(),
+        display: Display.parse({ display: "block" }),
+        offset: { left: 0, top: 0, width: 400, height: 300 } }, obj));
+    }
+  }, {
+    key: "getDefaultTitle",
+    value: function getDefaultTitle() {
+      return "Layer";
     }
 
-    createClass(Layer, [{
-        key: "getDefaultObject",
-        value: function getDefaultObject() {
-            var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    /**
+     * 상대좌표 인지 체크
+     */
 
-            return get$1(Layer.prototype.__proto__ || Object.getPrototypeOf(Layer.prototype), "getDefaultObject", this).call(this, _extends({
-                itemType: 'layer',
-                width: Length$1.px(400),
-                height: Length$1.px(300),
-                backgroundColor: 'rgba(222, 222, 222, 0.3)',
-                position: 'absolute',
-                x: Length$1.px(0),
-                y: Length$1.px(0),
-                rotate: 0,
-                filters: [],
-                backdropFilters: [],
-                backgroundImages: [],
-                boxShadows: [],
-                textShadows: [],
-                clippath: new NoneClipPath(),
-                display: Display.parse({ display: 'block' }),
-                offset: { left: 0, top: 0, width: 400, height: 300 } }, obj));
+  }, {
+    key: "isLayoutItem",
+    value: function isLayoutItem() {
+      var parent = this.parent();
+
+      return parent.hasLayout(); // 부모가 flex, grid 둘 중 하나를 가지면 자식은 layout item 이 된다.
+    }
+  }, {
+    key: "isRootItem",
+    value: function isRootItem() {
+      var parent = this.parent();
+
+      // 상위 객체가 artboard 나 directory 는 처음 시작하는 존재라고 본다.
+      return parent.itemType == "artboard" || parent.itemType == "directory";
+    }
+  }, {
+    key: "add",
+    value: function add(layer) {
+      if (layer.itemType == "layer") {
+        return get$1(Layer.prototype.__proto__ || Object.getPrototypeOf(Layer.prototype), "add", this).call(this, layer);
+      } else {
+        throw new Error("layer 객체입니다.");
+      }
+    }
+  }, {
+    key: "addBackgroundImage",
+    value: function addBackgroundImage(item) {
+      this.json.backgroundImages.push(item);
+      return item;
+    }
+  }, {
+    key: "addFilter",
+    value: function addFilter(item) {
+      this.json.filters.push(item);
+      return item;
+    }
+  }, {
+    key: "addBackdropFilter",
+    value: function addBackdropFilter(item) {
+      this.json.backdropFilters.push(item);
+      return item;
+    }
+  }, {
+    key: "addBoxShadow",
+    value: function addBoxShadow(item) {
+      this.json.boxShadows.push(item);
+      return item;
+    }
+  }, {
+    key: "addTextShadow",
+    value: function addTextShadow(item) {
+      this.json.textShadows.push(item);
+      return item;
+    }
+  }, {
+    key: "convert",
+    value: function convert(json) {
+      json = get$1(Layer.prototype.__proto__ || Object.getPrototypeOf(Layer.prototype), "convert", this).call(this, json);
+
+      json.x = Length$1.parse(json.x);
+      json.y = Length$1.parse(json.y);
+      json.width = Length$1.parse(json.width);
+      json.height = Length$1.parse(json.height);
+
+      if (json.clippath) json.clippath = ClipPath.parse(json.clippath);
+      if (json.display) json.display = Display.parse(json.display);
+
+      json.filters = json.filters.map(function (f) {
+        return Filter.parse(f);
+      });
+      json.backdropFilters = json.backdropFilters.map(function (f) {
+        return BackdropFilter.parse(f);
+      });
+      json.backgroundImages = json.backgroundImages.map(function (f) {
+        return BackgroundImage.parse(f);
+      });
+      json.boxShadows = json.boxShadows.map(function (f) {
+        return BoxShadow.parse(f);
+      });
+      json.textShadows = json.textShadows.map(function (f) {
+        return TextShadow.parse(f);
+      });
+
+      // copy 할 때 자동으로 체크
+      if (json.parentId) {
+        json.parentPosition = this.getParentPosition(json.parentId).id;
+      }
+
+      return json;
+    }
+  }, {
+    key: "checkField",
+    value: function checkField(key, value$$1) {
+      if (key === "parentId") {
+        this.json.parentPosition = this.getParentPosition(value$$1).id;
+      }
+      return true;
+    }
+  }, {
+    key: "getArtBoard",
+    value: function getArtBoard() {
+      return this.path().filter(function (it) {
+        return it.itemType == "artboard";
+      })[0];
+    }
+  }, {
+    key: "getParentPosition",
+    value: function getParentPosition(parentId) {
+      var path = this.path(parentId);
+
+      return path.filter(function (it) {
+        if (it.itemType == "layer") {
+          return !it.isLayoutItem(); // 좌표 설정이 있는 layer 만 부모로 해서 offset 설정
+        } else if (it.itemType == "artboard") {
+          return true;
         }
-    }, {
-        key: "getDefaultTitle",
-        value: function getDefaultTitle() {
-            return 'Layer';
+
+        return false;
+      })[0];
+    }
+  }, {
+    key: "parentDirectory",
+    value: function parentDirectory() {
+      var path = this.path();
+
+      return path.filter(function (it) {
+        if (it.itemType == "directory") {
+          return true;
+        } else if (it.itemType == "artboard") {
+          return true;
         }
 
-        /**
-         * 상대좌표 인지 체크 
-         */
+        return false;
+      })[0];
+    }
+  }, {
+    key: "changeOffsetToPosition",
+    value: function changeOffsetToPosition() {
+      var offset = this.json.offset;
+      this.reset({
+        x: Length$1.px(offset.left),
+        y: Length$1.px(offset.top),
+        width: Length$1.px(offset.width),
+        height: Length$1.px(offset.height)
+      });
+    }
+  }, {
+    key: "toString",
+    value: function toString() {
+      return CSS_TO_STRING(this.toCSS());
+    }
+  }, {
+    key: "toClipPathCSS",
+    value: function toClipPathCSS() {
+      return this.json.clippath.toCSS();
+    }
+  }, {
+    key: "toDisplayCSS",
+    value: function toDisplayCSS() {
+      return this.json.display.toCSS();
+    }
+  }, {
+    key: "toPropertyCSS",
+    value: function toPropertyCSS(list) {
+      var results = {};
+      list.forEach(function (item) {
+        keyEach(item.toCSS(), function (key, value$$1) {
+          if (!results[key]) results[key] = [];
+          results[key].push(value$$1);
+        });
+      });
 
-    }, {
-        key: "isLayoutItem",
-        value: function isLayoutItem() {
+      return combineKeyArray(results);
+    }
+  }, {
+    key: "toBackgroundImageCSS",
+    value: function toBackgroundImageCSS() {
+      return this.toPropertyCSS(this.backgroundImages);
+    }
+  }, {
+    key: "toBoxShadowCSS",
+    value: function toBoxShadowCSS() {
+      return this.toPropertyCSS(this.boxShadows);
+    }
+  }, {
+    key: "toTextShadowCSS",
+    value: function toTextShadowCSS() {
+      return this.toPropertyCSS(this.textShadows);
+    }
+  }, {
+    key: "toFilterCSS",
+    value: function toFilterCSS() {
+      return this.toPropertyCSS(this.filters);
+    }
+  }, {
+    key: "toBackdropFilterCSS",
+    value: function toBackdropFilterCSS() {
+      return this.toPropertyCSS(this.backdropFilters);
+    }
+  }, {
+    key: "toFontCSS",
+    value: function toFontCSS() {
+      var results = {};
+      var json = this.json;
 
-            var parent = this.parent();
+      if (json.color) {
+        results["color"] = json.color;
+      }
 
-            return parent.hasLayout(); // 부모가 flex, grid 둘 중 하나를 가지면 자식은 layout item 이 된다. 
+      if (json.fontSize) {
+        results["font-size"] = json.fontSize;
+      }
+
+      if (json.fontFamily) {
+        results["font-family"] = json.fontFamily;
+      }
+
+      if (json.fontWeight) {
+        results["font-weight"] = json.fontWeight;
+      }
+
+      if (json.lineHeight) {
+        results["line-height"] = json.lineHeight;
+      }
+
+      results["word-wrap"] = json.wordWrap || "break-word";
+      results["word-break"] = json.wordBreak || "break-word";
+
+      if (json.clipText) {
+        results["color"] = "transparent";
+        results["background-clip"] = "text";
+        results["-webkit-background-clip"] = "text";
+      }
+
+      return results;
+    }
+  }, {
+    key: "toBorderRadiusCSS",
+    value: function toBorderRadiusCSS() {
+      var json = this.json;
+      var css = {};
+      if (json.fixedRadius) {
+        css["border-radius"] = json.borderRadius;
+      } else {
+        if (json.borderTopLeftRadius) css["border-top-left-radius"] = json.borderTopLeftRadius;
+        if (json.borderTopRightRadius) css["border-top-right-radius"] = json.borderTopRightRadius;
+        if (json.borderBottomLeftRadius) css["border-bottom-left-radius"] = json.borderBottomLeftRadius;
+        if (json.borderBottomRightRadius) css["border-bottom-right-radius"] = json.borderBottomRightRadius;
+      }
+
+      return css;
+    }
+  }, {
+    key: "toBorderColorCSS",
+    value: function toBorderColorCSS() {
+      var json = this.json;
+      var css = {};
+
+      if (json.borderColor) {
+        css["border-color"] = json.borderColor;
+      } else {
+        if (json.borderTopColor) css["border-top-color"] = json.borderTopColor;
+        if (json.borderRightColor) css["border-right-color"] = json.borderRightColor;
+        if (json.borderBottomColor) css["border-bottom-color"] = json.borderBottomColor;
+        if (json.borderLeftColor) css["border-left-color"] = json.borderLeftColor;
+      }
+
+      return css;
+    }
+  }, {
+    key: "toBorderStyleCSS",
+    value: function toBorderStyleCSS() {
+      var json = this.json;
+      var css = {};
+
+      if (json.borderStyle) css["border-style"] = json.borderStyle;
+      if (json.borderTopStyle) css["border-top-style"] = json.borderTopStyle;
+      if (json.borderRightStyle) css["border-right-style"] = json.borderRightStyle;
+      if (json.borderBottomStyle) css["border-bottom-style"] = json.borderBottomStyle;
+      if (json.borderLeftStyle) css["border-left-style"] = json.borderLeftStyle;
+
+      return css;
+    }
+  }, {
+    key: "toBorderWidthCSS",
+    value: function toBorderWidthCSS() {
+      var json = this.json;
+      var css = {};
+
+      if (json.fixedBorderWidth) {
+        css["border-width"] = json.borderWidth;
+        css["border-style"] = "solid";
+      } else {
+        if (json.borderTopWidth) {
+          css["border-top-width"] = json.borderTopWidth;
+          css["border-top-style"] = "solid";
         }
-    }, {
-        key: "isRootItem",
-        value: function isRootItem() {
-            var parent = this.parent();
 
-            // 상위 객체가 artboard 나 directory 는 처음 시작하는 존재라고 본다. 
-            return parent.itemType == 'artboard' || parent.itemType == 'directory';
+        if (json.borderRightWidth) {
+          css["border-right-width"] = json.borderRightWidth;
+          css["border-right-style"] = "solid";
         }
-    }, {
-        key: "add",
-        value: function add(layer) {
-            if (layer.itemType == 'layer') {
-                return get$1(Layer.prototype.__proto__ || Object.getPrototypeOf(Layer.prototype), "add", this).call(this, layer);
-            } else {
-                throw new Error('layer 객체입니다.');
-            }
+
+        if (json.borderLeftWidth) {
+          css["border-left-width"] = json.borderLeftWidth;
+          css["border-left-style"] = "solid";
         }
-    }, {
-        key: "addBackgroundImage",
-        value: function addBackgroundImage(item) {
-            this.json.backgroundImages.push(item);
-            return item;
+
+        if (json.borderBottomWidth) {
+          css["border-bottom-width"] = json.borderBottomWidth;
+          css["border-bottom-style"] = "solid";
         }
-    }, {
-        key: "addFilter",
-        value: function addFilter(item) {
-            this.json.filters.push(item);
-            return item;
+      }
+
+      return css;
+    }
+  }, {
+    key: "toTransformCSS",
+    value: function toTransformCSS() {
+      var json = this.json;
+      var results = [];
+
+      if (json.perspective) {
+        results.push("perspective(" + json.perspective + "px)");
+      }
+
+      if (json.rotate) {
+        results.push("rotate(" + json.rotate + "deg)");
+      }
+
+      if (json.skewX) {
+        results.push("skewX(" + json.skewX + "deg)");
+      }
+
+      if (json.skewY) {
+        results.push("skewY(" + json.skewY + "deg)");
+      }
+
+      if (json.scale) {
+        results.push("scale(" + json.scale + ")");
+      }
+
+      if (json.translateX) {
+        results.push("translateX(" + json.translateX + "px)");
+      }
+
+      if (json.translateY) {
+        results.push("translateY(" + json.translateY + "px)");
+      }
+
+      if (json.translateZ) {
+        results.push("translateZ(" + json.translateZ + "px)");
+      }
+
+      if (json.rotateX) {
+        results.push("rotateX(" + json.rotateX + "deg)");
+      }
+
+      if (json.rotateY) {
+        results.push("rotateY(" + json.rotateY + "deg)");
+      }
+
+      if (json.rotateZ) {
+        results.push("rotateZ(" + json.rotateZ + "deg)");
+      }
+
+      if (json.scaleX) {
+        results.push("scaleX(" + json.scaleX + ")");
+      }
+
+      if (json.scaleY) {
+        results.push("scaleY(" + json.scaleY + ")");
+      }
+
+      if (json.scaleZ) {
+        results.push("scaleZ(" + json.scaleZ + ")");
+      }
+
+      return {
+        transform: results.length ? results.join(WHITE_STRING) : "none"
+      };
+    }
+  }, {
+    key: "toDefaultCSS",
+    value: function toDefaultCSS() {
+      var css = _extends({}, this.toBoundCSS());
+      var json = this.json;
+
+      css["box-sizing"] = json.boxSizing || "border-box";
+      css["visibility"] = json.visible ? "visible" : "hidden";
+      if (json.backgroundColor) {
+        css["background-color"] = json.backgroundColor;
+      }
+
+      if (json.mixBlendMode) {
+        css["mix-blend-mode"] = json.mixBlendMode || "normal";
+      }
+
+      if (json.backgroundClip && !json.clipText) {
+        css["background-clip"] = json.backgroundClip || "";
+        css["-webkit-background-clip"] = json.backgroundClip || "";
+      }
+
+      if (json.opacity) {
+        css["opacity"] = json.opacity;
+      }
+
+      return css;
+    }
+  }, {
+    key: "setGridRowColumn",
+    value: function setGridRowColumn(rowStart, columnStart, rowEnd, columnEnd) {
+      this.json.gridRowStart = rowStart;
+      this.json.gridRowEnd = rowEnd + 1;
+      this.json.gridColumnStart = columnStart;
+      this.json.gridColumnEnd = columnEnd + 1;
+    }
+  }, {
+    key: "initGridRowColumn",
+    value: function initGridRowColumn(row, column) {
+      this.setGridRowColumn(row, column, row, column);
+    }
+  }, {
+    key: "toGridString",
+    value: function toGridString() {
+      var _json = this.json,
+          gridRowEnd = _json.gridRowEnd,
+          gridRowStart = _json.gridRowStart,
+          gridColumnEnd = _json.gridColumnEnd,
+          gridColumnStart = _json.gridColumnStart;
+
+      if (!gridRowEnd) return EMPTY_STRING;
+
+      var distRow = gridRowEnd - gridRowStart;
+      var distColumn = gridColumnEnd - gridColumnStart;
+
+      if (distRow == 1 && distColumn == 1) {
+        return "(" + gridRowStart + ", " + gridColumnStart + ")";
+      }
+
+      return "(" + gridRowStart + ", " + gridColumnStart + ") -> (" + gridRowEnd + ", " + gridColumnEnd + ")";
+    }
+  }, {
+    key: "toBoundCSS",
+    value: function toBoundCSS() {
+      var json = this.json;
+      var parent = this.parent();
+
+      var height = parent.screenHeight.value;
+      var width = parent.screenWidth.value;
+
+      if (parent.display.type == "flex") {
+        return {
+          // TODO: 어찌 할꼬?
+          // bounding 을 너무 다양하게 할 수 있다.
+          // 다만 내부의 요소를 공통으로 묶을 것인지 개별로 설정할 것인지
+          // 디장인에서 flex 같은 레이아웃을 많이 쓰는가?
+          // 최소 고정 크기로 해야할 듯
+          flex: (json.flexGrow || 1) + " " + (json.flexShrink || 1) + " " + (json.flexBasis || "auto")
+          // width: Length.px(minSize),
+          // height: Length.px(minSize),
+          // display: 'inline-block'
+        };
+      } else if (parent.display.type == "grid") {
+        var css = {};
+        if (isNotUndefined(json.gridRowStart)) {
+          css["grid-row-start"] = json.gridRowStart;
         }
-    }, {
-        key: "addBackdropFilter",
-        value: function addBackdropFilter(item) {
-            this.json.backdropFilters.push(item);
-            return item;
+        if (isNotUndefined(json.gridRowEnd)) {
+          css["grid-row-end"] = json.gridRowEnd;
         }
-    }, {
-        key: "addBoxShadow",
-        value: function addBoxShadow(item) {
-            this.json.boxShadows.push(item);
-            return item;
+        if (isNotUndefined(json.gridColumnStart)) {
+          css["grid-column-start"] = json.gridColumnStart;
         }
-    }, {
-        key: "addTextShadow",
-        value: function addTextShadow(item) {
-            this.json.textShadows.push(item);
-            return item;
+        if (isNotUndefined(json.gridColumnEnd)) {
+          css["grid-column-end"] = json.gridColumnEnd;
         }
-    }, {
-        key: "convert",
-        value: function convert(json) {
-            json = get$1(Layer.prototype.__proto__ || Object.getPrototypeOf(Layer.prototype), "convert", this).call(this, json);
 
-            json.x = Length$1.parse(json.x);
-            json.y = Length$1.parse(json.y);
-            json.width = Length$1.parse(json.width);
-            json.height = Length$1.parse(json.height);
-
-            if (json.clippath) json.clippath = ClipPath.parse(json.clippath);
-            if (json.display) json.display = Display.parse(json.display);
-
-            json.filters = json.filters.map(function (f) {
-                return Filter.parse(f);
-            });
-            json.backdropFilters = json.backdropFilters.map(function (f) {
-                return BackdropFilter.parse(f);
-            });
-            json.backgroundImages = json.backgroundImages.map(function (f) {
-                return BackgroundImage.parse(f);
-            });
-            json.boxShadows = json.boxShadows.map(function (f) {
-                return BoxShadow.parse(f);
-            });
-            json.textShadows = json.textShadows.map(function (f) {
-                return TextShadow.parse(f);
-            });
-
-            // copy 할 때 자동으로 체크 
-            if (json.parentId) {
-                json.parentPosition = this.getParentPosition(json.parentId).id;
-            }
-
-            return json;
-        }
-    }, {
-        key: "checkField",
-        value: function checkField(key, value$$1) {
-            if (key === 'parentId') {
-                this.json.parentPosition = this.getParentPosition(value$$1).id;
-            }
-            return true;
-        }
-    }, {
-        key: "getArtBoard",
-        value: function getArtBoard() {
-            return this.path().filter(function (it) {
-                return it.itemType == 'artboard';
-            })[0];
-        }
-    }, {
-        key: "getParentPosition",
-        value: function getParentPosition(parentId) {
-            var path = this.path(parentId);
-
-            return path.filter(function (it) {
-                if (it.itemType == 'layer') {
-                    return !it.isLayoutItem(); // 좌표 설정이 있는 layer 만 부모로 해서 offset 설정 
-                } else if (it.itemType == 'artboard') {
-                    return true;
-                }
-
-                return false;
-            })[0];
-        }
-    }, {
-        key: "parentDirectory",
-        value: function parentDirectory() {
-            var path = this.path();
-
-            return path.filter(function (it) {
-                if (it.itemType == 'directory') {
-                    return true;
-                } else if (it.itemType == 'artboard') {
-                    return true;
-                }
-
-                return false;
-            })[0];
-        }
-    }, {
-        key: "changeOffsetToPosition",
-        value: function changeOffsetToPosition() {
-            var offset = this.json.offset;
-            this.reset({
-                x: Length$1.px(offset.left),
-                y: Length$1.px(offset.top),
-                width: Length$1.px(offset.width),
-                height: Length$1.px(offset.height)
-            });
-        }
-    }, {
-        key: "toString",
-        value: function toString() {
-            return CSS_TO_STRING(this.toCSS());
-        }
-    }, {
-        key: "toClipPathCSS",
-        value: function toClipPathCSS() {
-            return this.json.clippath.toCSS();
-        }
-    }, {
-        key: "toDisplayCSS",
-        value: function toDisplayCSS() {
-            return this.json.display.toCSS();
-        }
-    }, {
-        key: "toPropertyCSS",
-        value: function toPropertyCSS(list) {
-            var results = {};
-            list.forEach(function (item) {
-                keyEach(item.toCSS(), function (key, value$$1) {
-                    if (!results[key]) results[key] = [];
-                    results[key].push(value$$1);
-                });
-            });
-
-            return combineKeyArray(results);
-        }
-    }, {
-        key: "toBackgroundImageCSS",
-        value: function toBackgroundImageCSS() {
-            return this.toPropertyCSS(this.backgroundImages);
-        }
-    }, {
-        key: "toBoxShadowCSS",
-        value: function toBoxShadowCSS() {
-            return this.toPropertyCSS(this.boxShadows);
-        }
-    }, {
-        key: "toTextShadowCSS",
-        value: function toTextShadowCSS() {
-            return this.toPropertyCSS(this.textShadows);
-        }
-    }, {
-        key: "toFilterCSS",
-        value: function toFilterCSS() {
-            return this.toPropertyCSS(this.filters);
-        }
-    }, {
-        key: "toBackdropFilterCSS",
-        value: function toBackdropFilterCSS() {
-            return this.toPropertyCSS(this.backdropFilters);
-        }
-    }, {
-        key: "toFontCSS",
-        value: function toFontCSS() {
-            var results = {};
-            var json = this.json;
-
-            if (json.color) {
-                results['color'] = json.color;
-            }
-
-            if (json.fontSize) {
-                results['font-size'] = json.fontSize;
-            }
-
-            if (json.fontFamily) {
-                results['font-family'] = json.fontFamily;
-            }
-
-            if (json.fontWeight) {
-                results['font-weight'] = json.fontWeight;
-            }
-
-            if (json.lineHeight) {
-                results['line-height'] = json.lineHeight;
-            }
-
-            results['word-wrap'] = json.wordWrap || 'break-word';
-            results['word-break'] = json.wordBreak || 'break-word';
-
-            if (json.clipText) {
-                results['color'] = 'transparent';
-                results['background-clip'] = 'text';
-                results['-webkit-background-clip'] = 'text';
-            }
-
-            return results;
-        }
-    }, {
-        key: "toBorderRadiusCSS",
-        value: function toBorderRadiusCSS() {
-            var json = this.json;
-            var css = {};
-            if (json.fixedRadius) {
-                css['border-radius'] = json.borderRadius;
-            } else {
-                if (json.borderTopLeftRadius) css['border-top-left-radius'] = json.borderTopLeftRadius;
-                if (json.borderTopRightRadius) css['border-top-right-radius'] = json.borderTopRightRadius;
-                if (json.borderBottomLeftRadius) css['border-bottom-left-radius'] = json.borderBottomLeftRadius;
-                if (json.borderBottomRightRadius) css['border-bottom-right-radius'] = json.borderBottomRightRadius;
-            }
-
-            return css;
-        }
-    }, {
-        key: "toBorderColorCSS",
-        value: function toBorderColorCSS() {
-            var json = this.json;
-            var css = {};
-
-            if (json.borderColor) {
-                css['border-color'] = json.borderColor;
-            } else {
-                if (json.borderTopColor) css['border-top-color'] = json.borderTopColor;
-                if (json.borderRightColor) css['border-right-color'] = json.borderRightColor;
-                if (json.borderBottomColor) css['border-bottom-color'] = json.borderBottomColor;
-                if (json.borderLeftColor) css['border-left-color'] = json.borderLeftColor;
-            }
-
-            return css;
-        }
-    }, {
-        key: "toBorderStyleCSS",
-        value: function toBorderStyleCSS() {
-            var json = this.json;
-            var css = {};
-
-            if (json.borderStyle) css['border-style'] = json.borderStyle;
-            if (json.borderTopStyle) css['border-top-style'] = json.borderTopStyle;
-            if (json.borderRightStyle) css['border-right-style'] = json.borderRightStyle;
-            if (json.borderBottomStyle) css['border-bottom-style'] = json.borderBottomStyle;
-            if (json.borderLeftStyle) css['border-left-style'] = json.borderLeftStyle;
-
-            return css;
-        }
-    }, {
-        key: "toBorderWidthCSS",
-        value: function toBorderWidthCSS() {
-            var json = this.json;
-            var css = {};
-
-            if (json.fixedBorderWidth) {
-                css['border-width'] = json.borderWidth;
-                css['border-style'] = 'solid';
-            } else {
-
-                if (json.borderTopWidth) {
-                    css['border-top-width'] = json.borderTopWidth;
-                    css['border-top-style'] = 'solid';
-                }
-
-                if (json.borderRightWidth) {
-                    css['border-right-width'] = json.borderRightWidth;
-                    css['border-right-style'] = 'solid';
-                }
-
-                if (json.borderLeftWidth) {
-                    css['border-left-width'] = json.borderLeftWidth;
-                    css['border-left-style'] = 'solid';
-                }
-
-                if (json.borderBottomWidth) {
-                    css['border-bottom-width'] = json.borderBottomWidth;
-                    css['border-bottom-style'] = 'solid';
-                }
-            }
-
-            return css;
-        }
-    }, {
-        key: "toTransformCSS",
-        value: function toTransformCSS() {
-
-            var json = this.json;
-            var results = [];
-
-            if (json.perspective) {
-                results.push("perspective(" + json.perspective + "px)");
-            }
-
-            if (json.rotate) {
-                results.push("rotate(" + json.rotate + "deg)");
-            }
-
-            if (json.skewX) {
-                results.push("skewX(" + json.skewX + "deg)");
-            }
-
-            if (json.skewY) {
-                results.push("skewY(" + json.skewY + "deg)");
-            }
-
-            if (json.scale) {
-                results.push("scale(" + json.scale + ")");
-            }
-
-            if (json.translateX) {
-                results.push("translateX(" + json.translateX + "px)");
-            }
-
-            if (json.translateY) {
-                results.push("translateY(" + json.translateY + "px)");
-            }
-
-            if (json.translateZ) {
-                results.push("translateZ(" + json.translateZ + "px)");
-            }
-
-            if (json.rotateX) {
-                results.push("rotateX(" + json.rotateX + "deg)");
-            }
-
-            if (json.rotateY) {
-                results.push("rotateY(" + json.rotateY + "deg)");
-            }
-
-            if (json.rotateZ) {
-                results.push("rotateZ(" + json.rotateZ + "deg)");
-            }
-
-            if (json.scaleX) {
-                results.push("scaleX(" + json.scaleX + ")");
-            }
-
-            if (json.scaleY) {
-                results.push("scaleY(" + json.scaleY + ")");
-            }
-
-            if (json.scaleZ) {
-                results.push("scaleZ(" + json.scaleZ + ")");
-            }
-
-            return {
-                transform: results.length ? results.join(WHITE_STRING) : 'none'
-            };
-        }
-    }, {
-        key: "toDefaultCSS",
-        value: function toDefaultCSS() {
-            var css = _extends({}, this.toBoundCSS());
-            var json = this.json;
-
-            css['box-sizing'] = json.boxSizing || 'border-box';
-            css['visibility'] = json.visible ? 'visible' : 'hidden';
-            if (json.backgroundColor) {
-                css['background-color'] = json.backgroundColor;
-            }
-
-            if (json.mixBlendMode) {
-                css['mix-blend-mode'] = json.mixBlendMode || "normal";
-            }
-
-            if (json.backgroundClip && !json.clipText) {
-                css['background-clip'] = json.backgroundClip || "";
-                css['-webkit-background-clip'] = json.backgroundClip || "";
-            }
-
-            if (json.opacity) {
-                css['opacity'] = json.opacity;
-            }
-
-            return css;
-        }
-    }, {
-        key: "setGridRowColumn",
-        value: function setGridRowColumn(rowStart, columnStart, rowEnd, columnEnd) {
-            this.json.gridRowStart = rowStart;
-            this.json.gridRowEnd = rowEnd + 1;
-            this.json.gridColumnStart = columnStart;
-            this.json.gridColumnEnd = columnEnd + 1;
-        }
-    }, {
-        key: "initGridRowColumn",
-        value: function initGridRowColumn(row, column) {
-            this.setGridRowColumn(row, column, row, column);
-        }
-    }, {
-        key: "toGridString",
-        value: function toGridString() {
-            var _json = this.json,
-                gridRowEnd = _json.gridRowEnd,
-                gridRowStart = _json.gridRowStart,
-                gridColumnEnd = _json.gridColumnEnd,
-                gridColumnStart = _json.gridColumnStart;
-
-            if (!gridRowEnd) return EMPTY_STRING;
-
-            var distRow = gridRowEnd - gridRowStart;
-            var distColumn = gridColumnEnd - gridColumnStart;
-
-            if (distRow == 1 && distColumn == 1) {
-                return "(" + gridRowStart + ", " + gridColumnStart + ")";
-            }
-
-            return "(" + gridRowStart + ", " + gridColumnStart + ") -> (" + gridRowEnd + ", " + gridColumnEnd + ")";
-        }
-    }, {
-        key: "toBoundCSS",
-        value: function toBoundCSS() {
-            var json = this.json;
-            var parent = this.parent();
-
-            var height = parent.screenHeight.value;
-            var width = parent.screenWidth.value;
-
-            if (parent.display.type == 'flex') {
-                return {
-
-                    // TODO: 어찌 할꼬? 
-                    // bounding 을 너무 다양하게 할 수 있다. 
-                    // 다만 내부의 요소를 공통으로 묶을 것인지 개별로 설정할 것인지 
-                    // 디장인에서 flex 같은 레이아웃을 많이 쓰는가? 
-                    // 최소 고정 크기로 해야할 듯 
-                    flex: (json.flexGrow || 1) + " " + (json.flexShrink || 1) + " " + (json.flexBasis || 'auto')
-                    // width: Length.px(minSize),
-                    // height: Length.px(minSize),
-                    // display: 'inline-block'
-                };
-            } else if (parent.display.type == 'grid') {
-                var css = {};
-                if (isNotUndefined(json.gridRowStart)) {
-                    css['grid-row-start'] = json.gridRowStart;
-                }
-                if (isNotUndefined(json.gridRowEnd)) {
-                    css['grid-row-end'] = json.gridRowEnd;
-                }
-                if (isNotUndefined(json.gridColumnStart)) {
-                    css['grid-column-start'] = json.gridColumnStart;
-                }
-                if (isNotUndefined(json.gridColumnEnd)) {
-                    css['grid-column-end'] = json.gridColumnEnd;
-                }
-
-                return css;
-            }
-
-            return {
-                position: json.position,
-                left: json.x,
-                top: json.y,
-                width: json.width,
-                height: json.height
-            };
-        }
-    }, {
-        key: "toCSS",
-        value: function toCSS() {
-
-            var results = _extends({}, this.toDefaultCSS(), this.toBorderWidthCSS(), this.toBorderRadiusCSS(), this.toBorderColorCSS(), this.toBorderStyleCSS(), this.toTransformCSS(), this.toDisplayCSS(), this.toClipPathCSS(), this.toFilterCSS(), this.toBackdropFilterCSS(), this.toFontCSS(), this.toBoxShadowCSS(), this.toTextShadowCSS(), this.toBackgroundImageCSS());
-
-            return CSS_FILTERING(cleanObject(results));
-        }
-    }, {
-        key: "texts",
-        get: function get$$1() {
-            return this.search({ itemType: 'layer', type: 'text' });
-        }
-    }, {
-        key: "images",
-        get: function get$$1() {
-            return this.search({ itemType: 'layer', type: 'image' });
-        }
-    }, {
-        key: "filters",
-        get: function get$$1() {
-            return this.json.filters;
-        }
-    }, {
-        key: "backdropFilters",
-        get: function get$$1() {
-            return this.json.backdropFilters;
-        }
-    }, {
-        key: "backgroundImages",
-        get: function get$$1() {
-            return this.json.backgroundImages;
-        }
-    }, {
-        key: "boxShadows",
-        get: function get$$1() {
-            return this.json.boxShadows;
-        }
-    }, {
-        key: "textShadows",
-        get: function get$$1() {
-            return this.json.textShadows;
-        }
-    }, {
-        key: "screenX",
-        get: function get$$1() {
-            var offsetParent = editor$1.get(this.json.parentPosition);
-            if (this.isLayoutItem()) {
-                return Length$1.px(offsetParent.screenX.value + this.json.offset.left);
-            }
-
-            return Length$1.px(offsetParent.screenX.value + this.json.x.value);
-        }
-    }, {
-        key: "screenX2",
-        get: function get$$1() {
-            return Length$1.px(this.screenX.value + this.screenWidth.value);
-        }
-    }, {
-        key: "screenY",
-        get: function get$$1() {
-            var offsetParent = editor$1.get(this.json.parentPosition);
-
-            if (this.isLayoutItem()) {
-                return Length$1.px(offsetParent.screenY.value + this.json.offset.top);
-            }
-
-            return Length$1.px(offsetParent.screenY.value + this.json.y.value);
-        }
-    }, {
-        key: "screenY2",
-        get: function get$$1() {
-            return Length$1.px(this.screenY.value + this.screenHeight.value);
-        }
-    }, {
-        key: "screenWidth",
-        get: function get$$1() {
-
-            if (this.isLayoutItem()) {
-                return Length$1.px(this.json.offset.width);
-            }
-
-            return this.json.width;
-        }
-    }, {
-        key: "screenHeight",
-        get: function get$$1() {
-
-            if (this.isLayoutItem()) {
-                return Length$1.px(this.json.offset.height);
-            }
-
-            return this.json.height;
-        }
-    }]);
-    return Layer;
+        return css;
+      }
+
+      return {
+        position: json.position,
+        left: json.x,
+        top: json.y,
+        width: json.width,
+        height: json.height
+      };
+    }
+  }, {
+    key: "toCSS",
+    value: function toCSS() {
+      var results = _extends({}, this.toDefaultCSS(), this.toBorderWidthCSS(), this.toBorderRadiusCSS(), this.toBorderColorCSS(), this.toBorderStyleCSS(), this.toTransformCSS(), this.toDisplayCSS(), this.toClipPathCSS(), this.toFilterCSS(), this.toBackdropFilterCSS(), this.toFontCSS(), this.toBoxShadowCSS(), this.toTextShadowCSS(), this.toBackgroundImageCSS());
+
+      return CSS_FILTERING(cleanObject(results));
+    }
+  }, {
+    key: "texts",
+    get: function get$$1() {
+      return this.search({ itemType: "layer", type: "text" });
+    }
+  }, {
+    key: "images",
+    get: function get$$1() {
+      return this.search({ itemType: "layer", type: "image" });
+    }
+  }, {
+    key: "filters",
+    get: function get$$1() {
+      return this.json.filters;
+    }
+  }, {
+    key: "backdropFilters",
+    get: function get$$1() {
+      return this.json.backdropFilters;
+    }
+  }, {
+    key: "backgroundImages",
+    get: function get$$1() {
+      return this.json.backgroundImages || [];
+    }
+  }, {
+    key: "boxShadows",
+    get: function get$$1() {
+      return this.json.boxShadows;
+    }
+  }, {
+    key: "textShadows",
+    get: function get$$1() {
+      return this.json.textShadows;
+    }
+  }, {
+    key: "screenX",
+    get: function get$$1() {
+      var offsetParent = editor$1.get(this.json.parentPosition);
+      if (this.isLayoutItem()) {
+        return Length$1.px(offsetParent.screenX.value + this.json.offset.left);
+      }
+
+      return Length$1.px(offsetParent.screenX.value + this.json.x.value);
+    }
+  }, {
+    key: "screenX2",
+    get: function get$$1() {
+      return Length$1.px(this.screenX.value + this.screenWidth.value);
+    }
+  }, {
+    key: "screenY",
+    get: function get$$1() {
+      var offsetParent = editor$1.get(this.json.parentPosition);
+
+      if (this.isLayoutItem()) {
+        return Length$1.px(offsetParent.screenY.value + this.json.offset.top);
+      }
+
+      return Length$1.px(offsetParent.screenY.value + this.json.y.value);
+    }
+  }, {
+    key: "screenY2",
+    get: function get$$1() {
+      return Length$1.px(this.screenY.value + this.screenHeight.value);
+    }
+  }, {
+    key: "screenWidth",
+    get: function get$$1() {
+      if (this.isLayoutItem()) {
+        return Length$1.px(this.json.offset.width);
+      }
+
+      return this.json.width;
+    }
+  }, {
+    key: "screenHeight",
+    get: function get$$1() {
+      if (this.isLayoutItem()) {
+        return Length$1.px(this.json.offset.height);
+      }
+
+      return this.json.height;
+    }
+  }]);
+  return Layer;
 }(GroupItem);
 
 var MAX_DIST = 1;
@@ -20167,392 +20781,386 @@ var DragArea = function (_UIElement) {
     return DragArea;
 }(UIElement);
 
-var _templateObject$6 = taggedTemplateLiteral(["\n            <div \n                class='layer' \n                item-id=\"", "\" \n                style=\"", "\" \n                title=\"", "\" \n                data-depth=\"", "\"\n                data-layout-item=\"", "\"\n                data-root-item=\"", "\"\n                data-has-layout=\"", "\"\n                >\n                ", "\n                <div class='text-layer' style=\"pointer-events: none;\"></div>\n            </div>"], ["\n            <div \n                class='layer' \n                item-id=\"", "\" \n                style=\"", "\" \n                title=\"", "\" \n                data-depth=\"", "\"\n                data-layout-item=\"", "\"\n                data-root-item=\"", "\"\n                data-has-layout=\"", "\"\n                >\n                ", "\n                <div class='text-layer' style=\"pointer-events: none;\"></div>\n            </div>"]);
-var _templateObject2$3 = taggedTemplateLiteral(["\n            <div  \n                class='artboard-background' \n                style='", ";'>\n                    <div class='artboard-title' artboard-id=\"", "\">", "</div>\n            </div>\n            <div  \n                class='artboard' \n                item-id=\"", "\" \n                title=\"", "\" \n                style='", ";'>\n                ", "\n            </div>\n        "], ["\n            <div  \n                class='artboard-background' \n                style='", ";'>\n                    <div class='artboard-title' artboard-id=\"", "\">", "</div>\n            </div>\n            <div  \n                class='artboard' \n                item-id=\"", "\" \n                title=\"", "\" \n                style='", ";'>\n                ", "\n            </div>\n        "]);
+var _templateObject$6 = taggedTemplateLiteral(["\n      <div\n        class=\"layer\"\n        item-id=\"", "\"\n        style=\"", "\"\n        title=\"", "\"\n        data-depth=\"", "\"\n        data-layout-item=\"", "\"\n        data-root-item=\"", "\"\n        data-has-layout=\"", "\"\n      >\n        ", "\n        <div class=\"text-layer\" style=\"pointer-events: none;\"></div>\n      </div>\n    "], ["\n      <div\n        class=\"layer\"\n        item-id=\"", "\"\n        style=\"", "\"\n        title=\"", "\"\n        data-depth=\"", "\"\n        data-layout-item=\"", "\"\n        data-root-item=\"", "\"\n        data-has-layout=\"", "\"\n      >\n        ", "\n        <div class=\"text-layer\" style=\"pointer-events: none;\"></div>\n      </div>\n    "]);
+var _templateObject2$3 = taggedTemplateLiteral(["\n      <div class=\"artboard-background\" style=\"", ";\">\n        <div class=\"artboard-title\" artboard-id=\"", "\">\n          ", "\n        </div>\n      </div>\n      <div\n        class=\"artboard\"\n        item-id=\"", "\"\n        title=\"", "\"\n        style=\"", ";\"\n      >\n        ", "\n      </div>\n    "], ["\n      <div class=\"artboard-background\" style=\"", ";\">\n        <div class=\"artboard-title\" artboard-id=\"", "\">\n          ", "\n        </div>\n      </div>\n      <div\n        class=\"artboard\"\n        item-id=\"", "\"\n        title=\"", "\"\n        style=\"", ";\"\n      >\n        ", "\n      </div>\n    "]);
 
 var ItemManager = function (_UIElement) {
-    inherits(ItemManager, _UIElement);
+  inherits(ItemManager, _UIElement);
 
-    function ItemManager() {
-        classCallCheck(this, ItemManager);
-        return possibleConstructorReturn(this, (ItemManager.__proto__ || Object.getPrototypeOf(ItemManager)).apply(this, arguments));
+  function ItemManager() {
+    classCallCheck(this, ItemManager);
+    return possibleConstructorReturn(this, (ItemManager.__proto__ || Object.getPrototypeOf(ItemManager)).apply(this, arguments));
+  }
+
+  createClass(ItemManager, [{
+    key: "initialize",
+    value: function initialize() {
+      get$1(ItemManager.prototype.__proto__ || Object.getPrototypeOf(ItemManager.prototype), "initialize", this).call(this);
+
+      this.initializeLayerCache();
+    }
+  }, {
+    key: "templateClass",
+    value: function templateClass() {
+      return "area artboard-area";
+    }
+  }, {
+    key: "initializeLayerCache",
+    value: function initializeLayerCache() {
+      this.layerItems = {};
+      this.titleItems = {};
+    }
+  }, {
+    key: "getCachedLayerElement",
+    value: function getCachedLayerElement(id) {
+      if (!this.layerItems[id]) {
+        var $el = this.$el.$("[item-id=\"" + id + "\"]");
+
+        this.layerItems[id] = $el;
+      }
+
+      return this.layerItems[id];
+    }
+  }, {
+    key: "getCachedTitleElement",
+    value: function getCachedTitleElement(id) {
+      if (!this.titleItems[id]) {
+        var $el = this.$el.$("[artboard-id=\"" + id + "\"]");
+        this.titleItems[id] = $el;
+      }
+
+      return this.titleItems[id];
+    }
+  }, {
+    key: "makeLayer",
+    value: function makeLayer(layer) {
+      var _this2 = this;
+
+      var depth = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+      var children = layer.children;
+      var isLayoutItem = layer.isLayoutItem() ? "true" : "false";
+      var hasLayout = layer.hasLayout();
+      var hasRootItem = layer.isRootItem() ? "true" : "false";
+      return html(_templateObject$6, layer.id, layer.toString(), layer.title, depth, isLayoutItem, hasRootItem, hasLayout, children.map(function (it) {
+        return _this2.makeLayer(it, depth + 1);
+      }));
+    }
+  }, {
+    key: "makeArtBoard",
+    value: function makeArtBoard(artboard) {
+      var _this3 = this;
+
+      return html(_templateObject2$3, artboard.toBoundString(), artboard.id, artboard.title, artboard.id, artboard.title, artboard.toString(), artboard.rootItems.map(function (layer) {
+        return _this3.makeLayer(layer, 0);
+      }));
+    }
+  }, {
+    key: LOAD(),
+    value: function value$$1() {
+      var _this4 = this;
+
+      this.initializeLayerCache();
+      var project = editor$1.selection.currentProject;
+      if (!project) return EMPTY_STRING;
+
+      var list = project.artboards;
+
+      return list.map(function (artboard) {
+        return _this4.makeArtBoard(artboard);
+      });
+    }
+  }, {
+    key: "refresh",
+    value: function refresh() {
+      this.load();
+
+      this.refreshAllLayers();
+      // editor.selection.initRect()
+      // this.emit('setItemResizer')
+      // this.emit('removeGuideLine')
+    }
+  }, {
+    key: "selectItem",
+    value: function selectItem(item) {
+      if (item && item.isLayoutItem()) {
+        itemPositionCalc.clear();
+      } else {
+        itemPositionCalc.initialize(editor$1.config.get("selection.direction"));
+      }
+
+      // this.emit('removeGuideLine')
+    }
+  }, {
+    key: MOUSEOVER("$el .layer") + PREVENT + STOP,
+    value: function value$$1(e) {
+      var item = editor$1.get(e.$delegateTarget.attr("item-id"));
+    }
+  }, {
+    key: MOUSEOUT("$el .layer") + PREVENT + STOP,
+    value: function value$$1(e) {
+      var item = editor$1.get(e.$delegateTarget.attr("item-id"));
+    }
+  }, {
+    key: POINTERSTART("$el .artboard-title") + PREVENT + STOP + MOVE("moveArtBoard") + END("moveEndLayer"),
+    value: function value$$1(e) {
+      editor$1.config.set("selection.mode", "artboard");
+      editor$1.config.set("selection.direction", Segment.MOVE);
+
+      this.$artboardTitleContainer = e.$delegateTarget.parent();
+      this.item = editor$1.get(e.$delegateTarget.attr("artboard-id"));
+      this.item.select();
+      this.selectItem(this.item);
+      this.emit(CHANGE_SELECTION);
+    }
+  }, {
+    key: POINTERSTART("$el .layer") + PREVENT + STOP + MOVE("moveLayer") + END("moveEndLayer"),
+    value: function value$$1(e) {
+      editor$1.config.set("selection.mode", "layer");
+      editor$1.config.set("selection.direction", Segment.MOVE);
+
+      this.item = editor$1.get(e.$delegateTarget.attr("item-id"));
+      this.item.select();
+
+      if (e.altKey) {
+        // alt key 누르 상태로 시작하면 copy , 복사본만 움직임
+        var ids = editor$1.copy();
+        this.item = editor$1.get(ids[0]);
+        this.item.select();
+        this.refresh();
+        this.emit(COPY_ITEMS);
+      }
+
+      this.selectItem(this.item);
+
+      this.isLayoutItem = this.item.isLayoutItem();
+      this.emit(CHANGE_SELECTION);
+    }
+  }, {
+    key: "matchArtboardTitlePosition",
+    value: function matchArtboardTitlePosition(item) {
+      var $title = this.getCachedTitleElement(item.id);
+      if ($title) {
+        $title.parent().cssText(item.toBoundString());
+      }
+    }
+  }, {
+    key: "matchPosition",
+    value: function matchPosition() {
+      var items = editor$1.selection.items;
+      for (var i = 0, len = items.length; i < len; i++) {
+        var item = items[i];
+        itemPositionCalc.recover(item);
+        this.getCachedLayerElement(item.id).css(item.toBoundCSS());
+        this.matchArtboardTitlePosition(item);
+      }
+
+      this.emit("setItemResizer");
+    }
+  }, {
+    key: "matchGridPosition",
+    value: function matchGridPosition() {
+      editor$1.send(CHANGE_LAYER);
+      this.emit("setItemResizer");
+    }
+  }, {
+    key: EVENT("matchPosition"),
+    value: function value$$1() {
+      this.matchPosition();
+    }
+  }, {
+    key: "movePosition",
+    value: function movePosition(dx, dy) {
+      itemPositionCalc.calculateMove(dx, dy);
+      // this.emit('setGuideLine');
+      this.matchPosition();
+    }
+  }, {
+    key: "moveArtBoard",
+    value: function moveArtBoard(dx, dy) {
+      this.movePosition(dx, dy);
+      this.matchArtboardTitlePosition(this.item);
+      this.emit("setGuideLine");
+      this.emit(CHANGE_RECT);
+    }
+  }, {
+    key: "moveLayer",
+    value: function moveLayer(dx, dy) {
+      if (!this.isLayoutItem) {
+        this.movePosition(dx, dy);
+        this.emit("setGuideLine");
+        this.emit(CHANGE_RECT);
+      }
+    }
+  }, {
+    key: "moveEndLayer",
+    value: function moveEndLayer() {
+      this.emit(CHANGE_RECT);
+    }
+  }, {
+    key: "moveResizeEnd",
+    value: function moveResizeEnd() {
+      var _this5 = this;
+
+      editor$1.selection.items.forEach(function (item) {
+        return _this5.refreshLayerOffset(item);
+      });
+    }
+  }, {
+    key: EVENT("moveResizeEnd"),
+    value: function value$$1() {
+      this.moveResizeEnd();
+    }
+  }, {
+    key: "refreshLayerOffset",
+    value: function refreshLayerOffset(item) {
+      var _this6 = this;
+
+      var $el = this.getCachedLayerElement(item.id);
+
+      item.offset = $el.offsetRect();
+
+      item.children.forEach(function (child) {
+        _this6.refreshLayerOffset(child);
+      });
+    }
+  }, {
+    key: "refreshLayerOne",
+    value: function refreshLayerOne(item) {
+      var _this7 = this;
+
+      var $el = this.getCachedLayerElement(item.id);
+
+      var content = item.content || EMPTY_STRING;
+      $el.$(".text-layer").html(content);
+
+      $el.cssText(item.toString());
+      $el.attr("data-layout-item", item.isLayoutItem() ? "true" : "false");
+      $el.attr("data-has-layout", item.hasLayout() ? "true" : "false");
+
+      item.offset = $el.offsetRect();
+
+      item.children.forEach(function (child) {
+        _this7.refreshLayerOne(child);
+      });
+
+      this.refreshLayerOffset(item);
+    }
+  }, {
+    key: "refreshLayer",
+    value: function refreshLayer(layers) {
+      var _this8 = this;
+
+      layers = layers || editor$1.selection.layers;
+
+      layers.forEach(function (item) {
+        _this8.refreshLayerOne(item);
+      });
+    }
+  }, {
+    key: "refreshArtBoard",
+    value: function refreshArtBoard(artboards) {
+      var _this9 = this;
+
+      artboards = artboards || editor$1.selection.artboards;
+
+      artboards.forEach(function (artboard) {
+        _this9.refreshArtBoardOne(artboard);
+      });
+    }
+  }, {
+    key: "refreshArtBoardOne",
+    value: function refreshArtBoardOne(item) {
+      var _this10 = this;
+
+      var $el = this.getCachedLayerElement(item.id);
+
+      $el.cssText(item.toString());
+
+      item.allLayers.forEach(function (layer) {
+        _this10.refreshLayerOne(layer);
+      });
+
+      this.refreshLayerOffset(item);
+    }
+  }, {
+    key: "refreshAllLayers",
+    value: function refreshAllLayers() {
+      var _this11 = this;
+
+      var project = editor$1.selection.currentProject;
+      if (project) {
+        project.artboards.forEach(function (artboard) {
+          _this11.refreshArtBoardOne(artboard);
+        });
+      }
+    }
+  }, {
+    key: EVENT(CHANGE_INSPECTOR),
+    value: function value$$1() {
+      var current = editor$1.selection.current;
+
+      if (current) {
+        if (current.itemType == "artboard") {
+          this.refreshArtBoard(editor$1.selection.artboards);
+        } else {
+          this.refreshLayer(editor$1.selection.layers);
+        }
+      }
+    }
+  }, {
+    key: EVENT(CHANGE_ARTBOARD),
+    value: function value$$1(current) {
+      var artboards = current ? [current] : editor$1.selection.artboards;
+      this.refreshArtBoard(artboards);
     }
 
-    createClass(ItemManager, [{
-        key: "initialize",
-        value: function initialize() {
-            get$1(ItemManager.prototype.__proto__ || Object.getPrototypeOf(ItemManager.prototype), "initialize", this).call(this);
+    // indivisual layer effect
 
-            this.initializeLayerCache();
-        }
-    }, {
-        key: "templateClass",
-        value: function templateClass() {
-            return "area artboard-area";
-        }
-    }, {
-        key: "initializeLayerCache",
-        value: function initializeLayerCache() {
-            this.layerItems = {};
-            this.titleItems = {};
-        }
-    }, {
-        key: "getCachedLayerElement",
-        value: function getCachedLayerElement(id) {
+  }, {
+    key: EVENT(CHANGE_LAYER),
+    value: function value$$1(current) {
+      var layers = current ? [current] : editor$1.selection.layers;
+      this.refreshLayer(layers);
+    }
+  }, {
+    key: EVENT("refreshItem"),
+    value: function value$$1(item) {
+      if (item.itemType == "artboard") {
+        this.refreshArtBoard([item]);
+      } else if (item.itemType == "layer") {
+        this.refreshLayer([item]);
+      }
+    }
+  }, {
+    key: EVENT(CHANGE_RECT),
+    value: function value$$1(changeType) {
+      if (changeType == "grid") {
+        this.matchGridPosition();
+      } else {
+        this.matchPosition();
+      }
 
-            if (!this.layerItems[id]) {
-                var $el = this.$el.$("[item-id=\"" + id + "\"]");
+      // this.emit('removeGuideLine')
+    }
 
-                this.layerItems[id] = $el;
-            }
+    // all effect
 
-            return this.layerItems[id];
-        }
-    }, {
-        key: "getCachedTitleElement",
-        value: function getCachedTitleElement(id) {
-
-            if (!this.titleItems[id]) {
-                var $el = this.$el.$("[artboard-id=\"" + id + "\"]");
-                this.titleItems[id] = $el;
-            }
-
-            return this.titleItems[id];
-        }
-    }, {
-        key: "makeLayer",
-        value: function makeLayer(layer) {
-            var _this2 = this;
-
-            var depth = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-
-            var children = layer.children;
-            var isLayoutItem = layer.isLayoutItem() ? 'true' : 'false';
-            var hasLayout = layer.hasLayout();
-            var hasRootItem = layer.isRootItem() ? 'true' : 'false';
-            return html(_templateObject$6, layer.id, layer.toString(), layer.title, depth, isLayoutItem, hasRootItem, hasLayout, children.map(function (it) {
-                return _this2.makeLayer(it, depth + 1);
-            }));
-        }
-    }, {
-        key: "makeArtBoard",
-        value: function makeArtBoard(artboard) {
-            var _this3 = this;
-
-            return html(_templateObject2$3, artboard.toBoundString(), artboard.id, artboard.title, artboard.id, artboard.title, artboard.toString(), artboard.rootItems.map(function (layer) {
-                return _this3.makeLayer(layer, 0);
-            }));
-        }
-    }, {
-        key: LOAD(),
-        value: function value$$1() {
-            var _this4 = this;
-
-            this.initializeLayerCache();
-            var project = editor$1.selection.currentProject;
-            if (!project) return EMPTY_STRING;
-
-            var list = project.artboards;
-
-            return list.map(function (artboard) {
-                return _this4.makeArtBoard(artboard);
-            });
-        }
-    }, {
-        key: "refresh",
-        value: function refresh() {
-            this.load();
-
-            this.refreshAllLayers();
-            // editor.selection.initRect()
-            // this.emit('setItemResizer')
-            // this.emit('removeGuideLine')
-        }
-    }, {
-        key: "selectItem",
-        value: function selectItem(item) {
-            if (item && item.isLayoutItem()) {
-                itemPositionCalc.clear();
-            } else {
-                itemPositionCalc.initialize(editor$1.config.get('selection.direction'));
-            }
-
-            // this.emit('removeGuideLine')    
-        }
-    }, {
-        key: MOUSEOVER('$el .layer') + PREVENT + STOP,
-        value: function value$$1(e) {
-            var item = editor$1.get(e.$delegateTarget.attr('item-id'));
-        }
-    }, {
-        key: MOUSEOUT('$el .layer') + PREVENT + STOP,
-        value: function value$$1(e) {
-            var item = editor$1.get(e.$delegateTarget.attr('item-id'));
-        }
-    }, {
-        key: POINTERSTART('$el .artboard-title') + PREVENT + STOP + MOVE('moveArtBoard') + END('moveEndLayer'),
-        value: function value$$1(e) {
-            editor$1.config.set('selection.mode', 'artboard');
-            editor$1.config.set('selection.direction', Segment.MOVE);
-
-            this.$artboardTitleContainer = e.$delegateTarget.parent();
-            this.item = editor$1.get(e.$delegateTarget.attr('artboard-id'));
-            this.item.select();
-            this.selectItem(this.item);
-            this.emit(CHANGE_SELECTION);
-        }
-    }, {
-        key: POINTERSTART('$el .layer') + PREVENT + STOP + MOVE('moveLayer') + END('moveEndLayer'),
-        value: function value$$1(e) {
-            editor$1.config.set('selection.mode', 'layer');
-            editor$1.config.set('selection.direction', Segment.MOVE);
-
-            this.item = editor$1.get(e.$delegateTarget.attr('item-id'));
-            this.item.select();
-
-            if (e.altKey) {
-                // alt key 누르 상태로 시작하면 copy , 복사본만 움직임 
-                var ids = editor$1.copy();
-                this.item = editor$1.get(ids[0]);
-                this.item.select();
-                this.refresh();
-                this.emit(COPY_ITEMS);
-            }
-
-            this.selectItem(this.item);
-
-            this.isLayoutItem = this.item.isLayoutItem();
-            this.emit(CHANGE_SELECTION);
-        }
-    }, {
-        key: "matchArtboardTitlePosition",
-        value: function matchArtboardTitlePosition(item) {
-            var $title = this.getCachedTitleElement(item.id);
-            if ($title) {
-                $title.parent().cssText(item.toBoundString());
-            }
-        }
-    }, {
-        key: "matchPosition",
-        value: function matchPosition() {
-            var items = editor$1.selection.items;
-            for (var i = 0, len = items.length; i < len; i++) {
-                var item = items[i];
-                itemPositionCalc.recover(item);
-                this.getCachedLayerElement(item.id).css(item.toBoundCSS());
-                this.matchArtboardTitlePosition(item);
-            }
-
-            this.emit('setItemResizer');
-        }
-    }, {
-        key: "matchGridPosition",
-        value: function matchGridPosition() {
-
-            editor$1.send(CHANGE_LAYER);
-            this.emit('setItemResizer');
-        }
-    }, {
-        key: EVENT('matchPosition'),
-        value: function value$$1() {
-            this.matchPosition();
-        }
-    }, {
-        key: "movePosition",
-        value: function movePosition(dx, dy) {
-            itemPositionCalc.calculateMove(dx, dy);
-            // this.emit('setGuideLine');         
-            this.matchPosition();
-        }
-    }, {
-        key: "moveArtBoard",
-        value: function moveArtBoard(dx, dy) {
-            this.movePosition(dx, dy);
-            this.matchArtboardTitlePosition(this.item);
-            this.emit('setGuideLine');
-            this.emit(CHANGE_RECT);
-        }
-    }, {
-        key: "moveLayer",
-        value: function moveLayer(dx, dy) {
-
-            if (!this.isLayoutItem) {
-                this.movePosition(dx, dy);
-                this.emit('setGuideLine');
-                this.emit(CHANGE_RECT);
-            }
-        }
-    }, {
-        key: "moveEndLayer",
-        value: function moveEndLayer() {
-            this.emit(CHANGE_RECT);
-        }
-    }, {
-        key: "moveResizeEnd",
-        value: function moveResizeEnd() {
-            var _this5 = this;
-
-            editor$1.selection.items.forEach(function (item) {
-                return _this5.refreshLayerOffset(item);
-            });
-        }
-    }, {
-        key: EVENT('moveResizeEnd'),
-        value: function value$$1() {
-            this.moveResizeEnd();
-        }
-    }, {
-        key: "refreshLayerOffset",
-        value: function refreshLayerOffset(item) {
-            var _this6 = this;
-
-            var $el = this.getCachedLayerElement(item.id);
-
-            item.offset = $el.offsetRect();
-
-            item.children.forEach(function (child) {
-                _this6.refreshLayerOffset(child);
-            });
-        }
-    }, {
-        key: "refreshLayerOne",
-        value: function refreshLayerOne(item) {
-            var _this7 = this;
-
-            var $el = this.getCachedLayerElement(item.id);
-
-            var content = item.content || EMPTY_STRING;
-            $el.$('.text-layer').html(content);
-
-            $el.cssText(item.toString());
-            $el.attr('data-layout-item', item.isLayoutItem() ? 'true' : 'false');
-            $el.attr('data-has-layout', item.hasLayout() ? 'true' : 'false');
-
-            item.offset = $el.offsetRect();
-
-            item.children.forEach(function (child) {
-                _this7.refreshLayerOne(child);
-            });
-
-            this.refreshLayerOffset(item);
-        }
-    }, {
-        key: "refreshLayer",
-        value: function refreshLayer(layers) {
-            var _this8 = this;
-
-            layers = layers || editor$1.selection.layers;
-
-            layers.forEach(function (item) {
-                _this8.refreshLayerOne(item);
-            });
-        }
-    }, {
-        key: "refreshArtBoard",
-        value: function refreshArtBoard(artboards) {
-            var _this9 = this;
-
-            artboards = artboards || editor$1.selection.artboards;
-
-            artboards.forEach(function (artboard) {
-                _this9.refreshArtBoardOne(artboard);
-            });
-        }
-    }, {
-        key: "refreshArtBoardOne",
-        value: function refreshArtBoardOne(item) {
-            var _this10 = this;
-
-            var $el = this.getCachedLayerElement(item.id);
-
-            $el.cssText(item.toString());
-
-            item.allLayers.forEach(function (layer) {
-                _this10.refreshLayerOne(layer);
-            });
-
-            this.refreshLayerOffset(item);
-        }
-    }, {
-        key: "refreshAllLayers",
-        value: function refreshAllLayers() {
-            var _this11 = this;
-
-            var project = editor$1.selection.currentProject;
-            if (project) {
-                project.artboards.forEach(function (artboard) {
-                    _this11.refreshArtBoardOne(artboard);
-                });
-            }
-        }
-    }, {
-        key: EVENT(CHANGE_INSPECTOR),
-        value: function value$$1() {
-            var current = editor$1.selection.current;
-
-            if (current) {
-                if (current.itemType == 'artboard') {
-                    this.refreshArtBoard(editor$1.selection.artboards);
-                } else {
-                    this.refreshLayer(editor$1.selection.layers);
-                }
-            }
-        }
-    }, {
-        key: EVENT(CHANGE_ARTBOARD),
-        value: function value$$1(current) {
-            var artboards = current ? [current] : editor$1.selection.artboards;
-            this.refreshArtBoard(artboards);
-        }
-
-        // indivisual layer effect 
-
-    }, {
-        key: EVENT(CHANGE_LAYER),
-        value: function value$$1(current) {
-            var layers = current ? [current] : editor$1.selection.layers;
-            this.refreshLayer(layers);
-        }
-    }, {
-        key: EVENT('refreshItem'),
-        value: function value$$1(item) {
-            if (item.itemType == 'artboard') {
-                this.refreshArtBoard([item]);
-                this.emit(CHANGE_ARTBOARD, item);
-            } else if (item.itemType == 'layer') {
-                this.refreshLayer([item]);
-                this.emit(CHANGE_LAYER, item);
-            }
-        }
-    }, {
-        key: EVENT(CHANGE_RECT),
-        value: function value$$1(changeType) {
-            if (changeType == 'grid') {
-                this.matchGridPosition();
-            } else {
-                this.matchPosition();
-            }
-
-            // this.emit('removeGuideLine')        
-        }
-
-        // all effect 
-
-    }, {
-        key: EVENT(CHANGE_EDITOR),
-        value: function value$$1() {
-            this.refresh();
-            // editor.selection.initRect()
-            this.emit('setItemResizer');
-            this.emit('removeGuideLine');
-        }
-    }, {
-        key: EVENT(COPY_ITEMS),
-        value: function value$$1() {
-            this.refresh();
-        }
-    }]);
-    return ItemManager;
+  }, {
+    key: EVENT("refreshItemManager"),
+    value: function value$$1() {
+      this.refresh();
+      // editor.selection.initRect()
+      this.emit("setItemResizer");
+      this.emit("removeGuideLine");
+    }
+  }, {
+    key: EVENT(COPY_ITEMS),
+    value: function value$$1() {
+      this.refresh();
+    }
+  }]);
+  return ItemManager;
 }(UIElement);
 
 var RowEditor = function (_UIElement) {
@@ -20649,6 +21257,7 @@ var RowEditor = function (_UIElement) {
                 if (isRefresh) this.refresh();
 
                 this.emit('refreshItem', current);
+                this.emit('refreshPreviewEditor', current);
             }
         }
     }, {
@@ -20858,6 +21467,7 @@ var ColumnEditor = function (_UIElement) {
 
                 if (isRefresh) this.refresh();
                 this.emit('refreshItem', current);
+                this.emit('refreshPreviewEditor', current);
             }
         }
     }, {
@@ -20893,7 +21503,7 @@ var ColumnEditor = function (_UIElement) {
                 if (type == 'add') {
                     len.add(1);
                 } else if (type == 'sub') {
-                    len.add(-1);
+                    len.sub(1);
                 }
             }
 
@@ -21232,7 +21842,7 @@ var PreviewEditor = function (_UIElement) {
             this.bindCalculateOffset();
         }
     }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_ARTBOARD, CHANGE_INSPECTOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_LAYER, CHANGE_ARTBOARD, CHANGE_INSPECTOR, CHANGE_SELECTION, 'refreshPreviewEditor'),
         value: function value$$1() {
             this.refresh();
         }
@@ -21659,9 +22269,11 @@ var CanvasView = function (_UIElement) {
         // all effect 
 
     }, {
-        key: EVENT(CHANGE_EDITOR),
+        key: EVENT('refreshCanvas'),
         value: function value() {
             this.refresh();
+
+            this.emit('refreshItemManager');
         }
     }, {
         key: SCROLL('$board'),
@@ -21762,23 +22374,32 @@ var folder = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24
 
 var artboard = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path d=\"M6 2c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6H6zm7 7V3.5L18.5 9H13z\"/></svg>";
 
+var image$3 = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\">\n<path d=\"M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z\"/></svg>";
+
+var setting = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 20 20\"><path d=\"M15.95 10.78c.03-.25.05-.51.05-.78s-.02-.53-.06-.78l1.69-1.32c.15-.12.19-.34.1-.51l-1.6-2.77c-.1-.18-.31-.24-.49-.18l-1.99.8c-.42-.32-.86-.58-1.35-.78L12 2.34c-.03-.2-.2-.34-.4-.34H8.4c-.2 0-.36.14-.39.34l-.3 2.12c-.49.2-.94.47-1.35.78l-1.99-.8c-.18-.07-.39 0-.49.18l-1.6 2.77c-.1.18-.06.39.1.51l1.69 1.32c-.04.25-.07.52-.07.78s.02.53.06.78L2.37 12.1c-.15.12-.19.34-.1.51l1.6 2.77c.1.18.31.24.49.18l1.99-.8c.42.32.86.58 1.35.78l.3 2.12c.04.2.2.34.4.34h3.2c.2 0 .37-.14.39-.34l.3-2.12c.49-.2.94-.47 1.35-.78l1.99.8c.18.07.39 0 .49-.18l1.6-2.77c.1-.18.06-.39-.1-.51l-1.67-1.32zM10 13c-1.65 0-3-1.35-3-3s1.35-3 3-3 3 1.35 3 3-1.35 3-3 3z\"/></svg>";
+
+var remove2 = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path d=\"M19 13H5v-2h14v2z\"/></svg>";
+
 var icon = {
-    artboard: artboard,
-    folder: folder,
-    publish: publish,
-    add_note: add_note,
-    add: add,
-    save: save,
-    export: exportIcon,
-    redo: redo,
-    undo: undo,
-    lock: lock,
-    remove: remove,
-    copy: copy,
-    visible: visible,
-    add_box: add_box,
-    create_folder: create_folder,
-    chevron_right: chevron_right
+  remove2: remove2,
+  setting: setting,
+  image: image$3,
+  artboard: artboard,
+  folder: folder,
+  publish: publish,
+  add_note: add_note,
+  add: add,
+  save: save,
+  export: exportIcon,
+  redo: redo,
+  undo: undo,
+  lock: lock,
+  remove: remove,
+  copy: copy,
+  visible: visible,
+  add_box: add_box,
+  create_folder: create_folder,
+  chevron_right: chevron_right
 };
 
 var Export = function (_MenuItem) {
@@ -22376,6 +22997,7 @@ var AddRect = function (_MenuItem) {
             if (!project) {
                 project = editor$1.addProject(new Project({ name: 'New Project' }));
                 project.select();
+                this.emit('refreshProjectListView');
             }
 
             var artboard = project.artboard || editor$1.selection.currentArtBoard;
@@ -22383,6 +23005,7 @@ var AddRect = function (_MenuItem) {
             if (!artboard) {
                 artboard = project.add(new ArtBoard({ name: 'New ArtBoard' }));
                 artboard.select();
+                this.emit('refreshLayerListView');
             }
 
             var current = editor$1.selection.current;
@@ -22393,7 +23016,8 @@ var AddRect = function (_MenuItem) {
             }));
             layer.select();
 
-            this.emit(CHANGE_EDITOR);
+            this.emit('refreshLayerListView');
+            this.emit('refreshCanvas');
         }
     }]);
     return AddRect;
@@ -22719,192 +23343,199 @@ var RepeatingLinearGradient = function (_LinearGradient) {
 
 var _DEFINED_POSITIONS$1;
 
-var DEFINED_POSITIONS$1 = (_DEFINED_POSITIONS$1 = {}, defineProperty(_DEFINED_POSITIONS$1, 'center', true), defineProperty(_DEFINED_POSITIONS$1, 'top', true), defineProperty(_DEFINED_POSITIONS$1, 'left', true), defineProperty(_DEFINED_POSITIONS$1, 'right', true), defineProperty(_DEFINED_POSITIONS$1, 'bottom', true), _DEFINED_POSITIONS$1);
+var DEFINED_POSITIONS$1 = (_DEFINED_POSITIONS$1 = {}, defineProperty(_DEFINED_POSITIONS$1, "center", true), defineProperty(_DEFINED_POSITIONS$1, "top", true), defineProperty(_DEFINED_POSITIONS$1, "left", true), defineProperty(_DEFINED_POSITIONS$1, "right", true), defineProperty(_DEFINED_POSITIONS$1, "bottom", true), _DEFINED_POSITIONS$1);
 
 var RadialGradient = function (_Gradient) {
-    inherits(RadialGradient, _Gradient);
+  inherits(RadialGradient, _Gradient);
 
-    function RadialGradient() {
-        classCallCheck(this, RadialGradient);
-        return possibleConstructorReturn(this, (RadialGradient.__proto__ || Object.getPrototypeOf(RadialGradient)).apply(this, arguments));
+  function RadialGradient() {
+    classCallCheck(this, RadialGradient);
+    return possibleConstructorReturn(this, (RadialGradient.__proto__ || Object.getPrototypeOf(RadialGradient)).apply(this, arguments));
+  }
+
+  createClass(RadialGradient, [{
+    key: "getDefaultObject",
+    value: function getDefaultObject() {
+      var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      return get$1(RadialGradient.prototype.__proto__ || Object.getPrototypeOf(RadialGradient.prototype), "getDefaultObject", this).call(this, _extends({
+        type: "radial-gradient",
+        radialType: "ellipse",
+        radialPosition: [Position.CENTER, Position.CENTER]
+      }, obj));
     }
+  }, {
+    key: "isRadial",
+    value: function isRadial() {
+      return true;
+    }
+  }, {
+    key: "toString",
+    value: function toString() {
+      var colorString = this.getColorString();
+      var json = this.json;
+      var opt = EMPTY_STRING;
+      var radialType = json.radialType;
+      var radialPosition = json.radialPosition || ["center", "center"];
 
-    createClass(RadialGradient, [{
-        key: "getDefaultObject",
-        value: function getDefaultObject() {
-            var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      radialPosition = DEFINED_POSITIONS$1[radialPosition] ? radialPosition : radialPosition.join(WHITE_STRING$1);
 
-            return get$1(RadialGradient.prototype.__proto__ || Object.getPrototypeOf(RadialGradient.prototype), "getDefaultObject", this).call(this, _extends({
-                type: 'radial-gradient',
-                radialType: 'ellipse'
-            }, obj));
-        }
-    }, {
-        key: "isRadial",
-        value: function isRadial() {
-            return true;
-        }
-    }, {
-        key: "toString",
-        value: function toString() {
-            var colorString = this.getColorString();
-            var json = this.json;
-            var opt = EMPTY_STRING;
-            var radialType = json.radialType;
-            var radialPosition = json.radialPosition || ['center', 'center'];
+      opt = radialPosition ? radialType + " at " + radialPosition : radialType;
 
-            radialPosition = DEFINED_POSITIONS$1[radialPosition] ? radialPosition : radialPosition.join(WHITE_STRING$1);
-
-            opt = radialPosition ? radialType + " at " + radialPosition : radialType;
-
-            return json.type + "(" + opt + ", " + colorString + ")";
-        }
-    }]);
-    return RadialGradient;
+      return json.type + "(" + opt + ", " + colorString + ")";
+    }
+  }]);
+  return RadialGradient;
 }(Gradient);
 
 var RepeatingRadialGradient = function (_RadialGradient) {
-    inherits(RepeatingRadialGradient, _RadialGradient);
+  inherits(RepeatingRadialGradient, _RadialGradient);
 
-    function RepeatingRadialGradient() {
-        classCallCheck(this, RepeatingRadialGradient);
-        return possibleConstructorReturn(this, (RepeatingRadialGradient.__proto__ || Object.getPrototypeOf(RepeatingRadialGradient)).apply(this, arguments));
+  function RepeatingRadialGradient() {
+    classCallCheck(this, RepeatingRadialGradient);
+    return possibleConstructorReturn(this, (RepeatingRadialGradient.__proto__ || Object.getPrototypeOf(RepeatingRadialGradient)).apply(this, arguments));
+  }
+
+  createClass(RepeatingRadialGradient, [{
+    key: "getDefaultObject",
+    value: function getDefaultObject() {
+      return get$1(RepeatingRadialGradient.prototype.__proto__ || Object.getPrototypeOf(RepeatingRadialGradient.prototype), "getDefaultObject", this).call(this, {
+        type: "repeating-radial-gradient"
+      });
     }
-
-    createClass(RepeatingRadialGradient, [{
-        key: "getDefaultObject",
-        value: function getDefaultObject() {
-            return get$1(RepeatingRadialGradient.prototype.__proto__ || Object.getPrototypeOf(RepeatingRadialGradient.prototype), "getDefaultObject", this).call(this, { type: 'repeating-radial-gradient', angle: 0 });
-        }
-    }]);
-    return RepeatingRadialGradient;
+  }]);
+  return RepeatingRadialGradient;
 }(RadialGradient);
 
 var _DEFINED_POSITIONS$2;
 
-var DEFINED_POSITIONS$2 = (_DEFINED_POSITIONS$2 = {}, defineProperty(_DEFINED_POSITIONS$2, 'center', true), defineProperty(_DEFINED_POSITIONS$2, 'top', true), defineProperty(_DEFINED_POSITIONS$2, 'left', true), defineProperty(_DEFINED_POSITIONS$2, 'right', true), defineProperty(_DEFINED_POSITIONS$2, 'bottom', true), _DEFINED_POSITIONS$2);
+var DEFINED_POSITIONS$2 = (_DEFINED_POSITIONS$2 = {}, defineProperty(_DEFINED_POSITIONS$2, "center", true), defineProperty(_DEFINED_POSITIONS$2, "top", true), defineProperty(_DEFINED_POSITIONS$2, "left", true), defineProperty(_DEFINED_POSITIONS$2, "right", true), defineProperty(_DEFINED_POSITIONS$2, "bottom", true), _DEFINED_POSITIONS$2);
 
-var DEFINED_ANGLES$2 = {
-    'to top': 0,
-    'to top right': 45,
-    'to right': 90,
-    'to bottom right': 135,
-    'to bottom': 180,
-    'to bottom left': 225,
-    'to left': 270,
-    'to top left': 315
-
+var DEFINED_ANGLES$3 = {
+  "to top": 0,
+  "to top right": 45,
+  "to right": 90,
+  "to bottom right": 135,
+  "to bottom": 180,
+  "to bottom left": 225,
+  "to left": 270,
+  "to top left": 315
 };
 
 var ConicGradient = function (_Gradient) {
-    inherits(ConicGradient, _Gradient);
+  inherits(ConicGradient, _Gradient);
 
-    function ConicGradient() {
-        classCallCheck(this, ConicGradient);
-        return possibleConstructorReturn(this, (ConicGradient.__proto__ || Object.getPrototypeOf(ConicGradient)).apply(this, arguments));
+  function ConicGradient() {
+    classCallCheck(this, ConicGradient);
+    return possibleConstructorReturn(this, (ConicGradient.__proto__ || Object.getPrototypeOf(ConicGradient)).apply(this, arguments));
+  }
+
+  createClass(ConicGradient, [{
+    key: "getDefaultObject",
+    value: function getDefaultObject() {
+      var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      return get$1(ConicGradient.prototype.__proto__ || Object.getPrototypeOf(ConicGradient.prototype), "getDefaultObject", this).call(this, _extends({
+        type: "conic-gradient",
+        angle: 0,
+        radialPosition: [Position.CENTER, Position.CENTER]
+      }, obj));
     }
+  }, {
+    key: "isConic",
+    value: function isConic() {
+      return true;
+    }
+  }, {
+    key: "hasAngle",
+    value: function hasAngle() {
+      return true;
+    }
+  }, {
+    key: "getColorString",
+    value: function getColorString() {
+      var colorsteps = this.colorsteps;
+      if (!colorsteps) return EMPTY_STRING;
 
-    createClass(ConicGradient, [{
-        key: "getDefaultObject",
-        value: function getDefaultObject() {
-            var obj = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-            return get$1(ConicGradient.prototype.__proto__ || Object.getPrototypeOf(ConicGradient.prototype), "getDefaultObject", this).call(this, _extends({
-                type: 'conic-gradient',
-                angle: 0,
-                radialPosition: [Position.CENTER, Position.CENTER]
-            }, obj));
+      colorsteps.sort(function (a, b) {
+        if (a.percent == b.percent) {
+          if (a.index > b.index) return 1;
+          if (a.index < b.index) return 0;
+          return 0;
         }
-    }, {
-        key: "isConic",
-        value: function isConic() {
-            return true;
+        return a.percent > b.percent ? 1 : -1;
+      });
+
+      var newColors = [];
+      colorsteps.forEach(function (c, index) {
+        if (c.cut && index > 0) {
+          var prevItem = colorsteps[index - 1];
+          newColors.push(new ColorStep({
+            color: c.color,
+            unit: prevItem.unit,
+            percent: prevItem.percent,
+            px: prevItem.px,
+            em: prevItem.em
+          }));
         }
-    }, {
-        key: "hasAngle",
-        value: function hasAngle() {
-            return true;
-        }
-    }, {
-        key: "getColorString",
-        value: function getColorString() {
-            var colorsteps = this.colorsteps;
-            if (!colorsteps) return EMPTY_STRING;
 
-            colorsteps.sort(function (a, b) {
-                if (a.percent == b.percent) {
-                    if (a.index > b.index) return 1;
-                    if (a.index < b.index) return 0;
-                    return 0;
-                }
-                return a.percent > b.percent ? 1 : -1;
-            });
+        newColors.push(c);
+      });
 
-            var newColors = [];
-            colorsteps.forEach(function (c, index) {
-                if (c.cut && index > 0) {
-                    var prevItem = colorsteps[index - 1];
-                    newColors.push(new ColorStep({
-                        color: c.color,
-                        unit: prevItem.unit,
-                        percent: prevItem.percent,
-                        px: prevItem.px,
-                        em: prevItem.em
-                    }));
-                }
+      return newColors.map(function (f) {
+        var deg$$1 = Math.floor(f.percent * 3.6);
+        return f.color + " " + deg$$1 + "deg";
+      }).join(",");
+    }
+  }, {
+    key: "toString",
+    value: function toString() {
+      var colorString = this.getColorString();
 
-                newColors.push(c);
-            });
+      var opt = [];
+      var json = this.json;
 
-            return newColors.map(function (f) {
-                var deg$$1 = Math.floor(f.percent * 3.6);
-                return f.color + " " + deg$$1 + "deg";
-            }).join(',');
-        }
-    }, {
-        key: "toString",
-        value: function toString() {
-            var colorString = this.getColorString();
+      var conicAngle = json.angle;
+      var conicPosition = json.radialPosition || Position.CENTER;
 
-            var opt = [];
-            var json = this.json;
-            var conicAngle = json.angle;
-            var conicPosition = json.radialPosition;
+      conicPosition = DEFINED_POSITIONS$2[conicPosition] ? conicPosition : conicPosition.join(WHITE_STRING$1);
 
-            conicPosition = DEFINED_POSITIONS$2[conicPosition] ? conicPosition : conicPosition.join(WHITE_STRING$1);
+      if (isNotUndefined(conicAngle)) {
+        conicAngle = +(DEFINED_ANGLES$3[conicAngle] || conicAngle);
+        opt.push("from " + conicAngle + "deg");
+      }
 
-            if (isNotUndefined(conicAngle)) {
-                conicAngle = +(DEFINED_ANGLES$2[conicAngle] || conicAngle);
-                opt.push("from " + conicAngle + "deg");
-            }
+      if (conicPosition) {
+        opt.push("at " + conicPosition);
+      }
 
-            if (conicPosition) {
-                opt.push("at " + conicPosition);
-            }
+      var optString = opt.length ? opt.join(WHITE_STRING$1) + "," : EMPTY_STRING;
 
-            var optString = opt.length ? opt.join(WHITE_STRING$1) + ',' : EMPTY_STRING;
-
-            return json.type + "(" + optString + " " + colorString + ")";
-        }
-    }]);
-    return ConicGradient;
+      return json.type + "(" + optString + " " + colorString + ")";
+    }
+  }]);
+  return ConicGradient;
 }(Gradient);
 
 var RepeatingConicGradient = function (_ConicGradient) {
-    inherits(RepeatingConicGradient, _ConicGradient);
+  inherits(RepeatingConicGradient, _ConicGradient);
 
-    function RepeatingConicGradient() {
-        classCallCheck(this, RepeatingConicGradient);
-        return possibleConstructorReturn(this, (RepeatingConicGradient.__proto__ || Object.getPrototypeOf(RepeatingConicGradient)).apply(this, arguments));
+  function RepeatingConicGradient() {
+    classCallCheck(this, RepeatingConicGradient);
+    return possibleConstructorReturn(this, (RepeatingConicGradient.__proto__ || Object.getPrototypeOf(RepeatingConicGradient)).apply(this, arguments));
+  }
+
+  createClass(RepeatingConicGradient, [{
+    key: "getDefaultObject",
+    value: function getDefaultObject() {
+      return get$1(RepeatingConicGradient.prototype.__proto__ || Object.getPrototypeOf(RepeatingConicGradient.prototype), "getDefaultObject", this).call(this, {
+        type: "repeating-conic-gradient",
+        angle: 0,
+        radialPosition: [Position.CENTER, Position.CENTER]
+      });
     }
-
-    createClass(RepeatingConicGradient, [{
-        key: "getDefaultObject",
-        value: function getDefaultObject() {
-            return get$1(RepeatingConicGradient.prototype.__proto__ || Object.getPrototypeOf(RepeatingConicGradient.prototype), "getDefaultObject", this).call(this, { type: 'repeating-conic-gradient' });
-        }
-    }]);
-    return RepeatingConicGradient;
+  }]);
+  return RepeatingConicGradient;
 }(ConicGradient);
 
 var GradientClassList = {
@@ -23300,7 +23931,7 @@ var ProjectListView = function (_UIElement) {
             }
         }
     }, {
-        key: EVENT(CHANGE_EDITOR),
+        key: EVENT('refreshProjectListView'),
         value: function value$$1() {
             this.refresh();
         }
@@ -23383,303 +24014,306 @@ var Directory = function (_Item) {
     return Directory;
 }(Item);
 
-var _templateObject$9 = taggedTemplateLiteral(["\n            <div class='tree-item depth-", " ", " ", "' item-id=\"", "\" item-type='", "' ", ">\n                <div class=\"item-depth\"></div>            \n                ", "\n                ", "\n                <div class=\"item-title\" data-label='", "'>", " ", "</div> \n                <div class='item-tools'>          \n                    ", "\n                    ", "\n                    <button type=\"button\" class='delete-item' title=\"Remove\">", "</button>\n                    <button type=\"button\" class='copy-item' title=\"Copy\">", "</button>\n                </div>                \n            </div>\n            ", "\n        "], ["\n            <div class='tree-item depth-", " ", " ", "' item-id=\"", "\" item-type='", "' ", ">\n                <div class=\"item-depth\"></div>            \n                ", "\n                ", "\n                <div class=\"item-title\" data-label='", "'>", " ", "</div> \n                <div class='item-tools'>          \n                    ", "\n                    ", "\n                    <button type=\"button\" class='delete-item' title=\"Remove\">", "</button>\n                    <button type=\"button\" class='copy-item' title=\"Copy\">", "</button>\n                </div>                \n            </div>\n            ", "\n        "]);
-var _templateObject2$4 = taggedTemplateLiteral(["<div class='tree-children'>\n                ", "\n            </div>"], ["<div class='tree-children'>\n                ", "\n            </div>"]);
+var _templateObject$9 = taggedTemplateLiteral(["\n      <div\n        class=\"tree-item depth-", " ", " ", "\"\n        item-id=\"", "\"\n        item-type=\"", "\"\n        ", "\n      >\n        <div class=\"item-depth\"></div>\n        ", "\n        ", "\n        <div class=\"item-title\" data-label=\"", "\">\n          ", " ", "\n        </div>\n        <div class=\"item-tools\">\n          ", "\n          ", "\n          <button type=\"button\" class=\"delete-item\" title=\"Remove\">\n            ", "\n          </button>\n          <button type=\"button\" class=\"copy-item\" title=\"Copy\">\n            ", "\n          </button>\n        </div>\n      </div>\n      ", "\n    "], ["\n      <div\n        class=\"tree-item depth-", " ", " ", "\"\n        item-id=\"", "\"\n        item-type=\"", "\"\n        ", "\n      >\n        <div class=\"item-depth\"></div>\n        ", "\n        ", "\n        <div class=\"item-title\" data-label=\"", "\">\n          ", " ", "\n        </div>\n        <div class=\"item-tools\">\n          ", "\n          ", "\n          <button type=\"button\" class=\"delete-item\" title=\"Remove\">\n            ", "\n          </button>\n          <button type=\"button\" class=\"copy-item\" title=\"Copy\">\n            ", "\n          </button>\n        </div>\n      </div>\n      ", "\n    "]);
+var _templateObject2$4 = taggedTemplateLiteral(["\n          <div class=\"tree-children\">\n            ", "\n          </div>\n        "], ["\n          <div class=\"tree-children\">\n            ", "\n          </div>\n        "]);
 
 var LayerListView = function (_UIElement) {
-    inherits(LayerListView, _UIElement);
+  inherits(LayerListView, _UIElement);
 
-    function LayerListView() {
-        classCallCheck(this, LayerListView);
-        return possibleConstructorReturn(this, (LayerListView.__proto__ || Object.getPrototypeOf(LayerListView)).apply(this, arguments));
+  function LayerListView() {
+    classCallCheck(this, LayerListView);
+    return possibleConstructorReturn(this, (LayerListView.__proto__ || Object.getPrototypeOf(LayerListView)).apply(this, arguments));
+  }
+
+  createClass(LayerListView, [{
+    key: "template",
+    value: function template() {
+      return "\n            <div class='layer-list-view'>\n                <div class=\"layer-list-toolbar\">\n                    <span class='title' ref=\"$title\"></span>\n                    <span class='layer-tools'>\n                        <div class=\"button-group\">\n                            <button type=\"button\" ref=\"$addArtBoard\" title=\"add ArtBoard\">" + icon.add_note + "</button>\n                            <button type=\"button\" ref=\"$addDirectory\" title=\"add Directory\">" + icon.create_folder + "</button>\n                        </div>\n                    </span> \n                </div>\n                <div class=\"layer-list\" ref=\"$layerList\"></div>\n            </div>\n        ";
+    }
+  }, {
+    key: "makeItem",
+    value: function makeItem(item, depth) {
+      var _this2 = this;
+
+      var isArtBoard = item.itemType == "artboard";
+      var isDirectory = item.itemType == "directory";
+      var isLayer = item.itemType == "layer";
+
+      var children = item.children;
+
+      var isGroup = isArtBoard || isDirectory || children.length;
+      var hasLock = isDirectory || isLayer;
+      var isDraggable = isLayer;
+      var hasIcon = isArtBoard || isDirectory || isLayer;
+      var hasVisible = isDirectory || isLayer;
+
+      var draggable = isDraggable ? 'draggable="true"' : EMPTY_STRING;
+      var lock = hasLock && item.lock ? "lock" : EMPTY_STRING;
+      var visible = item.visible ? "visible" : EMPTY_STRING;
+      var selected = item.selectedOne ? "selected" : EMPTY_STRING;
+
+      var iconString = EMPTY_STRING;
+      if (isArtBoard) {
+        iconString = "" + icon.artboard;
+      } else if (isDirectory) {
+        iconString = "" + icon.folder;
+      } else if (isLayer) {
+        iconString = "<span class='icon-" + item.type + "'></span>";
+      }
+
+      var label = "";
+      var display = item.display.type;
+      if (display == "flex" || display == "grid") {
+        label = display;
+      }
+
+      return html(_templateObject$9, depth, selected, item.index, item.id, item.itemType, draggable, isGroup && "<div class='item-icon-group'>" + icon.chevron_right + "</div>", !isGroup && hasIcon && "<div class='item-icon'>" + iconString + "</div>", label, item.toGridString(), item.title, hasLock && "<button type=\"button\" class='lock-item " + lock + "' title=\"Visible\">" + icon.lock + "</button>", hasVisible && "<button type=\"button\" class='visible-item " + visible + "' title=\"Visible\">" + icon.visible + "</button>", icon.remove, icon.copy, isGroup && html(_templateObject2$4, item.children.map(function (child) {
+        return _this2.makeItem(child, depth + 1);
+      })));
+    }
+  }, {
+    key: LOAD("$title"),
+    value: function value$$1() {
+      var project = editor$1.selection.currentProject;
+      var title = project ? project.title : "ArtBoard";
+      return "<span>" + title + "</span>";
+    }
+  }, {
+    key: LOAD("$layerList"),
+    value: function value$$1() {
+      var _this3 = this;
+
+      var project = editor$1.selection.currentProject || editor$1.selection.project;
+      if (!project) return EMPTY_STRING;
+
+      return project.artboards.map(function (item, index) {
+        return _this3.makeItem(item, 0, index);
+      });
+    }
+  }, {
+    key: "refresh",
+    value: function refresh() {
+      this.load();
+    }
+  }, {
+    key: "refreshSelection",
+    value: function refreshSelection(id) {
+      var $selected = this.$el.$(".selected");
+
+      if ($selected) {
+        $selected.removeClass("selected");
+      }
+
+      this.$el.$("[id=\"" + id + "\"]").addClass("selected");
+    }
+  }, {
+    key: EVENT("refreshLayerListView"),
+    value: function value$$1() {
+      this.refresh();
     }
 
-    createClass(LayerListView, [{
-        key: "template",
-        value: function template() {
-            return "\n            <div class='layer-list-view'>\n                <div class=\"layer-list-toolbar\">\n                    <span class='title' ref=\"$title\"></span>\n                    <span class='layer-tools'>\n                        <div class=\"button-group\">\n                            <button type=\"button\" ref=\"$addArtBoard\" title=\"add ArtBoard\">" + icon.add_note + "</button>\n                            <button type=\"button\" ref=\"$addDirectory\" title=\"add Directory\">" + icon.create_folder + "</button>\n                        </div>\n                    </span> \n                </div>\n                <div class=\"layer-list\" ref=\"$layerList\"></div>\n            </div>\n        ";
+    // all effect
+
+  }, {
+    key: EVENT(CHANGE_EDITOR, COPY_ITEMS),
+    value: function value$$1() {
+      this.refresh();
+    }
+  }, {
+    key: "refreshLayer",
+    value: function refreshLayer() {
+      var _this4 = this;
+
+      editor$1.selection.items.forEach(function (item) {
+        var $item = _this4.refs.$layerList.$("[item-id=\"" + item.id + "\"]");
+        if ($item) {
+          var label = "";
+          var display = item.display.type;
+          if (display == "flex" || display == "grid") {
+            label = display;
+          }
+          var $title = $item.$(".item-title");
+
+          $title.attr("data-label", label);
+          $title.text(item.toGridString() + " " + item.title);
         }
-    }, {
-        key: "makeItem",
-        value: function makeItem(item, depth) {
-            var _this2 = this;
-
-            var isArtBoard = item.itemType == 'artboard';
-            var isDirectory = item.itemType == 'directory';
-            var isLayer = item.itemType == 'layer';
-
-            var children = item.children;
-
-            var isGroup = isArtBoard || isDirectory || children.length;
-            var hasLock = isDirectory || isLayer;
-            var isDraggable = isLayer;
-            var hasIcon = isArtBoard || isDirectory || isLayer;
-            var hasVisible = isDirectory || isLayer;
-
-            var draggable = isDraggable ? 'draggable="true"' : EMPTY_STRING;
-            var lock = hasLock && item.lock ? 'lock' : EMPTY_STRING;
-            var visible = item.visible ? 'visible' : EMPTY_STRING;
-            var selected = item.selectedOne ? 'selected' : EMPTY_STRING;
-
-            var iconString = EMPTY_STRING;
-            if (isArtBoard) {
-                iconString = "" + icon.artboard;
-            } else if (isDirectory) {
-                iconString = "" + icon.folder;
-            } else if (isLayer) {
-                iconString = "<span class='icon-" + item.type + "'></span>";
-            }
-
-            var label = '';
-            var display = item.display.type;
-            if (display == 'flex' || display == 'grid') {
-                label = display;
-            }
-
-            return html(_templateObject$9, depth, selected, item.index, item.id, item.itemType, draggable, isGroup && "<div class='item-icon-group'>" + icon.chevron_right + "</div>", !isGroup && hasIcon && "<div class='item-icon'>" + iconString + "</div>", label, item.toGridString(), item.title, hasLock && "<button type=\"button\" class='lock-item " + lock + "' title=\"Visible\">" + icon.lock + "</button>", hasVisible && "<button type=\"button\" class='visible-item " + visible + "' title=\"Visible\">" + icon.visible + "</button>", icon.remove, icon.copy, isGroup && html(_templateObject2$4, item.children.map(function (child) {
-                return _this2.makeItem(child, depth + 1);
-            })));
+      });
+    }
+  }, {
+    key: EVENT(CHANGE_LAYER, CHANGE_RECT, CHANGE_ARTBOARD),
+    value: function value$$1() {
+      this.refreshLayer();
+    }
+  }, {
+    key: EVENT(CHANGE_SELECTION),
+    value: function value$$1() {
+      var current = editor$1.selection.current;
+      if (current) {
+        this.toggleSelectedItem(current.id);
+      }
+    }
+  }, {
+    key: CLICK("$addArtBoard"),
+    value: function value$$1() {
+      var project = editor$1.selection.currentProject;
+      if (project) {
+        var artboard = project.addArtBoard(new ArtBoard({
+          name: "New ArtBoard"
+        }));
+        artboard.select();
+        editor$1.send(CHANGE_EDITOR);
+      }
+    }
+  }, {
+    key: CLICK("$addDirectory"),
+    value: function value$$1() {
+      var currentItem = editor$1.selection.current;
+      if (currentItem) {
+        if (currentItem instanceof ArtBoard || currentItem instanceof Directory) {
+          var directory = currentItem.add(new Directory({
+            name: "New Directory"
+          }));
+        } else if (currentItem instanceof Layer) {
+          var directory = currentItem.parentDirectory().add(new Directory({
+            name: "New Directory",
+            index: currentItem.index + 1
+          }));
         }
-    }, {
-        key: LOAD('$title'),
-        value: function value$$1() {
-            var project = editor$1.selection.currentProject;
-            var title = project ? project.title : 'ArtBoard';
-            return "<span>" + title + "</span>";
-        }
-    }, {
-        key: LOAD('$layerList'),
-        value: function value$$1() {
-            var _this3 = this;
+        directory.select();
+        this.refresh();
+        editor$1.send(CHANGE_SELECTION);
+      }
+    }
+  }, {
+    key: "removeSelectionItem",
+    value: function removeSelectionItem() {
+      this.refs.$layerList.$$(".selected").forEach(function ($el) {
+        return $el.removeClass("selected");
+      });
+    }
+  }, {
+    key: "toggleSelectedItem",
+    value: function toggleSelectedItem(id) {
+      this.removeSelectionItem();
 
-            var project = editor$1.selection.currentProject || editor$1.selection.project;
-            if (!project) return EMPTY_STRING;
+      var item = this.refs.$layerList.$("[item-id=\"" + id + "\"]");
+      if (item) {
+        item.addClass("selected");
+      }
+    }
+  }, {
+    key: "getItem",
+    value: function getItem(e) {
+      var $dt = e.$delegateTarget.closest("tree-item");
+      var id = $dt.attr("item-id");
+      var item = editor$1.get(id);
 
-            return project.artboards.map(function (item, index) {
-                return _this3.makeItem(item, 0, index);
-            });
-        }
-    }, {
-        key: "refresh",
-        value: function refresh() {
-            this.load();
-        }
-    }, {
-        key: "refreshSelection",
-        value: function refreshSelection(id) {
-            var $selected = this.$el.$(".selected");
+      return { item: item, $dt: $dt };
+    }
+  }, {
+    key: CLICK("$layerList .copy-item"),
+    value: function value$$1(e) {
+      var _getItem = this.getItem(e),
+          item = _getItem.item;
 
-            if ($selected) {
-                $selected.removeClass('selected');
-            }
+      item.copy();
 
-            this.$el.$("[id=\"" + id + "\"]").addClass('selected');
-        }
+      editor$1.emit(CHANGE_EDITOR);
+    }
+  }, {
+    key: CLICK("$layerList .delete-item"),
+    value: function value$$1(e) {
+      var _getItem2 = this.getItem(e),
+          item = _getItem2.item;
 
-        // all effect 
+      item.remove();
+      editor$1.selection.refresh();
+      editor$1.emit(CHANGE_EDITOR, null, this);
+    }
+  }, {
+    key: CLICK("$layerList .visible-item"),
+    value: function value$$1(e) {
+      var _getItem3 = this.getItem(e),
+          item = _getItem3.item;
 
-    }, {
-        key: EVENT(CHANGE_EDITOR, COPY_ITEMS),
-        value: function value$$1() {
-            this.refresh();
-        }
-    }, {
-        key: "refreshLayer",
-        value: function refreshLayer() {
-            var _this4 = this;
+      e.$delegateTarget.toggleClass("visible");
+      item.toggle("visible");
 
-            editor$1.selection.items.forEach(function (item) {
-                var $item = _this4.refs.$layerList.$("[item-id=\"" + item.id + "\"]");
-                if ($item) {
-                    var label = '';
-                    var display = item.display.type;
-                    if (display == 'flex' || display == 'grid') {
-                        label = display;
-                    }
-                    var $title = $item.$('.item-title');
+      editor$1.emit(CHANGE_LAYER, null, this);
+    }
+  }, {
+    key: CLICK("$layerList .lock-item"),
+    value: function value$$1(e) {
+      var _getItem4 = this.getItem(e),
+          item = _getItem4.item;
 
-                    $title.attr('data-label', label);
-                    $title.text(item.toGridString() + " " + item.title);
-                }
-            });
-        }
-    }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_RECT, CHANGE_ARTBOARD),
-        value: function value$$1() {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT(CHANGE_SELECTION),
-        value: function value$$1() {
-            var current = editor$1.selection.current;
-            if (current) {
-                this.toggleSelectedItem(current.id);
-            }
-        }
-    }, {
-        key: CLICK('$addArtBoard'),
-        value: function value$$1() {
-            var project = editor$1.selection.currentProject;
-            if (project) {
-                var artboard = project.addArtBoard(new ArtBoard({
-                    name: 'New ArtBoard'
-                }));
-                artboard.select();
-                editor$1.send(CHANGE_EDITOR);
-            }
-        }
-    }, {
-        key: CLICK('$addDirectory'),
-        value: function value$$1() {
-            var currentItem = editor$1.selection.current;
-            if (currentItem) {
+      e.$delegateTarget.toggleClass("lock");
+      item.toggle("lock");
 
-                if (currentItem instanceof ArtBoard || currentItem instanceof Directory) {
-                    var directory = currentItem.add(new Directory({
-                        name: 'New Directory'
-                    }));
-                } else if (currentItem instanceof Layer) {
-                    var directory = currentItem.parentDirectory().add(new Directory({
-                        name: 'New Directory',
-                        index: currentItem.index + 1
-                    }));
-                }
-                directory.select();
-                this.refresh();
-                editor$1.send(CHANGE_SELECTION);
-            }
-        }
-    }, {
-        key: "removeSelectionItem",
-        value: function removeSelectionItem() {
-            this.refs.$layerList.$$('.selected').forEach(function ($el) {
-                return $el.removeClass('selected');
-            });
-        }
-    }, {
-        key: "toggleSelectedItem",
-        value: function toggleSelectedItem(id) {
+      editor$1.emit(CHANGE_LAYER, null, this);
+    }
+  }, {
+    key: CLICK("$layerList .item-icon-group"),
+    value: function value$$1(e) {
+      var _getItem5 = this.getItem(e),
+          item = _getItem5.item,
+          $dt = _getItem5.$dt;
 
-            this.removeSelectionItem();
+      item.collapsed = true;
+      $dt.toggleClass("collapsed");
+    }
+  }, {
+    key: CLICK("$layerList .item-title"),
+    value: function value$$1(e) {
+      var _getItem6 = this.getItem(e),
+          item = _getItem6.item;
 
-            var item = this.refs.$layerList.$("[item-id=\"" + id + "\"]");
-            if (item) {
-                item.addClass('selected');
-            }
-        }
-    }, {
-        key: "getItem",
-        value: function getItem(e) {
-            var $dt = e.$delegateTarget.closest('tree-item');
-            var id = $dt.attr('item-id');
-            var item = editor$1.get(id);
+      this.toggleSelectedItem(item.id);
+      item.select();
+      editor$1.send(CHANGE_SELECTION, null, this);
+    }
+  }, {
+    key: DRAGSTART("$layerList .tree-item"),
+    value: function value$$1(e) {
+      this.draggedLayer = e.$delegateTarget;
+      this.draggedLayerId = e.$delegateTarget.attr("item-id");
+      this.draggedLayer.css("opacity", 0.5).css("background-color", "yellow");
+      e.dataTransfer.setData("text", e.$delegateTarget.attr("item-id"));
+      this.$el.addClass("dragging");
+    }
+  }, {
+    key: DRAGEND("$layerList .tree-item"),
+    value: function value$$1(e) {
+      if (this.draggedLayer) {
+        this.draggedLayer.css("opacity", 1).css("background-color", "");
+        this.draggedLayer = null;
+        this.draggedLayerId = null;
+      }
+      this.$el.removeClass("dragging");
+    }
+  }, {
+    key: DRAGOVER("$layerList .tree-item") + PREVENT,
+    value: function value$$1(e) {
+      // PREVENT
+    }
+  }, {
+    key: DROP("$layerList .tree-item") + SELF + PREVENT,
+    value: function value$$1(e) {
+      var $item = e.$delegateTarget;
+      if (this.draggedLayerId) {
+        var source = editor$1.get(this.draggedLayerId);
+        var target = editor$1.get($item.attr("item-id"));
 
-            return { item: item, $dt: $dt };
-        }
-    }, {
-        key: CLICK('$layerList .copy-item'),
-        value: function value$$1(e) {
-            var _getItem = this.getItem(e),
-                item = _getItem.item;
+        target.insertLast(source);
+        source.select();
 
-            item.copy();
+        editor$1.send(CHANGE_EDITOR);
+      }
 
-            editor$1.emit(CHANGE_EDITOR);
-        }
-    }, {
-        key: CLICK('$layerList .delete-item'),
-        value: function value$$1(e) {
-            var _getItem2 = this.getItem(e),
-                item = _getItem2.item;
-
-            item.remove();
-            editor$1.selection.refresh();
-            editor$1.emit(CHANGE_EDITOR, null, this);
-        }
-    }, {
-        key: CLICK('$layerList .visible-item'),
-        value: function value$$1(e) {
-            var _getItem3 = this.getItem(e),
-                item = _getItem3.item;
-
-            e.$delegateTarget.toggleClass('visible');
-            item.toggle('visible');
-
-            editor$1.emit(CHANGE_LAYER, null, this);
-        }
-    }, {
-        key: CLICK('$layerList .lock-item'),
-        value: function value$$1(e) {
-            var _getItem4 = this.getItem(e),
-                item = _getItem4.item;
-
-            e.$delegateTarget.toggleClass('lock');
-            item.toggle('lock');
-
-            editor$1.emit(CHANGE_LAYER, null, this);
-        }
-    }, {
-        key: CLICK('$layerList .item-icon-group'),
-        value: function value$$1(e) {
-            var _getItem5 = this.getItem(e),
-                item = _getItem5.item,
-                $dt = _getItem5.$dt;
-
-            item.collapsed = true;
-            $dt.toggleClass('collapsed');
-        }
-    }, {
-        key: CLICK('$layerList .item-title'),
-        value: function value$$1(e) {
-            var _getItem6 = this.getItem(e),
-                item = _getItem6.item;
-
-            this.toggleSelectedItem(item.id);
-            item.select();
-            editor$1.send(CHANGE_SELECTION, null, this);
-        }
-    }, {
-        key: DRAGSTART('$layerList .tree-item'),
-        value: function value$$1(e) {
-            this.draggedLayer = e.$delegateTarget;
-            this.draggedLayerId = e.$delegateTarget.attr('item-id');
-            this.draggedLayer.css('opacity', 0.5).css('background-color', 'yellow');
-            e.dataTransfer.setData('text', e.$delegateTarget.attr('item-id'));
-            this.$el.addClass('dragging');
-        }
-    }, {
-        key: DRAGEND('$layerList .tree-item'),
-        value: function value$$1(e) {
-            if (this.draggedLayer) {
-                this.draggedLayer.css('opacity', 1).css('background-color', '');
-                this.draggedLayer = null;
-                this.draggedLayerId = null;
-            }
-            this.$el.removeClass('dragging');
-        }
-    }, {
-        key: DRAGOVER('$layerList .tree-item') + PREVENT,
-        value: function value$$1(e) {
-            // PREVENT
-        }
-    }, {
-        key: DROP('$layerList .tree-item') + SELF + PREVENT,
-        value: function value$$1(e) {
-            var $item = e.$delegateTarget;
-            if (this.draggedLayerId) {
-                var source = editor$1.get(this.draggedLayerId);
-                var target = editor$1.get($item.attr('item-id'));
-
-                target.insertLast(source);
-                source.select();
-
-                editor$1.send(CHANGE_EDITOR);
-            }
-
-            this.$el.removeClass('dragging');
-        }
-    }]);
-    return LayerListView;
+      this.$el.removeClass("dragging");
+    }
+  }]);
+  return LayerListView;
 }(UIElement);
 
 var ITEM_ADD_CACHE = 'item/addCache';
@@ -24266,6 +24900,412 @@ var Name = function (_BasePropertyItem) {
     return Name;
 }(BasePropertyItem);
 
+var GradientSteps = function (_UIElement) {
+    inherits(GradientSteps, _UIElement);
+
+    function GradientSteps() {
+        classCallCheck(this, GradientSteps);
+        return possibleConstructorReturn(this, (GradientSteps.__proto__ || Object.getPrototypeOf(GradientSteps)).apply(this, arguments));
+    }
+
+    createClass(GradientSteps, [{
+        key: 'template',
+        value: function template() {
+            return '\n            <div class=\'gradient-steps\'>\n                <div class="hue-container" ref="$back"></div>            \n                <div class="hue" ref="$steps">\n                    <div class=\'step-list\' ref="$stepList"></div>\n                </div>\n            </div>\n        ';
+        }
+    }, {
+        key: 'getStepPosition',
+        value: function getStepPosition(step) {
+            var _getMinMax = this.getMinMax(),
+                min = _getMinMax.min,
+                max = _getMinMax.max;
+
+            var left = this.refs.$steps.offset().left;
+
+            min -= left;
+            max -= left;
+
+            if (step.isPx) {
+                return step.px;
+            }
+
+            return min + (max - min) * (step.percent / 100);
+        }
+    }, {
+        key: 'getUnitName',
+        value: function getUnitName(step) {
+            var unit$$1 = step.unit || UNIT_PERCENT;
+
+            if ([UNIT_PX, UNIT_EM].includes(unit$$1)) {
+                return unit$$1;
+            }
+
+            return UNIT_PERCENT;
+        }
+    }, {
+        key: 'getUnitSelect',
+        value: function getUnitSelect(step) {
+
+            return '\n        <select class=\'unit\' data-colorstep-id="' + step.id + '">\n            <option value=\'percent\' ' + (step.isPercent ? 'selected' : EMPTY_STRING) + '>%</option>\n            <option value=\'px\' ' + (step.isPx ? 'selected' : EMPTY_STRING) + '>px</option>\n            <option value=\'em\' ' + (step.isEm ? 'selected' : EMPTY_STRING) + '>em</option>\n        </select>\n        ';
+        }
+    }, {
+        key: 'getMaxValue',
+        value: function getMaxValue() {
+            return editor$1.config.get('step.width') || 400;
+        }
+
+        // load 후에 이벤트를 재설정 해야한다. 
+
+    }, {
+        key: LOAD('$stepList'),
+        value: function value$$1() {
+            var _this2 = this;
+
+            var item = editor$1.selection.image;
+            if (!item) return EMPTY_STRING;
+
+            if (!image.isGradient()) return EMPTY_STRING;
+
+            return image.colorsteps.map(function (step) {
+
+                var cut = step.cut ? 'cut' : EMPTY_STRING;
+                var unitValue$$1 = step.getUnitValue(_this2.getMaxValue());
+                return '\n                <div \n                    class=\'drag-bar ' + (step.selected ? 'selected' : EMPTY_STRING) + '\' \n                    id="' + step.id + '"\n                    style="left: ' + _this2.getStepPosition(step) + 'px;"\n                >   \n                    <div class="guide-step step" style=" border-color: ' + step.color + ';background-color: ' + step.color + ';"></div>\n                    <div class=\'guide-line\' \n                        style="background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), ' + step.color + ' 10%) ;"></div>\n                    <div class="guide-change ' + cut + '" data-colorstep-id="' + step.id + '"></div>\n                    <div class="guide-unit ' + step.getUnit() + '">\n                        <input type="number" class="percent" min="-100" max="100" step="0.1"  value="' + unitValue$$1.percent + '" data-colorstep-id="' + step.id + '"  />\n                        <input type="number" class="px" min="-100" max="1000" step="1"  value="' + unitValue$$1.px + '" data-colorstep-id="' + step.id + '"  />\n                        <input type="number" class="em" min="-100" max="500" step="0.1"  value="' + unitValue$$1.em + '" data-colorstep-id="' + step.id + '"  />\n                        ' + _this2.getUnitSelect(step) + '\n                    </div>       \n                </div>\n            ';
+            });
+        }
+    }, {
+        key: 'isShow',
+        value: function isShow() {
+
+            var item = editor$1.selection.image;
+            if (!item) return false;
+
+            return item.isGradient();
+        }
+    }, {
+        key: 'refresh',
+        value: function refresh() {
+            this.$el.toggle(this.isShow());
+
+            var item = editor$1.selection.image;
+            if (item && item.isGradient()) {
+                this.load();
+                this.setColorUI();
+            }
+        }
+    }, {
+        key: 'setColorUI',
+        value: function setColorUI() {
+            this.setBackgroundColor();
+        }
+    }, {
+        key: 'setBackgroundColor',
+        value: function setBackgroundColor() {
+
+            var item = editor$1.selection.image;
+            if (item && item.isGradient()) {
+                this.refs.$stepList.css('background-image', LinearGradient.toLinearGradient(item));
+            }
+        }
+
+        /* slide 영역 min,max 구하기  */
+
+    }, {
+        key: 'getMinMax',
+        value: function getMinMax() {
+            var min = this.refs.$steps.offsetLeft();
+            var width = this.refs.$steps.width();
+            var max = min + width;
+
+            return { min: min, max: max, width: width };
+        }
+
+        /* 현재 위치 구하기  */
+
+    }, {
+        key: 'getCurrent',
+        value: function getCurrent() {
+            var _getMinMax2 = this.getMinMax(),
+                min = _getMinMax2.min,
+                max = _getMinMax2.max;
+
+            var _editor$config$get = editor$1.config.get('pos'),
+                x = _editor$config$get.x;
+
+            var current = Math.min(Math.max(min, x), max);
+
+            return current;
+        }
+
+        /**
+         * 마우스 이벤트로 현재 위치 및 percent 설정, 전체  gradient 리프레쉬 
+         * 
+         * @param {*} e 
+         */
+
+    }, {
+        key: 'refreshColorUI',
+        value: function refreshColorUI(isUpdate) {
+            var _getMinMax3 = this.getMinMax(),
+                min = _getMinMax3.min,
+                max = _getMinMax3.max;
+
+            var current = this.getCurrent();
+
+            if (this.currentStep) {
+                var posX = Math.max(min, current);
+                var px$$1 = posX - this.refs.$steps.offsetLeft();
+
+                if (editor$1.config.get('bodyEvent').ctrlKey) {
+                    px$$1 = Math.floor(px$$1); // control + drag is floor number 
+                }
+                this.currentStepBox.px('left', px$$1);
+
+                var item = editor$1.get(this.currentStepBox.attr('id'));
+
+                if (item) {
+
+                    // item.px = px; 
+                    var maxValue = max - min;
+                    var percent$$1 = Length$1.px(px$$1).toPercent(maxValue);
+                    var em$$1 = Length$1.px(px$$1).toEm(maxValue);
+
+                    item.reset({ px: px$$1, percent: percent$$1, em: em$$1 });
+
+                    this.currentUnitPercent.val(percent$$1);
+                    this.currentUnitPx.val(px$$1);
+                    this.currentUnitEm.val(em$$1);
+
+                    editor$1.send(CHANGE_COLORSTEP$1, item);
+                    this.setBackgroundColor();
+                }
+            }
+        }
+    }, {
+        key: EVENT(CHANGE_COLORSTEP$1, CHANGE_EDITOR, CHANGE_SELECTION),
+        value: function value$$1() {
+            this.refresh();
+        }
+
+        // 이미 선언된 메소드를 사용하여 메타 데이타로 쓴다. 
+
+    }, {
+        key: CLICK('$back'),
+        value: function value$$1(e) {
+            this.addStep(e);
+        }
+    }, {
+        key: 'removeStep',
+        value: function removeStep(e) {
+
+            var id = e.$delegateTarget.attr('id');
+
+            editor$1.remove(id);
+            editor$1.send(CHANGE_LAYER, id);
+        }
+    }, {
+        key: 'addStep',
+        value: function addStep(e) {
+            var _getMinMax4 = this.getMinMax(),
+                min = _getMinMax4.min,
+                max = _getMinMax4.max;
+
+            var current = this.getCurrent(e);
+            var percent$$1 = Math.floor((current - min) / (max - min) * 100);
+            var item = editor$1.selection.image;
+            if (!item) return;
+
+            image.insertColorStep(percent$$1);
+            editor$1.send(CHANGE_LAYER, image);
+        }
+    }, {
+        key: 'getSortedStepList',
+        value: function getSortedStepList() {
+            var list = this.refs.$stepList.$$('.drag-bar').map(function (it) {
+                return { id: it.attr('id'), x: it.cssFloat('left') };
+            });
+
+            list.sort(function (a, b) {
+                if (a.x == b.x) return 0;
+                return a.x > b.x ? 1 : -1;
+            });
+
+            return list.map(function (it) {
+                return it.id;
+            });
+        }
+    }, {
+        key: 'selectStep',
+        value: function selectStep(e) {
+            var parent = e.$delegateTarget.parent();
+            var item = editor$1.get(parent.attr('id'));
+
+            item.select();
+            editor$1.send(CHANGE_COLORSTEP$1, item);
+
+            this.currentStepBox = this.currentStepBox || parent;
+            var $selected = this.refs.$stepList.$('.selected');
+            if ($selected && !$selected.is(this.currentStepBox)) {
+                $selected.removeClass('selected');
+            }
+
+            this.currentStepBox.addClass('selected');
+
+            this.setBackgroundColor();
+        }
+    }, {
+        key: CLICK('$steps .step') + SHIFT,
+        value: function value$$1(e) {
+            this.removeStep(e);
+        }
+    }, {
+        key: CLICK('$steps .step'),
+        value: function value$$1(e) {
+            this.selectStep(e);
+        }
+    }, {
+        key: CLICK('$steps .guide-change'),
+        value: function value$$1(e) {
+            var id = e.$delegateTarget.attr('data-colorstep-id');
+
+            var item = editor$1.get(id);
+
+            if (item) {
+                item.reset({ cut: !item.cut });
+                editor$1.send(CHANGE_COLORSTEP$1, item);
+            }
+        }
+    }, {
+        key: CHANGE('$steps .guide-unit select.unit'),
+        value: function value$$1(e) {
+
+            var unit$$1 = e.$delegateTarget.val();
+            var id = e.$delegateTarget.attr('data-colorstep-id');
+
+            var step = editor$1.get(id);
+
+            if (step) {
+                step.changeUnit(unit$$1, this.getMaxValue());
+                editor$1.send(CHANGE_COLORSTEP$1, step);
+
+                var $parent = e.$delegateTarget.parent();
+                $parent.removeClass(UNIT_PERCENT, UNIT_PX, UNIT_EM).addClass(step.getUnit());
+            }
+        }
+    }, {
+        key: INPUT('$steps input.percent'),
+        value: function value$$1(e) {
+            var item = editor$1.selection.colorstep;
+            if (!item) return;
+
+            var percent$$1 = +e.$delegateTarget.val();
+            var id = e.$delegateTarget.attr('data-colorstep-id');
+
+            var step = editor$1.get(id);
+
+            if (step) {
+
+                step.percent = percent$$1;
+                step.changeUnit('percent', this.getMaxValue());
+
+                this.currentStepBox.px('left', step.px);
+                this.currentUnitPx.val(step.px);
+                this.currentUnitEm.val(step.em);
+
+                editor$1.send(CHANGE_COLORSTEP$1, step);
+                this.setBackgroundColor();
+            }
+        }
+    }, {
+        key: INPUT('$steps input.px'),
+        value: function value$$1(e) {
+            var item = editor$1.selection.colorstep;
+            if (!item) return;
+
+            var px$$1 = +e.$delegateTarget.val();
+            var id = e.$delegateTarget.attr('data-colorstep-id');
+
+            var step = editor$1.get(id);
+
+            if (step) {
+
+                step.px = px$$1;
+                step.changeUnit('px', this.getMaxValue());
+
+                this.currentStepBox.px('left', step.px);
+                this.currentUnitPercent.val(step.percent);
+                this.currentUnitEm.val(step.em);
+
+                editor$1.send(CHANGE_COLORSTEP$1, step);
+                this.setBackgroundColor();
+            }
+        }
+    }, {
+        key: INPUT('$steps input.em'),
+        value: function value$$1(e) {
+            var item = editor$1.selection.colorstep;
+            if (!item) return;
+
+            var em$$1 = +e.$delegateTarget.val();
+            var id = e.$delegateTarget.attr('data-colorstep-id');
+
+            var step = editor$1.get(id);
+
+            if (step) {
+
+                step.em = em$$1;
+                step.changeUnit('em', this.getMaxValue());
+
+                this.currentStepBox.px('left', step.px);
+                this.currentUnitPercent.val(step.percent);
+                this.currentUnitPx.val(step.px);
+
+                editor$1.send(CHANGE_COLORSTEP$1, step);
+                this.setBackgroundColor();
+            }
+        }
+
+        // Event Bindings 
+
+    }, {
+        key: 'end',
+        value: function end() {
+            if (this.refs.$stepList) {
+                this.refs.$stepList.removeClass('mode-drag');
+            }
+        }
+    }, {
+        key: 'move',
+        value: function move() {
+            this.refreshColorUI(true);
+            this.refs.$stepList.addClass('mode-drag');
+        }
+    }, {
+        key: 'isStepElement',
+        value: function isStepElement(e) {
+            return new Dom(e.target).hasClass('step');
+        }
+    }, {
+        key: POINTERSTART('$steps .step') + IF('isStepElement') + MOVE() + END(),
+        value: function value$$1(e) {
+            e.preventDefault();
+
+            this.xy = e.xy;
+            this.currentStep = e.$delegateTarget;
+            this.currentStepBox = this.currentStep.parent();
+            this.currentUnit = this.currentStepBox.$(".guide-unit");
+            this.currentUnitPercent = this.currentUnit.$(".percent");
+            this.currentUnitPx = this.currentUnit.$(".px");
+            this.currentUnitEm = this.currentUnit.$(".em");
+
+            if (this.currentStep) {
+                this.selectStep(e);
+            }
+        }
+    }]);
+    return GradientSteps;
+}(UIElement);
+
 var ColorSteps = function (_BasePropertyItem) {
     inherits(ColorSteps, _BasePropertyItem);
 
@@ -24352,7 +25392,7 @@ var GradientInfo = function (_UIElement) {
             this.load();
         }
     }, {
-        key: EVENT(CHANGE_COLORSTEP, CHANGE_EDITOR, CHANGE_SELECTION),
+        key: EVENT(CHANGE_COLORSTEP$1, CHANGE_EDITOR, CHANGE_SELECTION),
         value: function value$$1() {
             this.refresh();
         }
@@ -24377,7 +25417,7 @@ var GradientInfo = function (_UIElement) {
 
             if (step) {
                 step.color = color$$1;
-                editor$1.send(CHANGE_COLORSTEP, step);
+                editor$1.send(CHANGE_COLORSTEP$1, step);
 
                 this.refs.$stepList.$(".color-view-item[colorstep-id=\"" + step.id + "\"]").css({
                     'background-color': color$$1
@@ -24400,7 +25440,7 @@ var GradientInfo = function (_UIElement) {
 
             if (step) {
                 step.changeUnit(unit$$1, this.getMaxValue());
-                editor$1.send(CHANGE_COLORSTEP, step);
+                editor$1.send(CHANGE_COLORSTEP$1, step);
 
                 var $parent = e.$delegateTarget.parent();
                 $parent.removeClass(UNIT_PERCENT, UNIT_PX, UNIT_EM).addClass(unit$$1);
@@ -24419,7 +25459,7 @@ var GradientInfo = function (_UIElement) {
                 step.percent = +percent$$1;
                 step.changeUnit(step.unit, this.getMaxValue());
 
-                editor$1.send(CHANGE_COLORSTEP, step);
+                editor$1.send(CHANGE_COLORSTEP$1, step);
             }
         }
     }, {
@@ -24434,7 +25474,7 @@ var GradientInfo = function (_UIElement) {
                 step.px = +px$$1;
                 step.changeUnit(step.unit, this.getMaxValue());
 
-                editor$1.send(CHANGE_COLORSTEP, step);
+                editor$1.send(CHANGE_COLORSTEP$1, step);
             }
         }
     }, {
@@ -24449,7 +25489,7 @@ var GradientInfo = function (_UIElement) {
             if (step) {
                 step.em = +em$$1;
                 step.changeUnit(step.unit, this.getMaxValue());
-                editor$1.send(CHANGE_COLORSTEP, step);
+                editor$1.send(CHANGE_COLORSTEP$1, step);
             }
         }
     }, {
@@ -24473,7 +25513,7 @@ var GradientInfo = function (_UIElement) {
 
             if (item) {
                 item.cut = !item.cut;
-                editor$1.send(CHANGE_COLORSTEP, item);
+                editor$1.send(CHANGE_COLORSTEP$1, item);
             }
         }
     }]);
@@ -24766,155 +25806,88 @@ var Transform3d = function (_BasePropertyItem) {
 var position_list = [POSITION_LEFT, POSITION_TOP, POSITION_RIGHT, POSITION_BOTTOM, POSITION_CENTER];
 
 var UnitRange = function (_UIElement) {
-    inherits(UnitRange, _UIElement);
+  inherits(UnitRange, _UIElement);
 
-    function UnitRange() {
-        classCallCheck(this, UnitRange);
-        return possibleConstructorReturn(this, (UnitRange.__proto__ || Object.getPrototypeOf(UnitRange)).apply(this, arguments));
+  function UnitRange() {
+    classCallCheck(this, UnitRange);
+    return possibleConstructorReturn(this, (UnitRange.__proto__ || Object.getPrototypeOf(UnitRange)).apply(this, arguments));
+  }
+
+  createClass(UnitRange, [{
+    key: "created",
+    value: function created() {
+      this.min = this.props.min || 0;
+      this.max = this.props.max || 1000;
+      this.step = this.props.step || 1;
+      this.value = this.props.value || 0;
+      this.unit = this.props.unit || UNIT_PX;
+      this.showClass = "show";
+
+      if (this.parent[this.props.maxvaluefunction]) {
+        this.maxValueFunction = this.parent[this.props.maxvaluefunction].bind(this.parent);
+      } else {
+        this.maxValueFunction = function () {};
+      }
+
+      if (this.parent[this.props.updatefunction]) {
+        this.updateFunction = this.parent[this.props.updatefunction].bind(this.parent);
+      } else {
+        this.updateFunction = function () {};
+      }
     }
+  }, {
+    key: "template",
+    value: function template() {
+      var value$$1 = position_list.includes(this.value) ? "0px" : this.value;
+      var unit$$1 = Length$1.parse(value$$1);
+      return "\n            <div class='unit-range'>\n                <div class='base-value'>\n                    <input ref=\"$range\" type=\"range\" class='range' min=\"" + this.min + "\" max=\"" + this.max + "\" step=\"" + this.step + "\" value=\"" + unit$$1.value + "\" />\n                    <input ref=\"$number\" type=\"number\" class='number' min=\"" + this.min + "\" max=\"" + this.max + "\" step=\"" + this.step + "\" value=\"" + unit$$1.value + "\"  />\n                    <select ref='$select'>\n                        <option value='px' " + (unit$$1.isPx() ? "selected" : "") + ">px</option>\n                        <option value='%' " + (unit$$1.isPercent() ? "selected" : "") + ">%</option>\n                        <option value='em' " + (unit$$1.isEm() ? "selected" : "") + ">em</option>\n                    </select>\n                </div>\n            </div>\n        ";
+    }
+  }, {
+    key: "refreshValue",
+    value: function refreshValue() {
+      var len = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Length$1.px(0);
 
-    createClass(UnitRange, [{
-        key: "created",
-        value: function created() {
-            this.min = this.props.min || 0;
-            this.max = this.props.max || 1000;
-            this.step = this.props.step || 1;
-            this.value = this.props.value || 0;
-            this.unit = this.props.unit || UNIT_PX;
-            this.showClass = 'show';
-            this.maxValueFunction = this.parent[this.props.maxvaluefunction].bind(this.parent);
-            this.updateFunction = this.parent[this.props.updatefunction].bind(this.parent);
-        }
-    }, {
-        key: "afterRender",
-        value: function afterRender() {
-            this.initializeRangeMax(this.unit);
-        }
-    }, {
-        key: "template",
-        value: function template() {
+      this.selectUnit(len);
+    }
+  }, {
+    key: "selectUnit",
+    value: function selectUnit(len) {
+      this.len = len;
+      this.refs.$range.val(this.len.value);
+      this.refs.$number.val(this.len.value);
+      this.refs.$select.val(this.len.unit);
+    }
+  }, {
+    key: CHANGE("$select"),
+    value: function value$$1() {
+      var unit$$1 = this.refs.$select.value;
+      this.selectUnit(this.len.to(unit$$1, this.maxValueFunction()));
+    }
+  }, {
+    key: INPUT("$range"),
+    value: function value$$1(e) {
+      var value$$1 = +this.refs.$range.val();
+      this.refs.$number.val(this.len.value);
+      this.len = new Length$1(value$$1, this.refs.$select.value);
 
-            var value$$1 = position_list.includes(this.value) ? "" : this.value;
+      this.updateRange();
+    }
+  }, {
+    key: INPUT("$number"),
+    value: function value$$1(e) {
+      var value$$1 = +this.refs.$number.val();
+      this.refs.$range.val(this.len.value);
+      this.len = new Length$1(value$$1, this.refs.$select.value);
 
-            return "\n            <div class='unit-range'>\n                <div class='base-value'>\n                    <input ref=\"$range\" type=\"range\" class='range' min=\"" + this.min + "\" max=\"" + this.max + "\" step=\"" + this.step + "\" value=\"" + value$$1 + "\" />\n                    <input ref=\"$number\" type=\"number\" class='number' min=\"" + this.min + "\" max=\"" + this.max + "\" step=\"" + this.step + "\" value=\"" + value$$1 + "\"  />\n                    <button ref=\"$unit\" type=\"button\" class='unit'>" + this.unit + "</button>\n                </div>\n                <div class=\"multi-value\" ref=\"$multiValue\">\n                    <div ref=\"$px\" class=\"" + UNIT_PX + "\" unit='" + UNIT_PX + "'></div>\n                    <div ref=\"$percent\" class=\"" + UNIT_PERCENT + "\" unit='" + UNIT_PERCENT + "'></div>\n                    <div ref=\"$em\" class=\"" + UNIT_EM + "\" unit='" + UNIT_EM + "'></div>\n                </div>\n            </div>\n        ";
-        }
-    }, {
-        key: CLICK('$multiValue div'),
-        value: function value$$1(e) {
-            var unit$$1 = e.$delegateTarget.attr('unit');
-            var value$$1 = e.$delegateTarget.attr('value');
-
-            this.selectUnit(unit$$1, value$$1);
-        }
-    }, {
-        key: "refresh",
-        value: function refresh() {
-            var value$$1 = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : EMPTY_STRING;
-
-
-            if (isPxUnit(value$$1) || isPercentUnit(value$$1) || isEmUnit(value$$1)) {
-                this.selectUnit(value$$1.unit, value$$1.value);
-                return;
-            }
-
-            //TODO: remove legacy code 
-            value$$1 = (value$$1 || EMPTY_STRING) + EMPTY_STRING;
-            var unit$$1 = UNIT_PX;
-            if (value$$1.includes(UNIT_PERCENT)) {
-                unit$$1 = UNIT_PERCENT;
-            } else if (value$$1.includes(UNIT_EM)) {
-                unit$$1 = UNIT_EM;
-            }
-
-            value$$1 = position_list.includes(value$$1) ? "" : parseParamNumber$2(value$$1);
-
-            this.selectUnit(unit$$1, value$$1);
-            //TODO: remove legacy code 
-        }
-    }, {
-        key: "initializeRangeMax",
-        value: function initializeRangeMax(unit$$1) {
-
-            if (isPercent(unit$$1)) {
-                var max = isPercent(this.props.unit) ? this.props.max : 300;
-                this.refs.$range.attr('max', max);
-                this.refs.$range.attr('step', 0.01);
-                this.refs.$number.attr('max', max);
-                this.refs.$number.attr('step', 0.01);
-            } else if (isPX(unit$$1)) {
-                var max = isPX(this.props.unit) ? this.props.max : 1000;
-
-                this.refs.$range.attr('max', max);
-                this.refs.$range.attr('step', 1);
-                this.refs.$number.attr('max', max);
-                this.refs.$number.attr('step', 1);
-            } else if (isEM(unit$$1)) {
-                var max = isEM(this.props.unit) ? this.props.max : 300;
-                this.refs.$range.attr('max', max);
-                this.refs.$range.attr('step', 0.01);
-                this.refs.$number.attr('max', max);
-                this.refs.$number.attr('step', 0.01);
-            }
-        }
-    }, {
-        key: "selectUnit",
-        value: function selectUnit(unit$$1, value$$1) {
-            this.unit = unit$$1;
-            this.value = position_list.includes(value$$1) ? "" : value$$1;
-
-            this.refs.$range.val(this.value);
-            this.refs.$number.val(this.value);
-            this.refs.$unit.text(unitString(this.unit));
-
-            this.initializeRangeMax(this.unit);
-        }
-    }, {
-        key: CLICK('$unit'),
-        value: function value$$1(e) {
-            this.$el.toggleClass(this.showClass);
-            this.updateRange();
-        }
-    }, {
-        key: "updateRange",
-        value: function updateRange() {
-            var unit$$1 = this.unit;
-            var px$$1 = isPX(unit$$1) ? this.refs.$range.val() : undefined;
-            var percent$$1 = isPercent(unit$$1) ? this.refs.$range.val() : undefined;
-            var em$$1 = isEM(unit$$1) ? this.refs.$range.val() : undefined;
-            var maxValue = this.maxValueFunction();
-
-            if (px$$1) {
-                this.refs.$px.text(px$$1 + ' px').attr('value', px$$1);
-                this.refs.$percent.text(px2percent(px$$1, maxValue) + ' %').attr('value', px2percent(px$$1, maxValue));
-                this.refs.$em.text(px2em(px$$1, maxValue) + ' em').attr('value', px2em(px$$1, maxValue));
-            } else if (percent$$1) {
-                this.refs.$percent.text(percent$$1 + ' %').attr('value', percent$$1);
-                this.refs.$px.text(percent2px(percent$$1, maxValue) + ' px').attr('value', percent2px(percent$$1, maxValue));
-                this.refs.$em.text(percent2em(percent$$1, maxValue) + ' em').attr('value', percent2em(percent$$1, maxValue));
-            } else if (em$$1) {
-                this.refs.$em.text(em$$1 + ' em').attr('value', em$$1);
-                this.refs.$percent.text(em2percent(em$$1, maxValue) + ' %').attr('value', em2percent(em$$1, maxValue));
-                this.refs.$px.text(em2px(em$$1, maxValue) + ' px').attr('value', em2px(em$$1, maxValue));
-            }
-        }
-    }, {
-        key: INPUT('$range'),
-        value: function value$$1(e) {
-            var value$$1 = +this.refs.$range.val();
-            this.refs.$number.val(value$$1);
-            this.updateRange();
-            this.updateFunction(unitObject(value$$1, this.unit));
-        }
-    }, {
-        key: INPUT('$number'),
-        value: function value$$1(e) {
-            var value$$1 = +this.refs.$number.val();
-            this.refs.$range.val(value$$1);
-            this.updateRange();
-            this.updateFunction(unitObject(value$$1, this.unit));
-        }
-    }]);
-    return UnitRange;
+      this.updateRange();
+    }
+  }, {
+    key: "updateRange",
+    value: function updateRange() {
+      this.updateFunction(this.len);
+    }
+  }]);
+  return UnitRange;
 }(UIElement);
 
 var BackgroundSize = function (_UIElement) {
@@ -26665,7 +27638,7 @@ var BackgroundCode = function (_BasePropertyItem) {
             });
         }
     }, {
-        key: EVENT(CHANGE_IMAGE, CHANGE_COLORSTEP, CHANGE_EDITOR, CHANGE_SELECTION, SELECT_TAB_IMAGE),
+        key: EVENT(CHANGE_IMAGE, CHANGE_COLORSTEP$1, CHANGE_EDITOR, CHANGE_SELECTION, SELECT_TAB_IMAGE),
         value: function value$$1() {
             this.refresh();
         }
@@ -28306,135 +29279,698 @@ var BaseProperty = function (_UIElement) {
 }(UIElement);
 
 var BoundProperty = function (_BaseProperty) {
-    inherits(BoundProperty, _BaseProperty);
+  inherits(BoundProperty, _BaseProperty);
 
-    function BoundProperty() {
-        classCallCheck(this, BoundProperty);
-        return possibleConstructorReturn(this, (BoundProperty.__proto__ || Object.getPrototypeOf(BoundProperty)).apply(this, arguments));
+  function BoundProperty() {
+    classCallCheck(this, BoundProperty);
+    return possibleConstructorReturn(this, (BoundProperty.__proto__ || Object.getPrototypeOf(BoundProperty)).apply(this, arguments));
+  }
+
+  createClass(BoundProperty, [{
+    key: "isHideHeader",
+    value: function isHideHeader() {
+      return true;
     }
+  }, {
+    key: "getBody",
+    value: function getBody() {
+      return "\n        <div class='property-item grid-4'>\n            <label class='property-item-label'>\n                X\n            </label>\n            <div class='property-item-input-field'>\n                <input type='number' ref=\"$x\"> <span>px</span>\n            </div>\n            <label class='property-item-label'>\n                Y\n            </label>                \n            <div class='property-item-input-field'>\n                <input type='number' ref=\"$y\"> <span>px</span>\n            </div>\n        </div>                \n        <div class='property-item grid-4'>\n            <label class='property-item-label'>\n                <button type=\"button\" ref=\"$rect\">*</button>\n                Width\n            </label>\n            <div class='property-item-input-field'>\n                <input type='number' ref=\"$width\"> <span>px</span>\n            </div>\n            <label class='property-item-label'>\n                Height\n            </label>                \n            <div class='property-item-input-field'>\n                <input type='number' ref=\"$height\"> <span>px</span>\n            </div>\n        </div>\n        ";
+    }
+  }, {
+    key: EVENT(CHANGE_RECT, CHANGE_LAYER, CHANGE_ARTBOARD, CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_INSPECTOR),
+    value: function value() {
+      this.refresh();
+    }
+  }, {
+    key: "refresh",
+    value: function refresh() {
+      var item = editor$1.selection.currentRect;
+      if (!item) return;
 
-    createClass(BoundProperty, [{
-        key: "getBody",
-        value: function getBody() {
-            return "\n            <div class='property-item display-manager'>\n                <div class='items'>\n                    <div>\n                        <label><button type=\"button\" ref=\"$rect\">*</button>Width</label>\n                        <div>\n                            <div class='input two'> \n                                <input type='number' ref=\"$width\"> <span>px</span>\n                            </div>\n                        </div>\n                        <label class='second'>height</label>\n                        <div>\n                            <div class=\"input two\">\n                                <input type='number' ref=\"$height\"> <span>px</span>\n                            </div>\n                        </div>                        \n                    </div>   \n                    <div>\n                        <label>X</label>\n                        <div>\n                            <div class='input two'> \n                                <input type='number' ref=\"$x\"> <span>px</span>\n                            </div>\n                        </div>\n                        <label class='second'>Y</label>\n                        <div>\n                            <div class='input two'>\n                                <input type='number' ref=\"$y\"> <span>px</span>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n                <div class='items display-list' ref='$displayList' selected-type='inline'>\n                    <div class='display' display-type='block'>BLOCK</div>\n                    <div class='display' display-type='flex'>FLEX</div>\n                    <div class='display' display-type='grid'>GRID</div>\n                </div>\n                <div class='items flex-list' ref='$flexList' selected-type='row'>\n                    <div class='display' display-type='row'>row</div>\n                    <div class='display' display-type='row-reverse'>row-reverse</div>\n                    <div class='display' display-type='column'>column</div>\n                    <div class='display' display-type='column-reverse'>column-reverse</div>\n                </div>                \n                <div class='items flex-wrap' ref='$flexWrap' selected-type='row'>\n                    <div class='display' display-type='nowrap'>nowrap</div>\n                    <div class='display' display-type='wrap'>wrap</div>\n                    <div class='display' display-type='wrap-reverse'>wrap-reverse</div>\n                </div>                             \n                <div class='items justify-content' ref='$justifyContent' selected-type='flex-start'>\n                    <div class='display' display-type='flex-start'>flex-start</div>\n                    <div class='display' display-type='flex-end'>flex-end</div>\n                    <div class='display' display-type='center'>center</div>\n                    <div class='display' display-type='space-between'>space-between</div>\n                    <div class='display' display-type='space-around'>space-around</div>\n                </div>                                                \n            </div> \n        ";
-        }
-    }, {
-        key: EVENT(CHANGE_RECT, CHANGE_LAYER, CHANGE_ARTBOARD, CHANGE_EDITOR, CHANGE_SELECTION),
-        value: function value() {
-            this.refresh();
-        }
-    }, {
-        key: "refresh",
-        value: function refresh() {
-            var item = editor$1.selection.currentRect;
-            if (!item) return;
+      this.refs.$width.val(item.width.value);
+      this.refs.$height.val(item.height.value);
+      this.refs.$x.val(item.x.value);
+      this.refs.$y.val(item.y.value);
+    }
+  }, {
+    key: CLICK("$rect"),
+    value: function value(e) {
+      var widthValue = this.refs.$width.int();
+      this.refs.$height.val(widthValue);
+      editor$1.selection.updateRect(CHANGE_RECT, {
+        width: Length$1.px(widthValue),
+        height: Length$1.px(widthValue)
+      }, this);
+    }
+  }, {
+    key: INPUT("$width"),
+    value: function value() {
+      editor$1.selection.updateRect(CHANGE_RECT, {
+        width: Length$1.px(this.refs.$width.int())
+      }, this);
+    }
+  }, {
+    key: INPUT("$height"),
+    value: function value() {
+      editor$1.selection.updateRect(CHANGE_RECT, {
+        height: Length$1.px(this.refs.$height.int())
+      }, this);
+    }
+  }, {
+    key: INPUT("$x"),
+    value: function value() {
+      editor$1.selection.updateRect(CHANGE_RECT, {
+        x: Length$1.px(this.refs.$x.int())
+      }, this);
+    }
+  }, {
+    key: INPUT("$y"),
+    value: function value() {
+      editor$1.selection.updateRect(CHANGE_RECT, {
+        y: Length$1.px(this.refs.$y.int())
+      }, this);
+    }
+  }]);
+  return BoundProperty;
+}(BaseProperty);
 
-            this.refs.$width.val(item.width.value);
-            this.refs.$height.val(item.height.value);
-            this.refs.$x.val(item.x.value);
-            this.refs.$y.val(item.y.value);
+var LayoutProperty = function (_BaseProperty) {
+  inherits(LayoutProperty, _BaseProperty);
 
-            if (item.display) {
-                this.refs.$displayList.attr('selected-type', item.display.type);
+  function LayoutProperty() {
+    classCallCheck(this, LayoutProperty);
+    return possibleConstructorReturn(this, (LayoutProperty.__proto__ || Object.getPrototypeOf(LayoutProperty)).apply(this, arguments));
+  }
 
-                if (item.display.type == 'flex') {
-                    this.refs.$flexList.attr('selected-type', item.display.direction);
-                    this.refs.$justifyContent.attr('selected-type', item.display.justifyContent);
-                }
-            }
-        }
-    }, {
-        key: CLICK('$justifyContent .display'),
-        value: function value(e) {
-            var display = e.$delegateTarget.attr('display-type');
-            var current = editor$1.selection.current;
+  createClass(LayoutProperty, [{
+    key: "isHideHeader",
+    value: function isHideHeader() {
+      return true;
+    }
+  }, {
+    key: "getBody",
+    value: function getBody() {
+      return "\n      <div class='property-item display-manager'>\n        <label class='property-item-label'>Display</label>\n        <div class='property-item-input-field display-list' ref=\"$displayList\" selected-type=\"inline\">\n          <div class='display' display-type='inline'>INLINE</div>\n          <div class='display' display-type='block'>BLOCK</div>\n          <div class='display' display-type='flex'>FLEX</div>\n          <div class='display' display-type='grid'>GRID</div>\n        </div>\n      </div>\n    ";
+    }
+  }, {
+    key: EVENT(CHANGE_RECT, CHANGE_LAYER, CHANGE_ARTBOARD, CHANGE_EDITOR, CHANGE_SELECTION),
+    value: function value() {
+      this.refresh();
+    }
+  }, {
+    key: "refresh",
+    value: function refresh() {
+      var item = editor$1.selection.currentRect;
+      if (!item) return;
 
-            if (current) {
-                this.refs.$justifyContent.attr('selected-type', display);
-                current.display.justifyContent = display;
+      if (item.display) {
+        this.refs.$displayList.attr("selected-type", item.display.type);
+      }
+    }
+  }, {
+    key: CLICK("$displayList .display"),
+    value: function value(e) {
+      var display = e.$delegateTarget.attr("display-type");
+      var current = editor$1.selection.current;
 
-                this.emit(CHANGE_INSPECTOR);
-            }
-        }
-    }, {
-        key: CLICK('$flexList .display'),
-        value: function value(e) {
-            var display = e.$delegateTarget.attr('display-type');
-            var current = editor$1.selection.current;
+      if (current) {
+        this.refs.$displayList.attr("selected-type", display);
+        current.changeDisplay(display);
 
-            if (current) {
-                this.refs.$flexList.attr('selected-type', display);
-                current.display.direction = display;
+        this.emit(CHANGE_INSPECTOR);
+      }
+    }
+  }]);
+  return LayoutProperty;
+}(BaseProperty);
 
-                this.emit(CHANGE_INSPECTOR);
-            }
-        }
-    }, {
-        key: CLICK('$flexWrap .display'),
-        value: function value(e) {
-            var display = e.$delegateTarget.attr('display-type');
-            var current = editor$1.selection.current;
+var FlexDirectionProperty = function (_BaseProperty) {
+  inherits(FlexDirectionProperty, _BaseProperty);
 
-            if (current) {
-                this.refs.$flexWrap.attr('selected-type', display);
-                current.display.wrap = display;
+  function FlexDirectionProperty() {
+    classCallCheck(this, FlexDirectionProperty);
+    return possibleConstructorReturn(this, (FlexDirectionProperty.__proto__ || Object.getPrototypeOf(FlexDirectionProperty)).apply(this, arguments));
+  }
 
-                this.emit(CHANGE_INSPECTOR);
-            }
-        }
-    }, {
-        key: CLICK('$displayList .display'),
-        value: function value(e) {
-            var display = e.$delegateTarget.attr('display-type');
-            var current = editor$1.selection.current;
+  createClass(FlexDirectionProperty, [{
+    key: "isHideHeader",
+    value: function isHideHeader() {
+      return true;
+    }
+  }, {
+    key: "getBody",
+    value: function getBody() {
+      return "\n      <div class='property-item display-manager'>\n        <label class='property-item-label'>Flex Direction</label>\n        <div class='property-item-input-field flex-direction' ref=\"$flexDirection\" selected-type=\"row\">\n          <div class='display' display-type='row'>row</div>\n          <div class='display' display-type='row-reverse'>row-reverse</div>\n          <div class='display' display-type='column'>column</div>\n          <div class='display' display-type='column-reverse'>column-reverse</div>\n        </div>\n      </div>    \n    ";
+    }
+  }, {
+    key: EVENT(CHANGE_RECT, CHANGE_LAYER, CHANGE_ARTBOARD, CHANGE_EDITOR, CHANGE_SELECTION),
+    value: function value() {
+      this.refresh();
+    }
+  }, {
+    key: "refresh",
+    value: function refresh() {
+      var item = editor$1.selection.currentRect;
+      if (!item) return;
 
-            if (current) {
-                this.refs.$displayList.attr('selected-type', display);
-                current.changeDisplay(display);
+      if (item.display) {
+        if (item.display.type == "flex") {
+          this.refs.$flexDirection.attr("selected-type", item.display.direction);
+        }
+      }
+    }
+  }, {
+    key: CLICK("$flexDirection .display"),
+    value: function value(e) {
+      var display = e.$delegateTarget.attr("display-type");
+      var current = editor$1.selection.current;
 
-                this.emit(CHANGE_INSPECTOR);
-            }
+      if (current) {
+        this.refs.$flexDirection.attr("selected-type", display);
+        current.display.direction = display;
+
+        this.emit(CHANGE_INSPECTOR);
+      }
+    }
+  }]);
+  return FlexDirectionProperty;
+}(BaseProperty);
+
+var JustifyContentProperty = function (_BaseProperty) {
+  inherits(JustifyContentProperty, _BaseProperty);
+
+  function JustifyContentProperty() {
+    classCallCheck(this, JustifyContentProperty);
+    return possibleConstructorReturn(this, (JustifyContentProperty.__proto__ || Object.getPrototypeOf(JustifyContentProperty)).apply(this, arguments));
+  }
+
+  createClass(JustifyContentProperty, [{
+    key: "isHideHeader",
+    value: function isHideHeader() {
+      return true;
+    }
+  }, {
+    key: "getBody",
+    value: function getBody() {
+      return "\n      <div class='property-item display-manager'>\n        <label class='property-item-label'>Justify Content</label>\n        <div class='property-item-input-field justify-content' ref='$justifyContent' selected-type='flex-start'>\n          <div class='display' display-type='flex-start'>flex-start</div>\n          <div class='display' display-type='flex-end'>flex-end</div>\n          <div class='display' display-type='center'>center</div>\n          <div class='display' display-type='space-between'>space-between</div>\n          <div class='display' display-type='space-around'>space-around</div>\n        </div>\n      </div>                             \n    ";
+    }
+  }, {
+    key: EVENT(CHANGE_RECT, CHANGE_LAYER, CHANGE_ARTBOARD, CHANGE_EDITOR, CHANGE_SELECTION),
+    value: function value() {
+      this.refresh();
+    }
+  }, {
+    key: "refresh",
+    value: function refresh() {
+      var item = editor$1.selection.currentRect;
+      if (!item) return;
+
+      if (item.display) {
+        this.refs.$displayList.attr("selected-type", item.display.type);
+
+        if (item.display.type == "flex") {
+          this.refs.$justifyContent.attr("selected-type", item.display.justifyContent);
         }
-    }, {
-        key: CLICK('$rect'),
-        value: function value(e) {
-            var widthValue = this.refs.$width.int();
-            this.refs.$height.val(widthValue);
-            editor$1.selection.updateRect(CHANGE_RECT, {
-                width: Length$1.px(widthValue),
-                height: Length$1.px(widthValue)
-            }, this);
+      }
+    }
+  }, {
+    key: CLICK("$justifyContent .display"),
+    value: function value(e) {
+      var display = e.$delegateTarget.attr("display-type");
+      var current = editor$1.selection.current;
+
+      if (current) {
+        this.refs.$justifyContent.attr("selected-type", display);
+        current.display.justifyContent = display;
+
+        this.emit(CHANGE_INSPECTOR);
+      }
+    }
+  }]);
+  return JustifyContentProperty;
+}(BaseProperty);
+
+var FlexWrapProperty = function (_BaseProperty) {
+  inherits(FlexWrapProperty, _BaseProperty);
+
+  function FlexWrapProperty() {
+    classCallCheck(this, FlexWrapProperty);
+    return possibleConstructorReturn(this, (FlexWrapProperty.__proto__ || Object.getPrototypeOf(FlexWrapProperty)).apply(this, arguments));
+  }
+
+  createClass(FlexWrapProperty, [{
+    key: "isHideHeader",
+    value: function isHideHeader() {
+      return true;
+    }
+  }, {
+    key: "getBody",
+    value: function getBody() {
+      return "\n      <div class='property-item display-manager'>\n        <label class='property-item-label'>Flex Wrap</label>\n        <div class='property-item-input-field flex-wrap' ref='$flexWrap' selected-type='nowrap'>\n          <div class='display' display-type='nowrap'>nowrap</div>\n          <div class='display' display-type='wrap'>wrap</div>\n          <div class='display' display-type='wrap-reverse'>wrap-reverse</div>\n        </div>\n      </div>    \n\n    ";
+    }
+  }, {
+    key: EVENT(CHANGE_RECT, CHANGE_LAYER, CHANGE_ARTBOARD, CHANGE_EDITOR, CHANGE_SELECTION),
+    value: function value() {
+      this.refresh();
+    }
+  }, {
+    key: "refresh",
+    value: function refresh() {
+      var item = editor$1.selection.currentRect;
+      if (!item) return;
+
+      if (item.display) {
+        if (item.display.type == "flex") {
+          this.refs.$flexWrap.attr("selected-type", item.display.flexWrap);
         }
-    }, {
-        key: INPUT('$width'),
-        value: function value() {
-            editor$1.selection.updateRect(CHANGE_RECT, {
-                width: Length$1.px(this.refs.$width.int())
-            }, this);
+      }
+    }
+  }, {
+    key: CLICK("$flexWrap .display"),
+    value: function value(e) {
+      var display = e.$delegateTarget.attr("display-type");
+      var current = editor$1.selection.current;
+
+      if (current) {
+        this.refs.$flexWrap.attr("selected-type", display);
+        current.display.flexWrap = display;
+
+        this.emit(CHANGE_INSPECTOR);
+      }
+    }
+  }]);
+  return FlexWrapProperty;
+}(BaseProperty);
+
+var names = {
+  color: "Color",
+  image: "Image",
+  linear: "Linear",
+  "repeating-linear": "Repeating Linear",
+  radial: "Radial",
+  "repeating-radial": "Repeating Radial",
+  conic: "Conic",
+  "repeating-conic": "Repeating Conic",
+  "linear-gradient": "Linear",
+  "repeating-linear-gradient": "Repeating Linear",
+  "radial-gradient": "Radial",
+  "repeating-radial-gradient": "Repeating Radial",
+  "conic-gradient": "Conic",
+  "repeating-conic-gradient": "Repeating Conic"
+};
+
+var types = {
+  color: "color",
+  image: "image",
+  linear: "gradient",
+  "repeating-linear": "gradient",
+  radial: "gradient",
+  "repeating-radial": "gradient",
+  conic: "gradient",
+  "repeating-conic": "gradient",
+  "linear-gradient": "gradient",
+  "repeating-linear-gradient": "gradient",
+  "radial-gradient": "gradient",
+  "repeating-radial-gradient": "gradient",
+  "conic-gradient": "gradient",
+  "repeating-conic-gradient": "gradient"
+};
+
+var FillProperty = function (_BaseProperty) {
+  inherits(FillProperty, _BaseProperty);
+
+  function FillProperty() {
+    classCallCheck(this, FillProperty);
+    return possibleConstructorReturn(this, (FillProperty.__proto__ || Object.getPrototypeOf(FillProperty)).apply(this, arguments));
+  }
+
+  createClass(FillProperty, [{
+    key: "getTitle",
+    value: function getTitle() {
+      return "Background";
+    }
+  }, {
+    key: "getBody",
+    value: function getBody() {
+      return "<div class='property-item fill-list' ref='$fillList'></div>";
+    }
+  }, {
+    key: "getTools",
+    value: function getTools() {
+      return "\n        <button type=\"button\" ref=\"$add\" title=\"add Fill\">" + icon.add + "</button>\n    ";
+    }
+  }, {
+    key: "getColorStepList",
+    value: function getColorStepList(backgroundImage) {
+      switch (backgroundImage.image.type) {
+        case "linear-gradient":
+        case "repeating-linear-gradient":
+        case "radial-gradient":
+        case "repeating-radial-gradient":
+        case "conic-gradient":
+        case "repeating-conic-gradient":
+          return this.getColorStepString(backgroundImage.image.colorsteps);
+      }
+
+      return EMPTY_STRING;
+    }
+  }, {
+    key: "getColorStepString",
+    value: function getColorStepString(colorsteps) {
+      return colorsteps.map(function (step) {
+        return "<div class='step' data-colorstep-id=\"" + step.id + "\" style='background-color:" + step.color + ";'></div>";
+      }).join(EMPTY_STRING);
+    }
+  }, {
+    key: LOAD("$fillList"),
+    value: function value$$1() {
+      var _this2 = this;
+
+      var current = editor$1.selection.current;
+
+      if (!current) return EMPTY_STRING;
+
+      return current.backgroundImages.map(function (it, index) {
+        var backgroundType = types[it.type];
+        var backgroundTypeName = names[it.type];
+
+        var imageCSS = {};
+
+        if (it.type === "color") {
+          imageCSS = "background-color: " + it.color;
+        } else {
+          imageCSS = "background-image: " + (it.image ? it.image.toString() : "none");
         }
-    }, {
-        key: INPUT('$height'),
-        value: function value() {
-            editor$1.selection.updateRect(CHANGE_RECT, {
-                height: Length$1.px(this.refs.$height.int())
-            }, this);
+
+        return "\n            <div class='fill-item' data-index='" + index + "' ref=\"fillIndex" + index + "\" draggable='true' data-fill-type=\"" + backgroundType + "\" >\n                <div class='check'><input type='checkbox' checked='" + (it.check ? "true" : "false") + "'/></div>\n                <div class='preview' data-index=\"" + index + "\">\n                    <div class='mini-view' style=\"" + imageCSS + "\" ref=\"miniView" + index + "\"></div>\n                </div>\n                <div class='fill-title' ref=\"fillTitle" + index + "\">" + backgroundTypeName + "</div>\n                <div class='colorcode'>\n                    <input type='text' placeholder='#999999'  ref=\"colorText" + index + "\"/>\n                </div>\n                <div class='colorsteps' ref=\"colorsteps" + index + "\">\n                  " + _this2.getColorStepList(it) + "\n                </div>\n                <div class='tools'>\n                  <button type=\"button\" class='setting' data-index='" + index + "'>" + icon.setting + "</button>\n                  <button type=\"button\" class='remove' data-index='" + index + "'>" + icon.remove2 + "</button>\n                </div>\n            </div>\n        ";
+      });
+    }
+  }, {
+    key: EVENT(CHANGE_RECT, CHANGE_LAYER, CHANGE_ARTBOARD, CHANGE_SELECTION),
+    value: function value$$1() {
+      this.refresh();
+      this.emit("hideFillPicker");
+      this.emit("hideBackgroundPropertyPopup");
+    }
+  }, {
+    key: "refresh",
+    value: function refresh() {
+      this.load();
+    }
+  }, {
+    key: CLICK("$add"),
+    value: function value$$1(e) {
+      var current = editor$1.selection.current;
+
+      if (current) {
+        var backgroundColor = current.backgroundImages.filter(function (img) {
+          return img.type === "color";
+        });
+
+        if (backgroundColor.length) {
+          var image = new BackgroundImage({
+            type: "linear",
+            checked: true,
+            image: new LinearGradient({
+              colorsteps: [new ColorStep({ color: "yellow", percent: 0, index: 0 }), new ColorStep({ color: "red", percent: 100, index: 100 })]
+            })
+          });
+
+          current.addBackgroundImage(image);
+        } else {
+          current.addBackgroundImage(new BackgroundImage({
+            checked: true
+          }));
         }
-    }, {
-        key: INPUT('$x'),
-        value: function value() {
-            editor$1.selection.updateRect(CHANGE_RECT, {
-                x: Length$1.px(this.refs.$x.int())
-            }, this);
+
+        this.refresh();
+
+        this.emit(CHANGE_INSPECTOR);
+      }
+    }
+  }, {
+    key: "getFillData",
+    value: function getFillData(backgroundImage) {
+      var data = {
+        type: backgroundImage.type
+      };
+
+      switch (data.type) {
+        case "color":
+          data.color = backgroundImage.color;
+          break;
+        case "image":
+          data.image = backgroundImage.image;
+          break;
+        default:
+          if (backgroundImage.image) {
+            var image = backgroundImage.image;
+
+            data.type = image.type;
+            data.colorsteps = [].concat(toConsumableArray(image.colorsteps));
+            data.angle = image.angle;
+            data.radialType = image.radialType || "ellipse";
+            data.radialPosition = image.radialPosition || Position.CENTER;
+          } else {
+            data.colorsteps = [];
+            data.angle = 0;
+            data.radialType = "ellipse";
+            data.radialPosition = Position.CENTER;
+          }
+
+          break;
+      }
+
+      return data;
+    }
+  }, {
+    key: "notNeedColorPicker",
+    value: function notNeedColorPicker(e) {
+      var $el = new Dom(e.target);
+      var isPreview = $el.hasClass("preview");
+      var isStep = $el.hasClass("step");
+      return !isPreview && !isStep;
+    }
+  }, {
+    key: CLICK("$fillList") + IF("notNeedColorPicker"),
+    value: function value$$1(e) {
+      this.emit("hideFillPicker");
+    }
+  }, {
+    key: CLICK("$fillList .colorsteps .step"),
+    value: function value$$1(e) {
+      var selectColorStepId = e.$delegateTarget.attr("data-colorstep-id");
+      var $preview = e.$delegateTarget.closest("fill-item").$(".preview");
+      this.viewFillPicker($preview, selectColorStepId);
+    }
+  }, {
+    key: "viewFillPicker",
+    value: function viewFillPicker($preview, selectColorStepId) {
+      this.selectedIndex = +$preview.attr("data-index");
+      this.current = editor$1.selection.current;
+
+      if (!this.current) return;
+      this.currentBackgroundImage = this.current.backgroundImages[this.selectedIndex];
+
+      var rect = $preview.rect();
+
+      this.emit("showFillPicker", _extends({}, this.getFillData(this.currentBackgroundImage), {
+        selectColorStepId: selectColorStepId,
+        left: rect.left + 90,
+        top: rect.top
+      }));
+      this.viewBackgroundPropertyPopup();
+    }
+  }, {
+    key: "viewBackgroundPropertyPopup",
+    value: function viewBackgroundPropertyPopup($setting) {
+      if ($setting) {
+        this.selectedIndex = +$setting.attr("data-index");
+      }
+
+      this.current = editor$1.selection.current;
+
+      if (!this.current) return;
+      this.currentBackgroundImage = this.current.backgroundImages[this.selectedIndex];
+
+      var x = this.currentBackgroundImage.x;
+      var y = this.currentBackgroundImage.y;
+      var width = this.currentBackgroundImage.width;
+      var height = this.currentBackgroundImage.height;
+      var maxWidth = this.current.width;
+      var maxHeight = this.current.height;
+      var repeat$$1 = this.currentBackgroundImage.repeat;
+      var size = this.currentBackgroundImage.size;
+
+      this.emit("showBackgroundPropertyPopup", {
+        x: x,
+        y: y,
+        width: width,
+        height: height,
+        maxWidth: maxWidth,
+        maxHeight: maxHeight,
+        repeat: repeat$$1,
+        size: size
+      });
+      // this.emit("hideFillPicker");
+    }
+  }, {
+    key: CLICK("$fillList .preview"),
+    value: function value$$1(e) {
+      this.viewFillPicker(e.$delegateTarget);
+    }
+  }, {
+    key: CLICK("$fillList .setting"),
+    value: function value$$1(e) {
+      this.viewBackgroundPropertyPopup(e.$delegateTarget);
+    }
+  }, {
+    key: "setBackgroundColor",
+    value: function setBackgroundColor(color$$1) {
+      if (this.currentBackgroundImage) {
+        this.currentBackgroundImage.reset({
+          type: "color",
+          color: color$$1
+        });
+
+        var $el = this.refs["miniView" + this.selectedIndex];
+        if ($el) {
+          $el.cssText(this.currentBackgroundImage.toString());
         }
-    }, {
-        key: INPUT('$y'),
-        value: function value() {
-            editor$1.selection.updateRect(CHANGE_RECT, {
-                y: Length$1.px(this.refs.$y.int())
-            }, this);
+
+        var $el = this.refs["fillTitle" + this.selectedIndex];
+        if ($el) {
+          $el.text(names["color"]);
         }
-    }]);
-    return BoundProperty;
+
+        var $el = this.refs["colorText" + this.selectedIndex];
+        if ($el) {
+          $el.val(color$$1);
+        }
+
+        if (this.current) {
+          this.emit("refreshItem", this.current);
+        }
+      }
+    }
+  }, {
+    key: "createGradient",
+    value: function createGradient(data, gradient) {
+      var colorsteps = data.colorsteps;
+
+      // linear, conic 은 angle 도 같이 설정한다.
+      var angle = data.angle;
+
+      // radial 은  radialType 도 같이 설정한다.
+      var radialType = data.radialType;
+      var radialPosition = data.radialPosition;
+
+      var json = gradient.toJSON();
+      delete json.itemType;
+      delete json.type;
+
+      switch (data.type) {
+        case "linear-gradient":
+          return new LinearGradient(_extends({}, json, {
+            colorsteps: colorsteps,
+            angle: angle
+          }));
+        case "repeating-linear-gradient":
+          return new RepeatingLinearGradient(_extends({}, json, {
+            colorsteps: colorsteps,
+            angle: angle
+          }));
+        case "radial-gradient":
+          return new RadialGradient(_extends({}, json, {
+            colorsteps: colorsteps,
+            radialType: radialType,
+            radialPosition: radialPosition
+          }));
+        case "repeating-radial-gradient":
+          return new RepeatingRadialGradient(_extends({}, json, {
+            colorsteps: colorsteps,
+            radialType: radialType,
+            radialPosition: radialPosition
+          }));
+        case "conic-gradient":
+          return new ConicGradient(_extends({}, json, {
+            colorsteps: colorsteps,
+            angle: angle,
+            radialPosition: radialPosition
+          }));
+        case "repeating-conic-gradient":
+          return new RepeatingConicGradient(_extends({}, json, {
+            colorsteps: colorsteps,
+            angle: angle,
+            radialPosition: radialPosition
+          }));
+      }
+
+      return new Gradient();
+    }
+  }, {
+    key: EVENT("selectFillPickerTab"),
+    value: function value$$1(type) {
+      var typeName = types[type];
+      var $fillItem = this.refs["fillIndex" + this.selectedIndex];
+      $fillItem.attr("data-fill-type", typeName);
+    }
+  }, {
+    key: "setGradient",
+    value: function setGradient(data) {
+      if (this.currentBackgroundImage) {
+        this.currentBackgroundImage.reset({
+          type: data.type,
+          image: this.createGradient(data, this.currentBackgroundImage.image)
+        });
+
+        var $el = this.refs["miniView" + this.selectedIndex];
+        if ($el) {
+          $el.cssText(this.currentBackgroundImage.toString());
+        }
+
+        var $el = this.refs["fillTitle" + this.selectedIndex];
+        if ($el) {
+          $el.text(names[data.type]);
+        }
+
+        var $el = this.refs["colorsteps" + this.selectedIndex];
+        if ($el) {
+          $el.html(this.getColorStepString(data.colorsteps));
+        }
+
+        if (this.current) {
+          this.emit("refreshItem", this.current);
+        }
+      }
+    }
+  }, {
+    key: EVENT("changeFillPicker"),
+    value: function value$$1(data) {
+      switch (data.type) {
+        case "color":
+          this.setBackgroundColor(data.color);
+          break;
+        case "image":
+          break;
+        default:
+          this.setGradient(data);
+          break;
+      }
+    }
+  }, {
+    key: EVENT("changeBackgroundPropertyPopup"),
+    value: function value$$1(data) {
+      if (this.currentBackgroundImage) {
+        this.currentBackgroundImage.reset(_extends({}, data));
+
+        if (this.current) {
+          this.emit("refreshItem", this.current);
+        }
+      }
+    }
+  }]);
+  return FillProperty;
 }(BaseProperty);
 
 // import ArtboardProperty from "./ArtboardProperty";
@@ -28458,27 +29994,32 @@ var BoundProperty = function (_BaseProperty) {
 // import BackgroundPositionProperty from "./BackgroundPositionProperty";
 // import LayerBorderRadiusProperty from "./LayerBorderRadiusProperty";
 var property = {
-    BoundProperty: BoundProperty
-    // BackgroundPositionProperty,
-    // Transform2DControlProperty,
-    // LayerBorderRadiusProperty,
-    // LayerBorderProperty,
-    // BackgroundProperty,
-    // BackgroundCodeProperty,
-    // ColorStepProperty,
-    // ImageSortingProperty,
-    // LayerCodeProperty,
-    // Transform2DProperty,
-    // Transform3DProperty,
-    // ClipPathProperty,
-    // FilterProperty,
-    // BackdropProperty,
-    // BoxShadowProperty,
-    // ArtboardProperty,
-    // LayerProperty,
-    // LayerFontProperty,
-    // LayerTextProperty,
-    // TextShadowProperty
+  FillProperty: FillProperty,
+  FlexWrapProperty: FlexWrapProperty,
+  JustifyContentProperty: JustifyContentProperty,
+  FlexDirectionProperty: FlexDirectionProperty,
+  LayoutProperty: LayoutProperty,
+  BoundProperty: BoundProperty
+  // BackgroundPositionProperty,
+  // Transform2DControlProperty,
+  // LayerBorderRadiusProperty,
+  // LayerBorderProperty,
+  // BackgroundProperty,
+  // BackgroundCodeProperty,
+  // ColorStepProperty,
+  // ImageSortingProperty,
+  // LayerCodeProperty,
+  // Transform2DProperty,
+  // Transform3DProperty,
+  // ClipPathProperty,
+  // FilterProperty,
+  // BackdropProperty,
+  // BoxShadowProperty,
+  // ArtboardProperty,
+  // LayerProperty,
+  // LayerFontProperty,
+  // LayerTextProperty,
+  // TextShadowProperty
 };
 
 var LayerTabView = function (_BaseTab) {
@@ -28667,40 +30208,333 @@ var HotKey = function (_UIElement) {
 
 var LOAD_START = 'load/start';
 
-var _templateObject$21 = taggedTemplateLiteral(["\n            <div class='feature-control'>     \n            ", "\n            </div>\n        "], ["\n            <div class='feature-control'>     \n            ", "\n            </div>\n        "]);
+var _templateObject$21 = taggedTemplateLiteral(["\n      <div class=\"feature-control\">\n        <BoundProperty />\n        <LayoutProperty />\n        <FlexDirectionProperty />\n        <FlexWrapProperty />\n        <JustifyContentProperty />\n        <FillProperty />\n      </div>\n    "], ["\n      <div class=\"feature-control\">\n        <BoundProperty />\n        <LayoutProperty />\n        <FlexDirectionProperty />\n        <FlexWrapProperty />\n        <JustifyContentProperty />\n        <FillProperty />\n      </div>\n    "]);
 
 var Inspector = function (_UIElement) {
-    inherits(Inspector, _UIElement);
+  inherits(Inspector, _UIElement);
 
-    function Inspector() {
-        classCallCheck(this, Inspector);
-        return possibleConstructorReturn(this, (Inspector.__proto__ || Object.getPrototypeOf(Inspector)).apply(this, arguments));
+  function Inspector() {
+    classCallCheck(this, Inspector);
+    return possibleConstructorReturn(this, (Inspector.__proto__ || Object.getPrototypeOf(Inspector)).apply(this, arguments));
+  }
+
+  createClass(Inspector, [{
+    key: "template",
+    value: function template() {
+      return html(_templateObject$21);
     }
+  }, {
+    key: "components",
+    value: function components() {
+      return property;
+    }
+  }, {
+    key: "refresh",
+    value: function refresh() {
+      this.load();
+    }
+  }]);
+  return Inspector;
+}(UIElement);
 
-    createClass(Inspector, [{
-        key: "template",
-        value: function template() {
-            return html(_templateObject$21, Object.keys(this.components()).map(function (key) {
-                return "<" + key + " />";
-            }));
+var _templateObject$22 = taggedTemplateLiteral(["\n      <div class=\"fill-picker\">\n        <div class=\"picker-tab\">\n          <div class=\"picker-tab-list\" ref=\"$tab\">\n            ", "\n          </div>\n        </div>\n        <div class=\"picker-tab-container\" ref=\"$tabContainer\">\n          <div\n            class=\"picker-tab-content selected\"\n            data-content-type=\"color\"\n            ref=\"$color\"\n          ></div>\n          <div class=\"picker-tab-content\" data-type=\"image\" ref=\"$image\"></div>\n        </div>\n      </div>\n    "], ["\n      <div class=\"fill-picker\">\n        <div class=\"picker-tab\">\n          <div class=\"picker-tab-list\" ref=\"$tab\">\n            ", "\n          </div>\n        </div>\n        <div class=\"picker-tab-container\" ref=\"$tabContainer\">\n          <div\n            class=\"picker-tab-content selected\"\n            data-content-type=\"color\"\n            ref=\"$color\"\n          ></div>\n          <div class=\"picker-tab-content\" data-type=\"image\" ref=\"$image\"></div>\n        </div>\n      </div>\n    "]);
+
+var tabs = [{ type: "color", title: "Color", selected: true }, { type: "linear-gradient", title: "Linear Gradient" }, { type: "repeating-linear-gradient", title: "Repeating Linear Gradient" }, { type: "radial-gradient", title: "Radial Gradient" }, { type: "repeating-radial-gradient", title: "Repeating Radial Gradient" }, { type: "conic-gradient", title: "Conic Gradient" }, { type: "repeating-conic-gradient", title: "Repeating Conic Gradient" }, { type: "image", title: "Image", icon: icon.image }];
+
+var FillPicker = function (_UIElement) {
+  inherits(FillPicker, _UIElement);
+
+  function FillPicker() {
+    classCallCheck(this, FillPicker);
+    return possibleConstructorReturn(this, (FillPicker.__proto__ || Object.getPrototypeOf(FillPicker)).apply(this, arguments));
+  }
+
+  createClass(FillPicker, [{
+    key: "afterRender",
+    value: function afterRender() {
+      var _this2 = this;
+
+      // this.$el.hide();
+
+      var defaultColor = "rgba(0, 0, 0, 0)";
+
+      this.colorPicker = ColorPicker.create({
+        type: "sketch",
+        position: "inline",
+        container: this.refs.$color.el,
+        color: defaultColor,
+        onChange: function onChange(c) {
+          _this2.changeColor(c);
         }
-    }, {
-        key: "components",
-        value: function components() {
-            return property;
-        }
-    }, {
-        key: "refresh",
-        value: function refresh() {
-            this.load();
-        }
-    }, {
-        key: EVENT(CHANGE_EDITOR),
-        value: function value() {
-            this.refresh();
-        }
-    }]);
-    return Inspector;
+      });
+
+      setTimeout(function () {
+        _this2.colorPicker.dispatch("initColor", defaultColor);
+      }, 100);
+    }
+  }, {
+    key: "initialize",
+    value: function initialize() {
+      get$1(FillPicker.prototype.__proto__ || Object.getPrototypeOf(FillPicker.prototype), "initialize", this).call(this);
+
+      this.selectedTab = "color";
+    }
+  }, {
+    key: "template",
+    value: function template() {
+      return html(_templateObject$22, tabs.map(function (it) {
+        return "\n                <span \n                    class='picker-tab-item " + (it.selected ? "selected" : EMPTY_STRING) + "' \n                    data-select-type='" + it.type + "'\n                    title='" + it.title + "'\n                >\n                    <div class='icon'>" + (it.icon || EMPTY_STRING) + "</div>\n                </span>";
+      }));
+    }
+  }, {
+    key: CLICK("$tab .picker-tab-item"),
+    value: function value$$1(e) {
+      var type = e.$delegateTarget.attr("data-select-type");
+
+      e.$delegateTarget.onlyOneClass("selected");
+
+      //TODO: picker 타입이 바뀌면 내부 속성도 같이 바뀌어야 한다.
+      this.selectTabContent(type, {
+        type: type
+      });
+      this.emit("selectFillPickerTab", type);
+    }
+  }, {
+    key: "selectTabContent",
+    value: function selectTabContent(type) {
+      var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+      this.selectedTab = type;
+      switch (type) {
+        case "image":
+          this.refs.$image.onlyOneClass("selected");
+          this.emit("hideGradientEditor");
+          break;
+        case "color":
+          this.refs.$color.onlyOneClass("selected");
+
+          if (data.color) {
+            this.colorPicker.initColorWithoutChangeEvent(data.color);
+          }
+
+          this.emit("hideGradientEditor");
+          break;
+        default:
+          // gradient
+          this.refs.$color.onlyOneClass("selected");
+
+          var sample = {
+            type: data.type || "linear-gradient",
+            selectColorStepId: data.selectColorStepId,
+            angle: data.angle || 0,
+            radialType: data.radialType,
+            radialPosition: data.radialPosition
+          };
+          if (data.colorsteps) {
+            sample.colorsteps = data.colorsteps;
+          }
+          this.emit("showGradientEditor", sample);
+
+          break;
+      }
+    }
+  }, {
+    key: "changeColor",
+    value: function changeColor(color$$1) {
+      if (this.selectedTab == "color") {
+        this.emit("changeFillPicker", { type: "color", color: color$$1 });
+      } else {
+        this.emit("changeColorPicker", color$$1);
+      }
+    }
+  }, {
+    key: EVENT("showFillPicker"),
+    value: function value$$1(data) {
+      this.$el.css({
+        top: Length$1.px(data.top),
+        right: Length$1.px(320)
+      }).show();
+
+      this.selectTabContent(data.type, data);
+    }
+  }, {
+    key: EVENT("hideFillPicker"),
+    value: function value$$1() {
+      this.$el.hide();
+
+      this.emit("hideGradientEditor");
+    }
+  }, {
+    key: EVENT("selectColorStep"),
+    value: function value$$1(color$$1) {
+      this.colorPicker.initColorWithoutChangeEvent(color$$1);
+    }
+  }, {
+    key: EVENT("changeColorStep"),
+    value: function value$$1() {
+      var data = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      this.emit("changeFillPicker", _extends({
+        type: this.selectedTab
+      }, data));
+    }
+  }]);
+  return FillPicker;
+}(UIElement);
+
+var BackgroundPropertyPopup = function (_UIElement) {
+  inherits(BackgroundPropertyPopup, _UIElement);
+
+  function BackgroundPropertyPopup() {
+    classCallCheck(this, BackgroundPropertyPopup);
+    return possibleConstructorReturn(this, (BackgroundPropertyPopup.__proto__ || Object.getPrototypeOf(BackgroundPropertyPopup)).apply(this, arguments));
+  }
+
+  createClass(BackgroundPropertyPopup, [{
+    key: "components",
+    value: function components() {
+      return {
+        UnitRange: UnitRange
+      };
+    }
+  }, {
+    key: "initialize",
+    value: function initialize() {
+      get$1(BackgroundPropertyPopup.prototype.__proto__ || Object.getPrototypeOf(BackgroundPropertyPopup.prototype), "initialize", this).call(this);
+
+      this.data = {
+        size: "auto",
+        repeat: "repeat",
+        x: Length$1.px(0),
+        y: Length$1.px(0),
+        width: Length$1.px(0),
+        height: Length$1.px(0),
+        maxWidth: 100,
+        maxHeight: 100
+      };
+    }
+  }, {
+    key: "getMaxWidth",
+    value: function getMaxWidth() {
+      return this.data.maxWidth;
+    }
+  }, {
+    key: "getMaxHeight",
+    value: function getMaxHeight() {
+      return this.data.maxHeight;
+    }
+  }, {
+    key: "updateX",
+    value: function updateX(x) {
+      this.updateData({ x: x });
+    }
+  }, {
+    key: "updateY",
+    value: function updateY(y) {
+      this.updateData({ y: y });
+    }
+  }, {
+    key: "updateWidth",
+    value: function updateWidth(width) {
+      this.updateData({ width: width });
+    }
+  }, {
+    key: "updateHeight",
+    value: function updateHeight(height) {
+      this.updateData({ height: height });
+    }
+  }, {
+    key: "updateData",
+    value: function updateData(opt) {
+      this.data = _extends({}, this.data, opt);
+
+      this.emit("changeBackgroundPropertyPopup", opt);
+    }
+  }, {
+    key: "templateForSize",
+    value: function templateForSize() {
+      return "\n      <div class='popup-item'>\n        <label>size</label>\n        <div class='size-list' ref=\"$size\" data-value=\"contain\">\n            <button type=\"button\" value=\"contain\" >contain</button>\n            <button type=\"button\" value=\"cover\">cover</button>\n            <button type=\"button\" value=\"auto\">auto</button>\n        </div>\n      </div>\n    ";
+    }
+  }, {
+    key: CLICK("$size button"),
+    value: function value(_ref) {
+      var $t = _ref.$delegateTarget;
+
+      this.refs.$size.attr("data-value", $t.value);
+      this.updateData({ size: $t.value });
+    }
+  }, {
+    key: "templateForX",
+    value: function templateForX() {
+      return "\n      <div class='popup-item'>\n        <label>X</label>\n        <UnitRange \n            ref=\"$x\" \n            min=\"-1000\" max=\"1000\" step=\"1\" value=\"0\" unit=\"px\"\n            maxValueFunction=\"getMaxWidth\"\n            updateFunction=\"updateX\"\n        />\n      </div>\n    ";
+    }
+  }, {
+    key: "templateForY",
+    value: function templateForY() {
+      return "\n      <div class='popup-item'>\n        <label>y</label>\n        <UnitRange \n            ref=\"$y\" \n            min=\"-1000\" max=\"1000\" step=\"1\" value=\"0\" unit=\"px\"\n            maxValueFunction=\"getMaxHeight\"\n            updateFunction=\"updateY\"\n        />\n      </div>\n    ";
+    }
+  }, {
+    key: "templateForWidth",
+    value: function templateForWidth() {
+      return "\n    <div class='popup-item'>\n      <label>Width</label>\n      <UnitRange \n          ref=\"$width\" \n          min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=\"px\"\n          maxValueFunction=\"getMaxWidth\"\n          updateFunction=\"updateWidth\"\n      />\n    </div>\n    ";
+    }
+  }, {
+    key: "templateForHeight",
+    value: function templateForHeight() {
+      return "\n    <div class='popup-item'>\n      <label>Height</label>\n      <UnitRange \n          ref=\"$height\" \n          min=\"0\" max=\"1000\" step=\"1\" value=\"0\" unit=\"px\"\n          maxValueFunction=\"getMaxHeight\"\n          updateFunction=\"updateHeight\"\n      />\n    </div>\n    ";
+    }
+  }, {
+    key: "templateForRepeat",
+    value: function templateForRepeat() {
+      return "\n    <div class='popup-item'>\n      <label>Repeat</label>\n      <div class='repeat-list' ref=\"$repeat\" data-value='repeat'>\n          <button type=\"button\" value='no-repeat' title=\"no-repeat\"></button>\n          <button type=\"button\" value='repeat' title=\"repeat\"></button>\n          <button type=\"button\" value='repeat-x' title=\"repeat-x\"></button>\n          <button type=\"button\" value='repeat-y' title=\"repeat-y\"></button>\n          <button type=\"button\" value='space' title=\"space\"></button>\n          <button type=\"button\" value='round' title=\"round\"></button>\n      </div>\n    </div>\n    ";
+    }
+  }, {
+    key: CLICK("$repeat button"),
+    value: function value(_ref2) {
+      var $t = _ref2.$delegateTarget;
+
+      this.refs.$repeat.attr("data-value", $t.value);
+      this.updateData({ repeat: $t.value });
+    }
+  }, {
+    key: "template",
+    value: function template() {
+      return "\n      <div class='popup background-property-popup'>\n        <div class='popup-title'>Background Image</div>\n        <div class='popup-content'>\n          " + this.templateForSize() + "        \n          " + this.templateForX() + "\n          " + this.templateForY() + "\n          " + this.templateForWidth() + "\n          " + this.templateForHeight() + "\n          " + this.templateForRepeat() + "\n        </div>\n      </div>\n    ";
+    }
+  }, {
+    key: "refreshUnitRange",
+    value: function refreshUnitRange() {
+      this.children.$x.refreshValue(this.data.x);
+      this.children.$y.refreshValue(this.data.y);
+      this.children.$width.refreshValue(this.data.width);
+      this.children.$height.refreshValue(this.data.height);
+      this.refs.$size.attr("data-value", this.data.size);
+      this.refs.$repeat.val(this.data.repeat);
+    }
+  }, {
+    key: EVENT("showBackgroundPropertyPopup"),
+    value: function value(data) {
+      this.data = _extends({}, this.data, data);
+
+      if (this.data.x.isString()) {
+        this.data.x = this.data.x.toPercent();
+      }
+
+      if (this.data.y.isString()) {
+        this.data.y = this.data.y.toPercent();
+      }
+
+      this.refreshUnitRange();
+
+      this.$el.show("inline-block");
+    }
+  }, {
+    key: EVENT("hideBackgroundPropertyPopup"),
+    value: function value() {
+      this.$el.hide();
+    }
+  }]);
+  return BackgroundPropertyPopup;
 }(UIElement);
 
 var CSSEditor$1 = function (_UIElement) {
@@ -28712,9 +30546,11 @@ var CSSEditor$1 = function (_UIElement) {
     }
 
     createClass(CSSEditor, [{
-        key: 'afterRender',
+        key: "afterRender",
         value: function afterRender() {
             var _this2 = this;
+
+            editor$1.initPicker(this.children.$picker);
 
             setTimeout(function () {
                 _this2.emit(RESIZE_WINDOW);
@@ -28722,14 +30558,16 @@ var CSSEditor$1 = function (_UIElement) {
             }, 100);
         }
     }, {
-        key: 'template',
+        key: "template",
         value: function template() {
-            return '\n            <div class="layout-main -show-timeline" ref="$layoutMain">\n                <div class="layout-header">\n                    <div class="page-tab-menu"><ToolMenu /></div>\n                </div>\n                <div class="layout-middle">\n                    <div class="layout-left">      \n                        <SelectLayerView/>\n                    </div>\n                    <div class="layout-body">\n                        <LayerToolbar />\n                        <!-- <VerticalColorStep /> -->\n                        <CanvasView />\n                    </div>                \n                    <div class="layout-right">\n                        <Alignment />\n                        <Inspector />\n                    </div>\n                </div>\n                <div class="layout-footer" ref="$footer">\n                    <!-- TimelineSplitter /-->\n                    <!-- Timeline /-->\n                </div>\n                <ExportWindow />\n                <DropView />\n                <HotKey />                \n            </div>\n  \n        ';
+            return "\n            <div class=\"layout-main -show-timeline\" ref=\"$layoutMain\">\n                <div class=\"layout-header\">\n                    <div class=\"page-tab-menu\"><ToolMenu /></div>\n                </div>\n                <div class=\"layout-middle\">\n                    <div class=\"layout-left\">      \n                        <SelectLayerView/>\n                    </div>\n                    <div class=\"layout-body\">\n                        <LayerToolbar />\n                        <CanvasView />\n                        <VerticalColorStep />                        \n                    </div>                \n                    <div class=\"layout-right\">\n                        <Alignment />\n                        <Inspector />\n                    </div>\n                </div>\n                <div class=\"layout-footer\" ref=\"$footer\">\n                    <!-- TimelineSplitter /-->\n                    <!-- Timeline /-->\n                </div>\n                <ExportWindow />\n                <DropView />\n                <HotKey />       \n                <FillPicker ref=\"$picker\" />\n                <BackgroundPropertyPopup />\n            </div>\n  \n        ";
         }
     }, {
-        key: 'components',
+        key: "components",
         value: function components() {
             return {
+                BackgroundPropertyPopup: BackgroundPropertyPopup,
+                FillPicker: FillPicker,
                 HotKey: HotKey,
                 Alignment: Alignment,
                 Inspector: Inspector,
@@ -28748,42 +30586,42 @@ var CSSEditor$1 = function (_UIElement) {
         key: EVENT(CHANGE_EDITOR),
         value: function value() {
             /*
-            this.read(SELECTION_CURRENT_LAYER, (layer) => {
-                var self = this; 
-                var obj = layer.style
-                var aniObject = Animation.createTimeline([{
-                    duration: 1000, 
-                    obj,
-                    timing: 'ease-out-sine',
-                    iteration: 3, 
-                    direction: 'alternate',
-                    keyframes : {
-                        '0%': {
-                            'x': '0px',
-                            'background-color': 'rgba(255, 255, 255, 0.5)',
-                        },
-                        '100%': {
-                            'x': '250px',
-                            'background-color': 'rgba(255, 0, 255, 1)'
+                this.read(SELECTION_CURRENT_LAYER, (layer) => {
+                    var self = this; 
+                    var obj = layer.style
+                    var aniObject = Animation.createTimeline([{
+                        duration: 1000, 
+                        obj,
+                        timing: 'ease-out-sine',
+                        iteration: 3, 
+                        direction: 'alternate',
+                        keyframes : {
+                            '0%': {
+                                'x': '0px',
+                                'background-color': 'rgba(255, 255, 255, 0.5)',
+                            },
+                            '100%': {
+                                'x': '250px',
+                                'background-color': 'rgba(255, 0, 255, 1)'
+                            }
+                        } 
+                     }], {
+                        callback() {
+                            self.run('item/set', layer);
+                            self.emit('animationEditor')
                         }
-                    } 
-                 }], {
-                    callback() {
-                        self.run('item/set', layer);
-                        self.emit('animationEditor')
-                    }
-                });
-                 aniObject.start();
-                 })
-            */
-
+                    });
+                     aniObject.start();
+            
+                })
+                */
         }
     }, {
         key: EVENT(LOAD_START),
         value: function value(isAdd) {
-            console.log('최초 로딩은 어디서 할까요?');
+            console.log("최초 로딩은 어디서 할까요?");
             // this.dispatch(STORAGE_LOAD, (isLoaded) => {
-            //     if (!isLoaded && isAdd) { 
+            //     if (!isLoaded && isAdd) {
             //         this.dispatch(ITEM_ADD_PAGE, true)
             //     } else {
             //         this.dispatch(ITEM_LOAD);
@@ -28794,10 +30632,10 @@ var CSSEditor$1 = function (_UIElement) {
     }, {
         key: EVENT(TOGGLE_TIMELINE),
         value: function value() {
-            this.$el.toggleClass('show-timeline');
+            this.$el.toggleClass("show-timeline");
         }
     }, {
-        key: RESIZE('window') + DEBOUNCE(100),
+        key: RESIZE("window") + DEBOUNCE(100),
         value: function value(e) {
             this.emit(RESIZE_WINDOW);
         }
@@ -28809,26 +30647,26 @@ var CSSEditor$1 = function (_UIElement) {
     }, {
         key: EVENT(CHANGE_HEIGHT_TIMELINE),
         value: function value(size) {
-            this.refs.$footer.px('height', this.initFooterHeight - size.dy);
+            this.refs.$footer.px("height", this.initFooterHeight - size.dy);
         }
     }]);
     return CSSEditor;
 }(UIElement);
 
 var CSSEditor = {
-    createCSSEditor: function createCSSEditor() {
-        var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { type: 'white' };
+  createCSSEditor: function createCSSEditor() {
+    var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { type: "white" };
 
-        switch (opts.type) {
-            default:
-                return start({
-                    components: { CSSEditor: CSSEditor$1 },
-                    template: '<CSSEditor />'
-                });
-        }
-    },
+    switch (opts.type) {
+      default:
+        return start({
+          components: { CSSEditor: CSSEditor$1 },
+          template: "<CSSEditor />"
+        });
+    }
+  },
 
-    CSSEditor: CSSEditor$1
+  CSSEditor: CSSEditor$1
 };
 
 var index = _extends({}, Util, ColorPicker, CSSEditor);

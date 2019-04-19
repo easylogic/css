@@ -90,6 +90,7 @@ export default class RowEditor extends UIElement {
             if (isRefresh) this.refresh();
 
             this.emit('refreshItem', current);
+            this.emit('refreshPreviewEditor', current);
         }
     }
 

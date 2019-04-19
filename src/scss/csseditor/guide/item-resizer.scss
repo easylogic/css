@@ -37,6 +37,15 @@
             background-color: $display-grid-color;
             border-color: $display-grid-color;
 
+            &[data-value='to top'],
+            &[data-value='to top right'],
+            &[data-value='to top left'],
+            &[data-value='to left'],
+            &[data-value='to bottom left']          
+             {
+                // display: none;
+            }
+            
         }
 
 

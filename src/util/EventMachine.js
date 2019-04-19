@@ -1,126 +1,133 @@
-import Event, { 
-  CHECK_PATTERN, 
-  NAME_SAPARATOR, 
-  CHECK_SAPARATOR, 
-  SAPARATOR, 
-  CHECK_LOAD_PATTERN, 
+import Event, {
+  CHECK_PATTERN,
+  NAME_SAPARATOR,
+  CHECK_SAPARATOR,
+  SAPARATOR,
+  CHECK_LOAD_PATTERN,
   LOAD_SAPARATOR
-} from './Event'
-import Dom from './Dom'
-import State from './State'
-import { debounce, isFunction, isArray, html, keyEach, isNotUndefined } from './functions/func';
-import { EMPTY_STRING } from './css/types';
-import { ADD_BODY_MOUSEMOVE, ADD_BODY_MOUSEUP } from '../csseditor/types/ToolTypes';
+} from "./Event";
+import Dom from "./Dom";
+import State from "./State";
+import {
+  debounce,
+  isFunction,
+  isArray,
+  html,
+  keyEach,
+  isNotUndefined
+} from "./functions/func";
+import { EMPTY_STRING } from "./css/types";
+import {
+  ADD_BODY_MOUSEMOVE,
+  ADD_BODY_MOUSEUP
+} from "../csseditor/types/ToolTypes";
 
-const REFERENCE_PROPERTY = 'ref';
-const TEMP_DIV = new Dom("div")
+const REFERENCE_PROPERTY = "ref";
+const TEMP_DIV = new Dom("div");
 const QUERY_PROPERTY = `[${REFERENCE_PROPERTY}]`;
 
 const matchPath = (el, selector) => {
   if (el) {
-    if (el.matches(selector)) { return el; }
+    if (el.matches(selector)) {
+      return el;
+    }
     return matchPath(el.parentElement, selector);
   }
   return null;
-}
+};
 
 const hasDelegate = (e, eventObject) => {
   return matchPath(e.target || e.srcElement, eventObject.delegate);
-}
-
+};
 
 const makeCallback = (context, eventObject, callback) => {
-
   if (eventObject.delegate) {
     return makeDelegateCallback(context, eventObject, callback);
-  }  else {
+  } else {
     return makeDefaultCallback(context, eventObject, callback);
   }
-}
-
-
+};
 
 const makeDefaultCallback = (context, eventObject, callback) => {
-  return (e) => {
+  return e => {
     var returnValue = runEventCallback(context, e, eventObject, callback);
-    if (isNotUndefined(returnValue))  {
+    if (isNotUndefined(returnValue)) {
       return returnValue;
     }
-  }
-}
-
+  };
+};
 
 const makeDelegateCallback = (context, eventObject, callback) => {
-  return (e) => {
+  return e => {
     const delegateTarget = hasDelegate(e, eventObject);
 
-    if (delegateTarget) { // delegate target 이 있는 경우만 callback 실행 
+    if (delegateTarget) {
+      // delegate target 이 있는 경우만 callback 실행
       e.$delegateTarget = new Dom(delegateTarget);
 
       var returnValue = runEventCallback(context, e, eventObject, callback);
-      if (isNotUndefined(returnValue))  {
+      if (isNotUndefined(returnValue)) {
         return returnValue;
       }
-    } 
-
-  }
-}
+    }
+  };
+};
 
 const runEventCallback = (context, e, eventObject, callback) => {
-  e.xy = Event.posXY(e)
+  e.xy = Event.posXY(e);
 
   if (eventObject.beforeMethods.length) {
     eventObject.beforeMethods.every(before => {
       return context[before.target].call(context, e, before.param);
-    })  
+    });
   }
 
   if (checkEventType(context, e, eventObject)) {
     var returnValue = callback(e, e.$delegateTarget, e.xy);
 
     if (eventObject.afterMethods.length) {
-      eventObject.afterMethods.forEach(after => context[after.target].call(context, e, after.param))
-    } 
+      eventObject.afterMethods.forEach(after =>
+        context[after.target].call(context, e, after.param)
+      );
+    }
 
-    return returnValue; 
-  } 
-}
+    return returnValue;
+  }
+};
 
-
-const checkEventType = (context, e, eventObject )  => {
-
-  // 특정 keycode 를 가지고 있는지 체크 
-  var hasKeyCode = true; 
+const checkEventType = (context, e, eventObject) => {
+  // 특정 keycode 를 가지고 있는지 체크
+  var hasKeyCode = true;
   if (eventObject.codes.length) {
-    hasKeyCode =  (
-      e.code ? eventObject.codes.includes(e.code.toLowerCase()) : false
-    ) || (
-      e.key ? eventObject.codes.includes(e.key.toLowerCase()) : false
-    )      
+    hasKeyCode =
+      (e.code ? eventObject.codes.includes(e.code.toLowerCase()) : false) ||
+      (e.key ? eventObject.codes.includes(e.key.toLowerCase()) : false);
   }
 
-  // 체크 메소드들은 모든 메소드를 다 적용해야한다. 
-  var isAllCheck = true;  
-  if (eventObject.checkMethodList.length) {  
+  // 체크 메소드들은 모든 메소드를 다 적용해야한다.
+  var isAllCheck = true;
+  if (eventObject.checkMethodList.length) {
     isAllCheck = eventObject.checkMethodList.every(field => {
       var fieldValue = context[field];
-      if (isFunction(fieldValue) && fieldValue) { // check method 
+      if (isFunction(fieldValue) && fieldValue) {
+        // check method
         return fieldValue.call(context, e);
-      } else if (isNotUndefined(fieldValue)) { // check field value
-        return !!fieldValue
-      } 
-      return true; 
+      } else if (isNotUndefined(fieldValue)) {
+        // check field value
+        return !!fieldValue;
+      }
+      return true;
     });
   }
 
-  return (hasKeyCode && isAllCheck);
-}
+  return hasKeyCode && isAllCheck;
+};
 
 const getDefaultDomElement = (context, dom) => {
-  let el; 
+  let el;
 
   if (dom) {
-    el = context.refs[dom] || context[dom] || window[dom]; 
+    el = context.refs[dom] || context[dom] || window[dom];
   } else {
     el = context.el || context.$el || context.$root;
   }
@@ -130,139 +137,167 @@ const getDefaultDomElement = (context, dom) => {
   }
 
   return el;
-}
+};
 
 const splitMethodByKeyword = (arr, keyword) => {
-
-  var filterKeys = arr.filter(code => code.indexOf(`${keyword}(`) > -1)
+  var filterKeys = arr.filter(code => code.indexOf(`${keyword}(`) > -1);
   var filterMaps = filterKeys.map(code => {
-    var [target, param] = code.split(`${keyword}(`)[1].split(')')[0].trim().split(' ')
+    var [target, param] = code
+      .split(`${keyword}(`)[1]
+      .split(")")[0]
+      .trim()
+      .split(" ");
 
-    return {target, param}
-  })
+    return { target, param };
+  });
 
-  return [filterKeys, filterMaps]
-}
+  return [filterKeys, filterMaps];
+};
 
 const getDefaultEventObject = (context, eventName, checkMethodFilters) => {
-  let arr = checkMethodFilters
+  let arr = checkMethodFilters;
 
-  // context 에 속한 변수나 메소드 리스트 체크 
+  // context 에 속한 변수나 메소드 리스트 체크
   const checkMethodList = arr.filter(code => !!context[code]);
 
-  // 이벤트 정의 시점에 적용 되어야 하는 것들은 모두 method() 화 해서 정의한다.  
-  const [afters, afterMethods] = splitMethodByKeyword(arr, 'after')
-  const [befores, beforeMethods] = splitMethodByKeyword(arr, 'before')
-  const [debounces, debounceMethods] = splitMethodByKeyword(arr, 'debounce')
-  const [captures] = splitMethodByKeyword(arr, 'capture')
+  // 이벤트 정의 시점에 적용 되어야 하는 것들은 모두 method() 화 해서 정의한다.
+  const [afters, afterMethods] = splitMethodByKeyword(arr, "after");
+  const [befores, beforeMethods] = splitMethodByKeyword(arr, "before");
+  const [debounces, debounceMethods] = splitMethodByKeyword(arr, "debounce");
+  const [captures] = splitMethodByKeyword(arr, "capture");
 
-  // 위의 5개 필터 이외에 있는 코드들은 keycode 로 인식한다. 
+  // 위의 5개 필터 이외에 있는 코드들은 keycode 로 인식한다.
   const filteredList = [
-    ...checkMethodList, 
-    ...afters, 
-    ...befores, 
-    ...debounces, 
+    ...checkMethodList,
+    ...afters,
+    ...befores,
+    ...debounces,
     ...captures
-  ]
+  ];
 
-  var codes = arr.filter(code => !filteredList.includes(code))
-                 .map(code => code.toLowerCase())
+  var codes = arr
+    .filter(code => !filteredList.includes(code))
+    .map(code => code.toLowerCase());
 
-  return { eventName, codes, captures, afterMethods, beforeMethods, debounceMethods, checkMethodList }
-}
+  return {
+    eventName,
+    codes,
+    captures,
+    afterMethods,
+    beforeMethods,
+    debounceMethods,
+    checkMethodList
+  };
+};
 
 const addEvent = (context, eventObject, callback) => {
-  eventObject.callback = makeCallback(context, eventObject, callback)
+  eventObject.callback = makeCallback(context, eventObject, callback);
   context.addBinding(eventObject);
-  Event.addEvent(eventObject.dom, eventObject.eventName, eventObject.callback, !!eventObject.captures.length)
-}
+  Event.addEvent(
+    eventObject.dom,
+    eventObject.eventName,
+    eventObject.callback,
+    !!eventObject.captures.length
+  );
+};
 
-const bindingEvent = (context, [ eventName, dom, ...delegate], checkMethodFilters, callback) => {
-  let eventObject = getDefaultEventObject(context, eventName, checkMethodFilters);
+const bindingEvent = (
+  context,
+  [eventName, dom, ...delegate],
+  checkMethodFilters,
+  callback
+) => {
+  let eventObject = getDefaultEventObject(
+    context,
+    eventName,
+    checkMethodFilters
+  );
 
   eventObject.dom = getDefaultDomElement(context, dom);
   eventObject.delegate = delegate.join(SAPARATOR);
 
   if (eventObject.debounceMethods.length) {
-    var debounceTime = +(eventObject.debounceMethods[0].target)
-    callback = debounce(callback, debounceTime)
-  } 
+    var debounceTime = +eventObject.debounceMethods[0].target;
+    callback = debounce(callback, debounceTime);
+  }
 
   addEvent(context, eventObject, callback);
-}
+};
 
-
-const getEventNames = (eventName) => {
-  let results = [] 
+const getEventNames = eventName => {
+  let results = [];
 
   eventName.split(NAME_SAPARATOR).forEach(e => {
-    var arr = e.split(NAME_SAPARATOR)
+    var arr = e.split(NAME_SAPARATOR);
 
-    results.push(...arr)
-  })
+    results.push(...arr);
+  });
 
-  return results; 
-}
+  return results;
+};
 
 const parseEvent = (context, key) => {
   let checkMethodFilters = key.split(CHECK_SAPARATOR).map(it => it.trim());
-  var eventSelectorAndBehave = checkMethodFilters.shift() ;
+  var eventSelectorAndBehave = checkMethodFilters.shift();
 
   var [eventName, ...params] = eventSelectorAndBehave.split(SAPARATOR);
-  var eventNames =  getEventNames(eventName)
-  var callback = context[key].bind(context)
-  
+  var eventNames = getEventNames(eventName);
+  var callback = context[key].bind(context);
+
   eventNames.forEach(eventName => {
     bindingEvent(context, [eventName, ...params], checkMethodFilters, callback);
-  })
-}
+  });
+};
 
-export default class EventMachine { 
-
-  constructor() { 
+export default class EventMachine {
+  constructor() {
     this.state = new State(this);
-    this.refs = {} 
-    this.children = {} 
-    this._bindings = []
-    this.childComponents = this.components()
+    this.refs = {};
+    this.children = {};
+    this._bindings = [];
+    this.childComponents = this.components();
   }
 
-  render ($container) {
-    this.$el = this.parseTemplate(html`${this.template()}`)
-    this.refs.$el = this.$el;   
+  render($container) {
+    this.$el = this.parseTemplate(
+      html`
+        ${this.template()}
+      `
+    );
+    this.refs.$el = this.$el;
 
-    if ($container) $container.html(this.$el)
+    if ($container) $container.html(this.$el);
 
-    this.load()    
+    this.load();
 
     this.afterRender();
   }
 
   initialize() {}
-  afterRender () { }
-  components () { return {} }
+  afterRender() {}
+  components() {
+    return {};
+  }
 
-  parseTemplate (html, isLoad) {
-
+  parseTemplate(html, isLoad) {
     if (isArray(html)) {
-      html = html.join(EMPTY_STRING)
+      html = html.join(EMPTY_STRING);
     }
 
     html = html.trim();
-    const list = TEMP_DIV.html(html).children()
+    const list = TEMP_DIV.html(html).children();
 
     list.forEach($el => {
-      // ref element 정리 
+      // ref element 정리
       if ($el.attr(REFERENCE_PROPERTY)) {
-        this.refs[$el.attr(REFERENCE_PROPERTY)] = $el; 
+        this.refs[$el.attr(REFERENCE_PROPERTY)] = $el;
       }
       var refs = $el.$$(QUERY_PROPERTY);
       refs.forEach($dom => {
-        const name = $dom.attr(REFERENCE_PROPERTY)
+        const name = $dom.attr(REFERENCE_PROPERTY);
         this.refs[name] = $dom;
-      })
-
-    })
+      });
+    });
 
     if (!isLoad) {
       return list[0];
@@ -271,205 +306,206 @@ export default class EventMachine {
     return TEMP_DIV.createChildrenFragment();
   }
 
-  parseComponent () {
-    const $el = this.$el; 
+  parseComponent() {
+    const $el = this.$el;
     keyEach(this.childComponents, (ComponentName, Component) => {
       const targets = $el.$$(`${ComponentName.toLowerCase()}`);
-      [...targets].forEach($dom => {
+      targets.forEach($dom => {
         let props = {};
-        
-        [...$dom.el.attributes].filter(t => {
-          return [REFERENCE_PROPERTY].indexOf(t.nodeName) < 0 
-        }).forEach(t => {
-          props[t.nodeName] = t.nodeValue 
-        })
-  
-        let refName = $dom.attr(REFERENCE_PROPERTY) || ComponentName
-  
-        if (refName) {
-        
-          if (Component) { 
 
+        [...$dom.el.attributes]
+          .filter(t => {
+            return [REFERENCE_PROPERTY].indexOf(t.nodeName) < 0;
+          })
+          .forEach(t => {
+            props[t.nodeName] = t.nodeValue;
+          });
+
+        let refName = $dom.attr(REFERENCE_PROPERTY) || ComponentName;
+
+        if (refName) {
+          if (Component) {
             var instance = new Component(this, props);
 
             if (this.children[refName]) {
-              refName = instance.id
+              refName = instance.id;
             }
 
-            this.children[refName] = instance            
-            this.refs[refName] = instance.$el
+            this.children[refName] = instance;
+            this.refs[refName] = instance.$el;
 
             if (instance) {
-              instance.render()
-  
-              $dom.replace(instance.$el)
+              instance.render();
+
+              $dom.replace(instance.$el);
             }
           }
-  
         }
-  
-  
-      })
-    })
+      });
+    });
   }
 
-  load () {
-
+  load() {
     if (!this._loadMethods) {
       this._loadMethods = this.filterProps(CHECK_LOAD_PATTERN);
     }
-  
-    this._loadMethods.forEach(callbackName => {
-      const elName = callbackName.split(LOAD_SAPARATOR)[1]
-      if (this.refs[elName]) { 
 
-        var oldTemplate = this[callbackName].t || EMPTY_STRING
+    this._loadMethods.forEach(callbackName => {
+      const elName = callbackName.split(LOAD_SAPARATOR)[1];
+      if (this.refs[elName]) {
+        var oldTemplate = this[callbackName].t || EMPTY_STRING;
         var newTemplate = this[callbackName].call(this);
 
         if (isArray(newTemplate)) {
-          newTemplate = newTemplate.join(EMPTY_STRING)
+          newTemplate = newTemplate.join(EMPTY_STRING);
         }
 
-        // LOAD 로 생성한 html 문자열에 변화가 없으면 업데이트 하지 않는다. 
+        // LOAD 로 생성한 html 문자열에 변화가 없으면 업데이트 하지 않는다.
         if (oldTemplate != newTemplate) {
           this[callbackName].t = newTemplate;
           const fragment = this.parseTemplate(newTemplate, true);
 
-          // fragment 와 이전 el children 을 비교해서 필요한 것만 갱신한다. 
-          // 이건 비교 알고리즘을 넣어도 괜찮을 듯 
-          this.refs[elName].htmlDiff(fragment) 
+          // fragment 와 이전 el children 을 비교해서 필요한 것만 갱신한다.
+          // 이건 비교 알고리즘을 넣어도 괜찮을 듯
+          this.refs[elName].html(fragment);
 
+          // ref 를 중복해서 로드 하게 되면 이전 객체가 그대로 살아 있을 확률이 커지기 때문에 정상적으로 싱크가 맞지 않음
         }
-
       }
-    })
+    });
 
-    this.parseComponent()
+    this.parseComponent();
   }
 
-  // 기본 템플릿 지정 
-  template () {
-    var className =  this.templateClass()
-    var classString = className ? `class="${className}"` : EMPTY_STRING
+  // 기본 템플릿 지정
+  template() {
+    var className = this.templateClass();
+    var classString = className ? `class="${className}"` : EMPTY_STRING;
 
     return `<div ${classString}></div>`;
   }
 
-  templateClass () {return null;}
+  templateClass() {
+    return null;
+  }
 
-
-  eachChildren (callback) {
-    if (!isFunction(callback)) return; 
+  eachChildren(callback) {
+    if (!isFunction(callback)) return;
 
     keyEach(this.children, (_, Component) => {
-      callback(Component)
-    })
+      callback(Component);
+    });
   }
 
   /**
-   * 이벤트를 초기화한다. 
+   * 이벤트를 초기화한다.
    */
-  initializeEvent () { 
+  initializeEvent() {
     this.initializeEventMachin();
 
-    // 자식 이벤트도 같이 초기화 한다. 
-    // 그래서 이 메소드는 부모에서 한번만 불려도 된다. 
+    // 자식 이벤트도 같이 초기화 한다.
+    // 그래서 이 메소드는 부모에서 한번만 불려도 된다.
     this.eachChildren(Component => {
-      Component.initializeEvent()
-    })
+      Component.initializeEvent();
+    });
   }
 
   /**
-   * 자원을 해제한다. 
-   * 이것도 역시 자식 컴포넌트까지 제어하기 때문에 가장 최상위 부모에서 한번만 호출되도 된다. 
+   * 자원을 해제한다.
+   * 이것도 역시 자식 컴포넌트까지 제어하기 때문에 가장 최상위 부모에서 한번만 호출되도 된다.
    */
   destroy() {
     this.destroyEventMachin();
-    // this.refs = {} 
+    // this.refs = {}
 
     this.eachChildren(Component => {
-      Component.destroy()
-    })
+      Component.destroy();
+    });
   }
 
-  destroyEventMachin () {
+  destroyEventMachin() {
     this.removeEventAll();
   }
 
-  initializeEventMachin () {
+  initializeEventMachin() {
     this.filterProps(CHECK_PATTERN).forEach(key => parseEvent(this, key));
   }
 
   /**
-   * property 수집하기 
-   * 상위 클래스의 모든 property 를 수집해서 리턴한다. 
+   * property 수집하기
+   * 상위 클래스의 모든 property 를 수집해서 리턴한다.
    */
-  collectProps () {
-
+  collectProps() {
     if (!this.collapsedProps) {
-      var p = this.__proto__ 
-      var results = [] 
+      var p = this.__proto__;
+      var results = [];
       do {
-        results.push(...Object.getOwnPropertyNames(p))
-        p  = p.__proto__;
-      } while( p );
+        results.push(...Object.getOwnPropertyNames(p));
+        p = p.__proto__;
+      } while (p);
 
-      this.collapsedProps = results
+      this.collapsedProps = results;
     }
 
-    return this.collapsedProps; 
+    return this.collapsedProps;
   }
 
-  filterProps (pattern) {
+  filterProps(pattern) {
     return this.collectProps().filter(key => {
       return key.match(pattern);
     });
   }
 
-  /* magic check method  */ 
-  self (e) { return e && e.$delegateTarget && e.$delegateTarget.is(e.target); }
-  isAltKey (e) { return e.altKey }
-  isCtrlKey (e) { return e.ctrlKey }
-  isShiftKey (e) { return e.shiftKey }
-  isMetaKey (e) { return e.metaKey }
+  /* magic check method  */
 
-  /* magic check method */ 
-
-  /** before check method */
-
-
-  /** before check method */
-
-  /* after check method */ 
-  preventDefault(e) { 
-    e.preventDefault()
-    return true; 
+  self(e) {
+    return e && e.$delegateTarget && e.$delegateTarget.is(e.target);
+  }
+  isAltKey(e) {
+    return e.altKey;
+  }
+  isCtrlKey(e) {
+    return e.ctrlKey;
+  }
+  isShiftKey(e) {
+    return e.shiftKey;
+  }
+  isMetaKey(e) {
+    return e.metaKey;
   }
 
-  stopPropagation (e) {
+  /* magic check method */
+
+  /** before check method */
+
+  /** before check method */
+
+  /* after check method */
+
+  preventDefault(e) {
+    e.preventDefault();
+    return true;
+  }
+
+  stopPropagation(e) {
     e.stopPropagation();
-    return true; 
+    return true;
   }
 
-  bodyMouseMove (e, methodName) {
+  bodyMouseMove(e, methodName) {
     if (this[methodName]) {
-      this.emit(ADD_BODY_MOUSEMOVE, this[methodName], this, e.xy)
+      this.emit(ADD_BODY_MOUSEMOVE, this[methodName], this, e.xy);
     }
   }
 
-  bodyMouseUp (e, methodName) {
+  bodyMouseUp(e, methodName) {
     if (this[methodName]) {
-      this.emit(ADD_BODY_MOUSEUP, this[methodName], this, e.xy)
-    }    
-  }  
-  /* after check method */ 
-  
+      this.emit(ADD_BODY_MOUSEUP, this[methodName], this, e.xy);
+    }
+  }
+  /* after check method */
 
-
-
-
-  getBindings () {
-
+  getBindings() {
     if (!this._bindings) {
       this.initBindings();
     }
@@ -477,7 +513,7 @@ export default class EventMachine {
     return this._bindings;
   }
 
-  addBinding (obj) {
+  addBinding(obj) {
     this.getBindings().push(obj);
   }
 
@@ -485,14 +521,14 @@ export default class EventMachine {
     this._bindings = [];
   }
 
-  removeEventAll () {
+  removeEventAll() {
     this.getBindings().forEach(obj => {
       this.removeEvent(obj);
     });
     this.initBindings();
   }
 
-  removeEvent({eventName, dom, callback}) {
+  removeEvent({ eventName, dom, callback }) {
     Event.removeEvent(dom, eventName, callback);
   }
 }

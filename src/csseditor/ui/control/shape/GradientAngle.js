@@ -1,120 +1,155 @@
-import {getXYInCircle, calculateAngle} from '../../../../util/functions/math'
-import UIElement, { EVENT } from '../../../../util/UIElement';
-import { CHANGE_EDITOR, CHANGE_SELECTION, CHANGE_TOOL, CHANGE_IMAGE } from '../../../types/event';
-import { POINTERSTART, MOVE } from '../../../../util/Event';
-import { editor } from '../../../../editor/editor';
+import { getXYInCircle, calculateAngle } from "../../../../util/functions/math";
+import UIElement, { EVENT } from "../../../../util/UIElement";
+import {
+  POINTERSTART,
+  MOVE,
+  INPUT,
+  KEYDOWN,
+  ENTER,
+  ARROW_DOWN,
+  ARROW_UP,
+  PREVENT,
+  STOP
+} from "../../../../util/Event";
+import { editor } from "../../../../editor/editor";
+import { Length } from "../../../../editor/unit/Length";
 
 export default class GradientAngle extends UIElement {
+  initialize() {
+    super.initialize();
 
-    template () {
-        return `
+    this.angle = 0;
+  }
+  template() {
+    return `
             <div class='drag-angle-rect'>
                 <div class="drag-angle" ref="$dragAngle">
-                    <div ref="$angleText" class="angle-text"></div>
+                    <div class="angle-text">
+                      <span contenteditable='true' ref="$angleText"></span>°
+                    </div>
                     <div ref="$dragPointer" class="drag-pointer"></div>
                 </div>
             </div>
-        `
+        `;
+  }
+
+  getCurrentXY(isUpdate, angle, radius, centerX, centerY) {
+    return isUpdate
+      ? editor.config.get("pos")
+      : getXYInCircle(angle, radius, centerX, centerY);
+  }
+
+  getRectangle() {
+    var width = this.refs.$dragAngle.width();
+    var height = this.refs.$dragAngle.height();
+    var radius = Math.floor((width / 2) * 0.7);
+    var { left, top } = this.refs.$dragAngle.offset();
+    var minX = left;
+    var minY = top;
+    var centerX = minX + width / 2;
+    var centerY = minY + height / 2;
+
+    return { minX, minY, width, height, radius, centerX, centerY };
+  }
+
+  getDefaultValue() {
+    return this.angle - 90;
+  }
+
+  refreshAngleText(angleText) {
+    this.refs.$angleText.text(angleText);
+  }
+
+  refreshUI(isUpdate) {
+    var { minX, minY, radius, centerX, centerY } = this.getRectangle();
+    var { x, y } = this.getCurrentXY(
+      isUpdate,
+      this.getDefaultValue(),
+      radius,
+      centerX,
+      centerY
+    );
+
+    var rx = x - centerX,
+      ry = y - centerY,
+      angle = calculateAngle(rx, ry);
+
+    {
+      var { x, y } = this.getCurrentXY(null, angle, radius, centerX, centerY);
     }
 
-    refresh () {
+    // set drag pointer position
+    this.refs.$dragPointer.px("left", x - minX);
+    this.refs.$dragPointer.px("top", y - minY);
 
-        if (this.isShow()) {
-            this.$el.show();
+    var lastAngle = Math.round(angle + 90) % 360;
 
-            this.refreshUI()            
-        } else {
-            this.$el.hide();
-        }
+    this.refreshAngleText(lastAngle);
+
+    if (isUpdate) {
+      this.setAngle(lastAngle);
     }
+  }
 
-    isShow () {
-        var image = editor.selection.backgroundImage
-
-        if (!image) return false; 
-        if (!image.image.hasAngle()) {
-            return false; 
-        }
-
-        return editor.config.get('guide.angle')
+  getKeyTarget(key) {
+    switch (key) {
+      case "ArrowDown":
+        return "sub";
+      case "ArrowUp":
+        return "add";
     }
+  }
 
-    getCurrentXY(isUpdate, angle, radius, centerX, centerY) {
-        return isUpdate ? editor.config.get('pos') : getXYInCircle(angle, radius, centerX, centerY)
-    }
+  modifyAngle(e, $el) {
+    var type = this.getKeyTarget(e.key || e.code);
+    var len = Length.deg(+$el.text());
 
-    getRectangle () {
-        var width = this.refs.$dragAngle.width();  
-        var height = this.refs.$dragAngle.height();  
-        var radius = Math.floor(width/2 * 0.7); 
-        var {left, top} = this.refs.$dragAngle.offset();
-        var minX = left; 
-        var minY = top; 
-        var centerX = minX + width / 2;
-        var centerY = minY + height / 2;
+    len.calculate(type, 1);
 
-        return { minX, minY, width, height, radius,  centerX, centerY }
-    }    
+    return len;
+  }
 
-    getDefaultValue() {
-        var image = editor.selection.backgroundImage;
-        if (!image) return 0 
+  updateAngle(angle) {
+    this.angle = angle;
+    this.refreshUI();
+    this.setAngle(this.angle);
+  }
 
-        return image.image.calculateAngle() - 90 
-    }
+  [KEYDOWN("$angleText") + ARROW_DOWN + ARROW_UP + PREVENT + STOP](e) {
+    var len = this.modifyAngle(e, this.refs.$angleText);
 
-    refreshAngleText (angleText) {
-        this.refs.$angleText.text(angleText + ' °') 
-    }
+    this.updateAngle(len.value);
+    return false;
+  }
 
-    refreshUI (isUpdate) {
-        var { minX, minY, radius,  centerX, centerY } = this.getRectangle()
-        var { x , y } = this.getCurrentXY(isUpdate, this.getDefaultValue(), radius, centerX, centerY)
+  [INPUT("$angleText")](e) {
+    this.updateAngle(+this.refs.$angleText.text().trim());
+  }
 
-        var rx = x - centerX, ry = y - centerY, angle = calculateAngle(rx, ry);
+  setAngle(angle) {
+    this.emit("changeGradientAngle", angle);
+  }
 
-        {
-            var { x, y } = this.getCurrentXY(null, angle, radius, centerX, centerY);
-        }
+  // Event Bindings
+  move() {
+    this.refreshUI(true);
+  }
 
-        // set drag pointer position 
-        this.refs.$dragPointer.px('left', x - minX);
-        this.refs.$dragPointer.px('top', y - minY);
+  [POINTERSTART("$dragAngle") + MOVE()](e) {}
 
-        var lastAngle = Math.round(angle + 90) % 360;
+  [EVENT("showGradientAngle")](angle) {
+    this.angle = angle;
+    this.refreshUI();
 
-        this.refreshAngleText (lastAngle)
+    this.$el.show();
+  }
 
-        if (isUpdate) {
+  [EVENT("hideGradientAngle")]() {
+    this.$el.hide();
+  }
 
-            this.setAngle (lastAngle)
-        }
-
-    }
-
-    setAngle (angle) {
-        var image = editor.selection.backgroundImage;
-        if (image) {
-            image.image.angle = angle; 
-            editor.send(CHANGE_IMAGE, image.image)
-        }
-    }
-
-    [EVENT(
-        CHANGE_IMAGE,
-        CHANGE_EDITOR,
-        CHANGE_SELECTION
-    )] () { this.refresh() }
-
-    [EVENT(CHANGE_TOOL)] () {
-        this.$el.toggle(this.isShow())
-    }
-
-    // Event Bindings 
-    move () {
-        this.refreshUI(true);
-    }
-
-    [POINTERSTART('$dragAngle') + MOVE()] (e) { }     
-
+  [EVENT("changeGradientAngle")](angle) {
+    this.angle = angle;
+    this.refreshUI();
+  }
 }

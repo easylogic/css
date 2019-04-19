@@ -67,8 +67,10 @@ export default class CanvasView extends UIElement {
     }
 
     // all effect 
-    [EVENT( CHANGE_EDITOR )] () { 
+    [EVENT( 'refreshCanvas' )] () { 
         this.refresh(); 
+
+        this.emit('refreshItemManager')
     }
 
     [SCROLL('$board')] () {

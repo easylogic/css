@@ -60,7 +60,7 @@ export default class ProjectListView extends UIElement {
         }
     }
 
-    [EVENT(CHANGE_EDITOR)] () {
+    [EVENT('refreshProjectListView')] () {
         this.refresh()
     }
 

@@ -1,16 +1,20 @@
-import UIElement, { EVENT } from '../../../../util/UIElement';
-import { 
-    CHANGE_EDITOR, 
-    CHANGE_IMAGE, 
-    CHANGE_SELECTION
-} from '../../../types/event';
-import { CLICK, SELF } from '../../../../util/Event';
-import { editor } from '../../../../editor/editor';
+import UIElement, { EVENT } from "../../../../util/UIElement";
+import { CLICK, SELF } from "../../../../util/Event";
+
+const DEFINED_ANGLES = {
+  "to top": 0,
+  "to top right": 45,
+  "to right": 90,
+  "to bottom right": 135,
+  "to bottom": 180,
+  "to bottom left": 225,
+  "to left": 270,
+  "to top left": 315
+};
 
 export default class PredefinedLinearGradientAngle extends UIElement {
-
-    template () { 
-        return `
+  template() {
+    return `
             <div class="predefined-angluar-group">
                 <button type="button" data-value="to right"></button>                          
                 <button type="button" data-value="to left"></button>                                                  
@@ -21,40 +25,21 @@ export default class PredefinedLinearGradientAngle extends UIElement {
                 <button type="button" data-value="to bottom left"></button>
                 <button type="button" data-value="to top left"></button>
             </div>
-        `
-    }
+        `;
+  }
 
-    refresh () {
-        this.$el.toggle(this.isShow())
-    }
+  [CLICK("$el button") + SELF](e) {
+    this.emit(
+      "changeGradientAngle",
+      DEFINED_ANGLES[e.$delegateTarget.attr("data-value")]
+    );
+  }
 
+  [EVENT("showGradientAngle")]() {
+    this.$el.show();
+  }
 
-    isShow () {
-        var image = editor.selection.backgroundImage;
-        if (!image) { return false; }
-
-        var isLinear = image.image.isLinear()
-        var isConic = image.image.isConic()
-
-        return editor.config.get('guide.angle') && (isLinear || isConic);
-    }
-
-    [CLICK('$el button') + SELF] (e) {
-        var image = editor.selection.backgroundImage;
-        if(image) {
-            image.image.angle = e.$delegateTarget.attr('data-value')
-            editor.send(CHANGE_IMAGE, image);
-        }
-    }
-
-    [EVENT(
-        CHANGE_IMAGE,
-        CHANGE_EDITOR,
-        CHANGE_SELECTION
-    )] () { this.refresh() }
-
-    [EVENT('changeTool')] () {
-        this.refresh();
-    }
-
+  [EVENT("hideGradientAngle")]() {
+    this.$el.hide();
+  }
 }

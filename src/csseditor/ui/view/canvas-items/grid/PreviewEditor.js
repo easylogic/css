@@ -240,7 +240,8 @@ export default class PreviewEditor extends UIElement {
         CHANGE_LAYER,
         CHANGE_ARTBOARD,
         CHANGE_INSPECTOR,        
-        CHANGE_SELECTION
+        CHANGE_SELECTION,
+        'refreshPreviewEditor'
     )] () {
         this.refresh();
     }

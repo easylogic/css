@@ -19,29 +19,37 @@
 // import BackgroundPositionProperty from "./BackgroundPositionProperty";
 // import LayerBorderRadiusProperty from "./LayerBorderRadiusProperty";
 import BoundProperty from "./BoundProperty";
-
-
+import LayoutProperty from "./LayoutProperty";
+import FlexDirectionProperty from "./FlexDirectionProperty";
+import JustifyContentProperty from "./JustifyContentProperty";
+import FlexWrapProperty from "./FlexWrapProperty";
+import FillProperty from "./FillProperty";
 
 export default {
-    BoundProperty,
-    // BackgroundPositionProperty,
-    // Transform2DControlProperty,
-    // LayerBorderRadiusProperty,
-    // LayerBorderProperty,
-    // BackgroundProperty,
-    // BackgroundCodeProperty,
-    // ColorStepProperty,
-    // ImageSortingProperty,
-    // LayerCodeProperty,
-    // Transform2DProperty,
-    // Transform3DProperty,
-    // ClipPathProperty,
-    // FilterProperty,
-    // BackdropProperty,
-    // BoxShadowProperty,
-    // ArtboardProperty,
-    // LayerProperty,
-    // LayerFontProperty,
-    // LayerTextProperty,
-    // TextShadowProperty
-}
+  FillProperty,
+  FlexWrapProperty,
+  JustifyContentProperty,
+  FlexDirectionProperty,
+  LayoutProperty,
+  BoundProperty
+  // BackgroundPositionProperty,
+  // Transform2DControlProperty,
+  // LayerBorderRadiusProperty,
+  // LayerBorderProperty,
+  // BackgroundProperty,
+  // BackgroundCodeProperty,
+  // ColorStepProperty,
+  // ImageSortingProperty,
+  // LayerCodeProperty,
+  // Transform2DProperty,
+  // Transform3DProperty,
+  // ClipPathProperty,
+  // FilterProperty,
+  // BackdropProperty,
+  // BoxShadowProperty,
+  // ArtboardProperty,
+  // LayerProperty,
+  // LayerFontProperty,
+  // LayerTextProperty,
+  // TextShadowProperty
+};

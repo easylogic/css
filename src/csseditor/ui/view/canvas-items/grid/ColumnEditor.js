@@ -90,6 +90,7 @@ export default class ColumnEditor extends UIElement {
 
             if (isRefresh) this.refresh();
             this.emit('refreshItem', current);
+            this.emit('refreshPreviewEditor', current);
         }
     }
 
@@ -126,7 +127,7 @@ export default class ColumnEditor extends UIElement {
             if (type == 'add') {
                 len.add(1);
             } else if (type == 'sub') {
-                len.add(-1);
+                len.sub(1);
             }
         }
 
