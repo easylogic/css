@@ -20,16 +20,10 @@
 // import LayerBorderRadiusProperty from "./LayerBorderRadiusProperty";
 import BoundProperty from "./BoundProperty";
 import LayoutProperty from "./LayoutProperty";
-import FlexDirectionProperty from "./FlexDirectionProperty";
-import JustifyContentProperty from "./JustifyContentProperty";
-import FlexWrapProperty from "./FlexWrapProperty";
 import FillProperty from "./FillProperty";
 
 export default {
   FillProperty,
-  FlexWrapProperty,
-  JustifyContentProperty,
-  FlexDirectionProperty,
   LayoutProperty,
   BoundProperty
   // BackgroundPositionProperty,

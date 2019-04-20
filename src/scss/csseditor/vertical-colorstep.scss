@@ -36,8 +36,8 @@
     top: 0px;
 
     .guide-button {
-      width: 10px;
-      height: 10px;
+      width: 14px;
+      height: 14px;
       padding: 0px;
       appearance: none;
       background-color: transparent;
@@ -46,14 +46,13 @@
       background-color: white;
       background-image: linear-gradient(to top, black 0%, black 100%);
       background-size: 2px 2px;
-      background-position: 2.5px center;
+      background-position: center center;
       background-repeat: repeat-y;
       box-sizing: border-box;
       outline: none;
       vertical-align: middle;
 
       &.cut {
-        background-position: center 2.5px;
         background-repeat: repeat-x;
       }
     }
@@ -153,7 +152,6 @@
         height: 14px;
         z-index: 1;
         border-radius: 14px;
-        border: 1px solid rgba(black, 0.7);
 
         &.mode-drag {
           cursor: pointer;

@@ -1,4 +1,4 @@
-$grid-tool-size: 25px;
+$grid-tool-size: 18px;
 
 .grid-layout-editor {
     position: absolute;
@@ -37,6 +37,7 @@ $grid-tool-size: 25px;
             left: 50%;
             top: 50%;
             transform: translateX(-50%) translateY(-50%);
+            font-size: 11px;
 
             &+ .delete {
                 position: absolute;
@@ -60,6 +61,7 @@ $grid-tool-size: 25px;
             top: 50%;
             transform:  translateY(-50%) translateX(-50%) rotate(270deg) ;
             transform-origin: center center;
+            font-size: 11px;
 
             &:focus {
                 transform:  translateY(-50%) translateX(-50%);
@@ -77,11 +79,11 @@ $grid-tool-size: 25px;
         right: 0px;
         height: $grid-tool-size;
         top: -1px;
-        transform: translateY(-25px);
+        transform: translateY(-$grid-tool-size);
         display: grid;
 
         .grid-item {
-            margin-bottom: 2px;
+            // margin-bottom: 2px;
 
             &.selected {
                 background-color: black;
@@ -104,6 +106,7 @@ $grid-tool-size: 25px;
         height: $grid-tool-size;
         outline: none;
         cursor: pointer;
+        padding: 2px;        
     }
 
     .column-gap-editor {
@@ -160,11 +163,11 @@ $grid-tool-size: 25px;
         top: 0px;
         bottom: 0px;
         min-width: $grid-tool-size;
-        transform: translateX(-25px);
+        transform: translateX(-$grid-tool-size);
         display: grid;       
 
         .grid-item {
-            margin-right: 2px;
+            // margin-right: 2px;
 
             &.selected {
                 background-color: black;
@@ -188,6 +191,7 @@ $grid-tool-size: 25px;
         height: $grid-tool-size;
         outline: none;   
         cursor: pointer;     
+        padding: 2px;        
     }
 
     .move-layout {
@@ -205,6 +209,7 @@ $grid-tool-size: 25px;
         height: $grid-tool-size;
         outline: none;    
         cursor: move;
+        padding: 2px;
     }
 
     .preview {

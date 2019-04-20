@@ -8,6 +8,14 @@
     cursor: pointer;
   }
 
+  .property-item-label {
+    button { display: none; }
+  }
+
+  .property-item-label[data-display='grid'] button {
+    display: inline-block;
+  }
+
   .display-list {
     display: grid;
     box-sizing: border-box;

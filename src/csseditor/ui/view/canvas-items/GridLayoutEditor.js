@@ -161,4 +161,11 @@ export default class GridLayoutEditor extends UIElement {
     }
 
 
+    [EVENT('toggleDisplayGridEditor')] ( ) {
+        if (this.$el.css('left') === '-10000px') {
+            this.refresh();
+        } else {
+            this.initGridLayoutEditor()
+        }
+    }
 }

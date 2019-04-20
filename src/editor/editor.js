@@ -4,6 +4,7 @@ import { uuidShort } from "../util/functions/math";
 
 const items = new Map();
 const linkedItems = new Map();
+const urlList = new Map();
 
 function traverse(item, results, parentId) {
   var newItem = item.clone(true);
@@ -270,5 +271,25 @@ export const editor = new class {
       }
     }
     return results;
+  }
+
+  hasFile (url) {
+    return urlList.has(url);
+  }
+
+  getFile (url) {
+    return urlList.get(url);
+  }
+
+  createUrl (file) {
+    var url = URL.createObjectURL(file);
+    urlList.set(url, file); 
+    return url; 
+  }
+
+  revokeUrl (url) {
+    if (urlList.delete(url)) {
+      URL.revokeObjectURL(url);
+    }
   }
 }();

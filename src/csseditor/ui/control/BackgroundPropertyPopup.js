@@ -1,8 +1,28 @@
 import UIElement, { EVENT } from "../../../util/UIElement";
 import UnitRange from "./panel/items/element/UnitRange";
-import { CLICK } from "../../../util/Event";
+import { CLICK, CHANGE } from "../../../util/Event";
 import { Length } from "../../../editor/unit/Length";
-import { isString } from "../../../util/functions/func";
+import { html } from "../../../util/functions/func";
+import { CHANGE_EDITOR, CHANGE_SELECTION } from "../../types/event";
+
+const blend_list = [
+  "normal",
+  "multiply",
+  "screen",
+  "overlay",
+  "darken",
+  "lighten",
+  "color-dodge",
+  "color-burn",
+  "hard-light",
+  "soft-light",
+  "difference",
+  "exclusion",
+  "hue",
+  "saturation",
+  "color",
+  "luminosity"
+];
 
 export default class BackgroundPropertyPopup extends UIElement {
   components() {
@@ -146,6 +166,26 @@ export default class BackgroundPropertyPopup extends UIElement {
     this.updateData({ repeat: $t.value });
   }
 
+  templateForBlendMode () {
+    return html`
+    <div class='popup-item'>
+      <label>Blend</label>
+      <div class='blend-list' ">
+        <select ref='$blend' class='full-size'>
+          ${blend_list.map(it => {
+            return `<option value=${it}>${it}</option>`
+          })}
+        </select>
+      </div>
+    </div>
+    `
+  }
+
+  [CHANGE('$blend')] () {
+    const blendMode = this.refs.$blend.value;
+    this.updateData({ blendMode });
+  }
+
   template() {
     return `
       <div class='popup background-property-popup'>
@@ -157,6 +197,7 @@ export default class BackgroundPropertyPopup extends UIElement {
           ${this.templateForWidth()}
           ${this.templateForHeight()}
           ${this.templateForRepeat()}
+          ${this.templateForBlendMode()}
         </div>
       </div>
     `;
@@ -169,6 +210,7 @@ export default class BackgroundPropertyPopup extends UIElement {
     this.children.$height.refreshValue(this.data.height);
     this.refs.$size.attr("data-value", this.data.size);
     this.refs.$repeat.val(this.data.repeat);
+    this.refs.$blend.val(this.data.blendMode);
   }
 
   [EVENT("showBackgroundPropertyPopup")](data) {
@@ -187,7 +229,12 @@ export default class BackgroundPropertyPopup extends UIElement {
     this.$el.show("inline-block");
   }
 
-  [EVENT("hideBackgroundPropertyPopup")]() {
+  [EVENT(
+    "hideBackgroundPropertyPopup",
+    'hidePropertyPopup',
+    CHANGE_EDITOR,
+    CHANGE_SELECTION
+  )]() {
     this.$el.hide();
   }
 }

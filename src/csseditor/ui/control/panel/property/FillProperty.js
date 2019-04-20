@@ -23,22 +23,24 @@ import { Gradient } from "../../../../../editor/image-resource/Gradient";
 import Dom from "../../../../../util/Dom";
 import { ColorStep } from "../../../../../editor/image-resource/ColorStep";
 import { Position } from "../../../../../editor/unit/Length";
+import { ImageResource } from "../../../../../editor/image-resource/ImageResource";
+import { URLImageResource } from "../../../../../editor/image-resource/URLImageResource";
 
 const names = {
   color: "Color",
   image: "Image",
   linear: "Linear",
-  "repeating-linear": "Repeating Linear",
+  "repeating-linear": `${icon.repeat} Linear`,
   radial: "Radial",
-  "repeating-radial": "Repeating Radial",
+  "repeating-radial": `${icon.repeat} Radial`,
   conic: "Conic",
-  "repeating-conic": "Repeating Conic",
+  "repeating-conic": `${icon.repeat} Conic`,
   "linear-gradient": "Linear",
-  "repeating-linear-gradient": "Repeating Linear",
+  "repeating-linear-gradient": `${icon.repeat} Linear`,
   "radial-gradient": "Radial",
-  "repeating-radial-gradient": "Repeating Radial",
+  "repeating-radial-gradient": `${icon.repeat} Radial`,
   "conic-gradient": "Conic",
-  "repeating-conic-gradient": "Repeating Conic"
+  "repeating-conic-gradient": `${icon.repeat} Conic`
 };
 
 const types = {
@@ -110,9 +112,7 @@ export default class FillProperty extends BaseProperty {
       if (it.type === "color") {
         imageCSS = `background-color: ${it.color}`;
       } else {
-        imageCSS = `background-image: ${
-          it.image ? it.image.toString() : "none"
-        }`;
+        imageCSS = `background-image: ${ it.image ? it.image.toString() : "none" }; background-size: cover;`;
       }
 
       return `
@@ -198,7 +198,7 @@ export default class FillProperty extends BaseProperty {
         data.color = backgroundImage.color;
         break;
       case "image":
-        data.image = backgroundImage.image;
+        data.url = backgroundImage.image ? backgroundImage.image.url : '';
         break;
       default:
         if (backgroundImage.image) {
@@ -271,24 +271,21 @@ export default class FillProperty extends BaseProperty {
       this.selectedIndex
     ];
 
-    const x = this.currentBackgroundImage.x;
-    const y = this.currentBackgroundImage.y;
-    const width = this.currentBackgroundImage.width;
-    const height = this.currentBackgroundImage.height;
+    const back = this.currentBackgroundImage
+
+    const x = back.x;
+    const y = back.y;
+    const width = back.width;
+    const height = back.height;
     const maxWidth = this.current.width;
     const maxHeight = this.current.height;
-    const repeat = this.currentBackgroundImage.repeat;
-    const size = this.currentBackgroundImage.size;
+    const repeat = back.repeat;
+    const size = back.size;
+    const blendMode = back.blendMode;
 
     this.emit("showBackgroundPropertyPopup", {
-      x,
-      y,
-      width,
-      height,
-      maxWidth,
-      maxHeight,
-      repeat,
-      size
+      x, y, width, height,
+      maxWidth, maxHeight, repeat, size, blendMode
     });
     // this.emit("hideFillPicker");
   }
@@ -301,6 +298,25 @@ export default class FillProperty extends BaseProperty {
     this.viewBackgroundPropertyPopup(e.$delegateTarget);
   }
 
+  viewChangeColor (data) {
+    var backgroundImage = this.currentBackgroundImage;
+    if (!backgroundImage) return; 
+    var $el = this.refs[`miniView${this.selectedIndex}`];
+    if ($el) {
+      $el.cssText(backgroundImage.toString());
+    }
+
+    var $el = this.refs[`fillTitle${this.selectedIndex}`];
+    if ($el) {
+      $el.html(names["color"]);
+    }
+
+    var $el = this.refs[`colorText${this.selectedIndex}`];
+    if ($el) {
+      $el.val(data.color);
+    }
+  }
+
   setBackgroundColor(color) {
     if (this.currentBackgroundImage) {
       this.currentBackgroundImage.reset({
@@ -308,20 +324,43 @@ export default class FillProperty extends BaseProperty {
         color
       });
 
-      var $el = this.refs[`miniView${this.selectedIndex}`];
-      if ($el) {
-        $el.cssText(this.currentBackgroundImage.toString());
-      }
+      this.viewChangeColor({color});
 
-      var $el = this.refs[`fillTitle${this.selectedIndex}`];
-      if ($el) {
-        $el.text(names["color"]);
+      if (this.current) {
+        this.emit("refreshItem", this.current);
       }
+    }
+  }
 
-      var $el = this.refs[`colorText${this.selectedIndex}`];
-      if ($el) {
-        $el.val(color);
-      }
+  viewChangeImage (data) {
+    var backgroundImage = this.currentBackgroundImage;
+    if (!backgroundImage) return; 
+    var $el = this.refs[`miniView${this.selectedIndex}`];
+    if ($el) {
+      $el.css({
+        ...backgroundImage.toCSS(),
+        'background-size': 'cover'
+      });
+    }
+
+    var $el = this.refs[`fillTitle${this.selectedIndex}`];
+    if ($el) {
+      $el.html(names["image"]);
+    }
+  }
+
+  setImage(data) {
+    if (!data.images) return; 
+    if (!data.images.length) return; 
+    if (this.currentBackgroundImage) {
+      this.currentBackgroundImage.reset({
+        type: "image",
+        image: new URLImageResource({
+          url: data.images[0]
+        })
+      });
+
+      this.viewChangeImage(data);
 
       if (this.current) {
         this.emit("refreshItem", this.current);
@@ -389,10 +428,47 @@ export default class FillProperty extends BaseProperty {
     return new Gradient();
   }
 
-  [EVENT("selectFillPickerTab")](type) {
+  [EVENT("selectFillPickerTab")](type, data) {
     var typeName = types[type];
     var $fillItem = this.refs[`fillIndex${this.selectedIndex}`];
     $fillItem.attr("data-fill-type", typeName);
+
+    // TODO: 탭만 바뀌어도 현재 상태에서 Preview 가 바뀌어야 한다. 
+
+    // switch(type) {
+    //   case'color':
+    //     this.currentBackgroundImage.type = 'color'
+    //     this.viewChangeColor(data);
+    //     break; 
+    //   case 'image':
+    //     this.currentBackgroundImage.type = 'image'
+    //     this.viewChangeImage(data);
+    //     break;
+    //   default: 
+    //     this.viewChangeGradient(data);
+    //     break; 
+    // }
+  }
+
+  viewChangeGradient(data) {
+    var backgroundImage = this.currentBackgroundImage;
+
+    if (!backgroundImage) return; 
+    var $el = this.refs[`miniView${this.selectedIndex}`];
+    if ($el) {
+      $el.cssText(backgroundImage.toString());
+    }
+
+    var $el = this.refs[`fillTitle${this.selectedIndex}`];
+    if ($el) {
+      $el.html(names[data.type]);
+    }
+
+    var $el = this.refs[`colorsteps${this.selectedIndex}`];
+    if ($el) {
+      $el.html(this.getColorStepString(data.colorsteps));
+    }
+
   }
 
   setGradient(data) {
@@ -402,20 +478,7 @@ export default class FillProperty extends BaseProperty {
         image: this.createGradient(data, this.currentBackgroundImage.image)
       });
 
-      var $el = this.refs[`miniView${this.selectedIndex}`];
-      if ($el) {
-        $el.cssText(this.currentBackgroundImage.toString());
-      }
-
-      var $el = this.refs[`fillTitle${this.selectedIndex}`];
-      if ($el) {
-        $el.text(names[data.type]);
-      }
-
-      var $el = this.refs[`colorsteps${this.selectedIndex}`];
-      if ($el) {
-        $el.html(this.getColorStepString(data.colorsteps));
-      }
+      this.viewChangeGradient(data);
 
       if (this.current) {
         this.emit("refreshItem", this.current);
@@ -429,6 +492,7 @@ export default class FillProperty extends BaseProperty {
         this.setBackgroundColor(data.color);
         break;
       case "image":
+        this.setImage(data);
         break;
       default:
         this.setGradient(data);

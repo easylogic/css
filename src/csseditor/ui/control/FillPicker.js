@@ -1,10 +1,11 @@
 import UIElement, { EVENT } from "../../../util/UIElement";
 import ColorPicker from "../../../colorpicker/index";
 import icon from "../icon/icon";
-import { CLICK } from "../../../util/Event";
+import { CLICK, CHANGE } from "../../../util/Event";
 import { EMPTY_STRING } from "../../../util/css/types";
 import { html } from "../../../util/functions/func";
 import { Length, Position } from "../../../editor/unit/Length";
+import { editor } from "../../../editor/editor";
 
 const tabs = [
   { type: "color", title: "Color", selected: true },
@@ -41,7 +42,7 @@ export default class FillPicker extends UIElement {
   initialize() {
     super.initialize();
 
-    this.selectedTab = "color";
+    this.selectedTab = "image";
   }
 
   template() {
@@ -69,10 +70,39 @@ export default class FillPicker extends UIElement {
             data-content-type="color"
             ref="$color"
           ></div>
-          <div class="picker-tab-content" data-type="image" ref="$image"></div>
+          <div class="picker-tab-content" data-content-type="image" ref="$image">
+            <div class='image-preview'>
+              <figure>
+                <img src='' ref='$imagePreview' />
+                <div class='select-text'>Select a image</div>                
+              </figure>
+              <input type="file" ref='$imageFile' accept="image/*" />
+            </div>
+          </div>
         </div>
       </div>
     `;
+  }
+
+  [CHANGE('$imageFile')] (e) {
+    var files = this.refs.$imageFile.files;
+
+    //화면 표시 하기 
+    // files.length 따라 Preview 에 표시 하기 
+    // URL.createObjectUrl 로 임시 url 생성 (임시 URL 은 어디서 관리하나)
+    // emit('changeFillPicker', { images: [........] })
+
+
+    var images = files.map(file => {
+      return editor.createUrl(file);
+    })
+
+    if (images) {
+      this.refs.$imagePreview.attr('src', images[0]);
+      this.emit('changeFillPicker', { type: 'image', images })      
+    }
+
+
   }
 
   [CLICK("$tab .picker-tab-item")](e) {
@@ -82,15 +112,16 @@ export default class FillPicker extends UIElement {
 
     //TODO: picker 타입이 바뀌면 내부 속성도 같이 바뀌어야 한다.
     this.selectTabContent(type, {
-      type
+      type,
+      selectTab: true 
     });
-    this.emit("selectFillPickerTab", type);
   }
 
   selectTabContent(type, data = {}) {
     this.selectedTab = type;
     switch (type) {
       case "image":
+        this.refs.$imagePreview.attr('src', data.url);      
         this.refs.$image.onlyOneClass("selected");
         this.emit("hideGradientEditor");
         break;
@@ -117,7 +148,7 @@ export default class FillPicker extends UIElement {
         if (data.colorsteps) {
           sample.colorsteps = data.colorsteps;
         }
-        this.emit("showGradientEditor", sample);
+        this.emit("showGradientEditor", sample, data.selectTab);
 
         break;
     }
@@ -146,6 +177,12 @@ export default class FillPicker extends UIElement {
     this.$el.hide();
 
     this.emit("hideGradientEditor");
+  }
+
+  [EVENT('hidePropertyPopup')] () {
+    this.$el.hide();
+
+    this.emit('hideGradientEditor')
   }
 
   [EVENT("selectColorStep")](color) {

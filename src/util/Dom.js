@@ -437,6 +437,10 @@ export default class Dom {
     return this.el.value;
   }
 
+  get files () {
+    return this.el.files ? [...this.el.files] : [] 
+  }
+
   realVal() {
     switch (this.el.nodeType) {
       case "INPUT":

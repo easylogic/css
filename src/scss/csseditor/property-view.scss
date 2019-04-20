@@ -10,7 +10,7 @@
   }
 
   > .property-title {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 400;
     padding: 2px 5px;
     padding-left: 10px;
@@ -64,6 +64,27 @@
       .property-item-label,
       .property-item-input-field {
         vertical-align: middle;
+
+        .tools {
+          padding: 2px;
+          text-align: right;
+        }
+
+        button {
+          appearance: none;
+          background-color: transparent;
+          border:0px;
+          cursor: pointer;
+          padding: 0px 3px;
+          outline: none;
+          vertical-align: middle;
+
+          svg {
+            width: 16px;
+            height: 16px;
+          }
+        }
+        
       }
 
       .property-item-label {

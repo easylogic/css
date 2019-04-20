@@ -8,9 +8,6 @@ export default class Inspector extends UIElement {
       <div class="feature-control">
         <BoundProperty />
         <LayoutProperty />
-        <FlexDirectionProperty />
-        <FlexWrapProperty />
-        <JustifyContentProperty />
         <FillProperty />
       </div>
     `;

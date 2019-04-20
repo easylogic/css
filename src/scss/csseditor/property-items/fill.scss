@@ -5,7 +5,7 @@
   .fill-item {
     display: grid;
     height: 24px;
-    grid-template-columns: 20px 24px 2fr 2fr 40px;
+    grid-template-columns: 20px 24px 1fr 2fr 40px;
     grid-column-gap: 5px;
     margin-bottom: 5px;
     text-align: center;
@@ -41,6 +41,12 @@
       text-align: left;
       padding: 4px 0px;
       box-sizing: border-box;
+
+      svg {
+        width: 16px;
+        height: 16px;
+        vertical-align: middle;
+      }
     }
 
     .colorcode {
@@ -54,11 +60,11 @@
       text-align: left;
 
       .step {
-        border: 2px solid white;
+        border: 1px solid #333;
         display: inline-block;
         margin-left: -5px;
-        width: 20px;
-        height: 20px;
+        width: 16px;
+        height: 16px;
         box-sizing: border-box;
         border-radius: 100%;
         cursor: pointer;

@@ -256,6 +256,7 @@ function crop() {
     };
 }
 
+// Image manupulate 
 function resize(dstWidth, dstHeight) {
     return function (bitmap, done) {
         var c = Canvas.drawPixels(bitmap);
@@ -685,6 +686,9 @@ function bitonal(darkColor, lightColor) {
     });
 }
 
+/*
+ * @param {Number} amount  -100..100  ,  value < 0  is darken, value > 0 is brighten 
+ */
 function brightness() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -712,6 +716,10 @@ function brownie() {
     });
 }
 
+/**
+ * 
+ * @param {Number} amount from 0 to 100 
+ */
 function clip() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
 
@@ -726,6 +734,10 @@ function clip() {
     }, { $C: $C });
 }
 
+/**
+ * 
+ * @param {*} amount   min = -128, max = 128 
+ */
 function contrast() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
 
@@ -750,6 +762,10 @@ function gamma() {
     }, { $C: $C });
 }
 
+/**
+ * F.gradient('red', 'blue', 'yellow', 'white', 10)
+ * F.gradient('red, blue, yellow, white, 10')
+ */
 function gradient() {
     // 전체 매개변수 기준으로 파싱 
     // 색이 아닌 것 기준으로 scale 변수로 인식 
@@ -823,6 +839,9 @@ function grayscale() {
     });
 }
 
+/*
+ * @param {Number} amount   0..360  
+ */
 function hue() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 360;
 
@@ -906,6 +925,10 @@ function matrix() {
     });
 }
 
+/**
+ * 
+ * @param {Number} amount 1..100
+ */
 function noise() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -949,6 +972,9 @@ function polaroid() {
     });
 }
 
+/*
+ * @param {Number} amount  -100..100 
+ */
 function saturation() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 100;
 
@@ -968,6 +994,9 @@ function saturation() {
     });
 }
 
+/*
+ * @param {Number} amount  0..1 
+ */
 function sepia() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -1020,6 +1049,12 @@ function shift() {
     });
 }
 
+/**
+ * change the relative darkness of (a part of an image) by overexposure to light.
+ * @param {*} r 
+ * @param {*} g 
+ * @param {*} b 
+ */
 function solarize(redValue, greenValue, blueValue) {
     var $redValue = parseParamNumber$1(redValue);
     var $greenValue = parseParamNumber$1(greenValue);
@@ -1079,6 +1114,9 @@ function thresholdColor() {
     });
 }
 
+/*
+ * @param {Number} amount  0..100 
+ */
 function threshold() {
   var scale = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 200;
   var amount = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 100;
@@ -1140,6 +1178,11 @@ function blur () {
     return convolution(createBlurMatrix(amount));
 }
 
+/*
+ * carve, mold, or stamp a design on (a surface) so that it stands out in relief.
+ * 
+ * @param {Number} amount   0.0 .. 4.0 
+ */
 function emboss() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 4;
 
@@ -3216,6 +3259,24 @@ var func = Object.freeze({
 	html: html
 });
 
+/**
+ * @method format
+ *
+ * convert color to format string
+ *
+ *     // hex
+ *     color.format({ r : 255, g : 255, b : 255 }, 'hex')  // #FFFFFF
+ *
+ *     // rgb
+ *     color.format({ r : 255, g : 255, b : 255 }, 'rgb') // rgba(255, 255, 255, 0.5);
+ *
+ *     // rgba
+ *     color.format({ r : 255, g : 255, b : 255, a : 0.5 }, 'rgb') // rgba(255, 255, 255, 0.5);
+ *
+ * @param {Object} obj  obj has r, g, b and a attributes
+ * @param {"hex"/"rgb"} type  format string type
+ * @returns {*}
+ */
 function format(obj, type) {
     var defaultColor = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'rgba(0, 0, 0, 0)';
 
@@ -3405,6 +3466,18 @@ var fromLAB = Object.freeze({
 	LABtoRGB: LABtoRGB
 });
 
+/**
+ * @method RGBtoHSV
+ *
+ * convert rgb to hsv
+ *
+ * 		color.RGBtoHSV(0, 0, 255) === { h : 240, s : 1, v : 1 } === '#FFFF00'
+ *
+ * @param {Number} R  red color value
+ * @param {Number} G  green color value
+ * @param {Number} B  blue color value
+ * @return {Object}  hsv color code
+ */
 function RGBtoHSV(r, g, b) {
 
     if (arguments.length == 1) {
@@ -3635,6 +3708,18 @@ var fromCMYK = Object.freeze({
 	CMYKtoRGB: CMYKtoRGB
 });
 
+/**
+ * @method HSVtoRGB
+ *
+ * convert hsv to rgb
+ *
+ * 		color.HSVtoRGB(0,0,1) === #FFFFF === { r : 255, g : 0, b : 0 }
+ *
+ * @param {Number} H  hue color number  (min : 0, max : 360)
+ * @param {Number} S  Saturation number  (min : 0, max : 1)
+ * @param {Number} V  Value number 		(min : 0, max : 1 )
+ * @returns {Object}
+ */
 function HSVtoRGB(h, s, v) {
 
     if (arguments.length == 1) {
@@ -4068,6 +4153,15 @@ var parser = Object.freeze({
 	parseGradient: parseGradient
 });
 
+/**
+ * @deprecated 
+ * 
+ * instead of this,  use blend function 
+ *  
+ * @param {*} startColor 
+ * @param {*} endColor 
+ * @param {*} t 
+ */
 function interpolateRGB(startColor, endColor) {
     var t = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0.5;
     var exportFormat = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 'hex';
@@ -4766,6 +4860,11 @@ function normal () {
     return convolution$1([0, 0, 0, 0, 1, 0, 0, 0, 0]);
 }
 
+/*
+ * carve, mold, or stamp a design on (a surface) so that it stands out in relief.
+ * 
+ * @param {Number} amount   0.0 .. 4.0 
+ */
 function emboss$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 4;
 
@@ -4773,6 +4872,10 @@ function emboss$1() {
     return convolution$1([amount * -2.0, -amount, 0.0, -amount, 1.0, amount, 0.0, amount, amount * 2.0]);
 }
 
+/**
+ * 
+ * @param {Number} amount 0..1
+ */
 function gaussianBlur$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -4889,6 +4992,9 @@ function bitonal$1(darkColor, lightColor) {
     return shader('\n        if ((pixelColor.r + pixelColor.g + pixelColor.b) > ' + checkVlue + ') {\n            outColor = vec4(' + lightColorString + '.rgb, pixelColor.a);\n        } else {\n            outColor = vec4(' + darkColorString + '.rgb, pixelColor.a);\n        }\n    ');
 }
 
+/*
+ * @param {Number} amount  -1..1  ,  value < 0  is darken, value > 0 is brighten 
+ */
 function brightness$2() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -4926,6 +5032,9 @@ function brownie$1() {
     return matrix$3(0.5997023498159715, 0.34553243048391263, -0.2708298674538042, 0, -0.037703249837783157, 0.8609577587992641, 0.15059552388459913, 0, 0.24113635128153335, -0.07441037908422492, 0.44972182064877153, 0, 0, 0, 0, 1);
 }
 
+/*
+ * @param {Number} amount 0..1
+ */
 function clip$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
 
@@ -4942,6 +5051,9 @@ function chaos() {
     return shader('\n        vec2 st = pixelColor.st;\n        st *= ' + C + ';\n        \n        vec2 ipos = floor(st);  // get the integer coords\n\n        vec3 color = vec3(random( ipos ));\n\n        outColor = vec4(color, pixelColor.a);\n    ');
 }
 
+/*
+ * @param {Number} amount  0..1
+ */
 function contrast$2() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -4950,6 +5062,9 @@ function contrast$2() {
     return shader('\n        outColor = pixelColor * ' + C + ';\n    ');
 }
 
+/*
+ * @param {Number} amount  -1..1  ,  value < 0  is darken, value > 0 is brighten 
+ */
 function gamma$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -4958,6 +5073,10 @@ function gamma$1() {
     return shader('\n        outColor = vec4(pow(pixelColor.r, ' + C + '), pow(pixelColor.g, ' + C + '), pow(pixelColor.b, ' + C + '), pixelColor.a );\n    ');
 }
 
+/**
+ * F.gradient('red', 'blue', 'yellow', 'white', 10)
+ * F.gradient('red, blue, yellow, white, 10')
+ */
 function gradient$2() {
     // 전체 매개변수 기준으로 파싱 
     // 색이 아닌 것 기준으로 scale 변수로 인식 
@@ -5005,6 +5124,10 @@ function gradient$2() {
     return shader('\n        float rate = (pixelColor.r * 0.2126 + pixelColor.g * 0.7152 + pixelColor.b * 0.0722); \n\n        ' + temp.join('\n') + '        \n    ');
 }
 
+/**
+ * 
+ * @param {Number} amount 0..1
+ */
 function grayscale$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -5016,6 +5139,9 @@ function grayscale$1() {
 }
 
 //http://lolengine.net/blog/2013/07/27/rgb-to-hsv-in-glsl
+/*
+ * @param {Number} amount  0..1  ,  (real value 0..360)
+ */
 function hue$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -5037,6 +5163,10 @@ function kodachrome$1() {
     return matrix$3(1.1285582396593525, -0.3967382283601348, -0.03992559172921793, 0, -0.16404339962244616, 1.0835251566291304, -0.05498805115633132, 0, -0.16786010706155763, -0.5603416277695248, 1.6014850761964943, 0, 0, 0, 0, 1);
 }
 
+/**
+ * 
+ * @param {Number} amount 0..1
+ */
 function noise$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -5047,6 +5177,10 @@ function noise$1() {
     return shader('\n        float rnd = ' + min + ' + random( pixelColor.st ) * (' + max + ' - ' + min + ');\n\n        outColor = vec4(pixelColor.rgb + rnd, 1.0);\n    ');
 }
 
+/**
+ * 
+ * @param {Number} amount 0..1
+ */
 function opacity$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -5060,6 +5194,9 @@ function polaroid$1() {
     return matrix$3(1.438, -0.062, -0.062, 0, -0.122, 1.378, -0.122, 0, -0.016, -0.016, 1.483, 0, 0, 0, 0, 1);
 }
 
+/*
+ * @param {Number} amount  0..1 
+ */
 function saturation$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
 
@@ -5068,6 +5205,9 @@ function saturation$1() {
     return matrix$3(L, 0, 0, 0, 0, L, 0, 0, 0, 0, L, 0, 0, 0, 0, L);
 }
 
+/*
+ * @param {Number} amount  0..100 
+ */
 function sepia$1() {
     var amount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -5115,6 +5255,9 @@ function thresholdColor$1() {
     return shader('\n        float c = ( (pixelColor.r * 0.2126 + pixelColor.g * 0.7152 + pixelColor.b * 0.0722) ) >= ' + scale + ' ? 1.0 : 0.0;\n\n        outColor = vec4(c, c, c, pixelColor.a);\n    ');
 }
 
+/*
+ * @param {Number} amount  0..100 
+ */
 function threshold$1() {
   var scale = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 200;
   var amount = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 100;
@@ -5122,6 +5265,12 @@ function threshold$1() {
   return thresholdColor$1(scale, amount, false);
 }
 
+/**
+ * 
+ * @param {*} redTint  0..1
+ * @param {*} greenTint 0..1
+ * @param {*} blueTint 0..1
+ */
 function tint$1 () {
     var redTint = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
     var greenTint = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
@@ -6727,22 +6876,6 @@ var Dom = function () {
     key: "toggleClass",
     value: function toggleClass(cls, isForce) {
       this.el.classList.toggle(cls, isForce);
-
-      /*
-          if (arguments.length == 2) {
-              if (isForce) {
-                  this.addClass(cls)
-              } else {
-                  this.removeClass(cls);
-              }
-          } else {
-              if (this.hasClass(cls)) {
-                  this.removeClass(cls);
-              } else {
-                  this.addClass(cls);
-              }
-          }
-          */
     }
   }, {
     key: "html",
@@ -7362,6 +7495,11 @@ var Dom = function () {
     key: "value",
     get: function get$$1() {
       return this.el.value;
+    }
+  }, {
+    key: "files",
+    get: function get$$1() {
+      return this.el.files ? [].concat(toConsumableArray(this.el.files)) : [];
     }
   }], [{
     key: "getScrollTop",
@@ -8685,6 +8823,7 @@ var EventMachine = function () {
   return EventMachine;
 }();
 
+// const CHECK_STORE_PATTERN = /^@/
 var CHECK_STORE_MULTI_PATTERN = /^ME@/;
 
 var PREFIX = "@";
@@ -9573,404 +9712,403 @@ var RectItem = function () {
 }();
 
 var Selection = function () {
-    function Selection(editor) {
-        classCallCheck(this, Selection);
+  function Selection(editor) {
+    classCallCheck(this, Selection);
 
-        this.editor = editor;
+    this.editor = editor;
 
-        this._mode = '';
-        this._ids = [];
-        this._idSet = new Set();
-        this.currentRect = null;
+    this._mode = "";
+    this._ids = [];
+    this._idSet = new Set();
+    this.currentRect = null;
+  }
+
+  createClass(Selection, [{
+    key: "initialize",
+    value: function initialize() {
+      this._mode = "";
+      this._ids = [];
+      this._idSet.clear();
     }
 
-    createClass(Selection, [{
-        key: "initialize",
-        value: function initialize() {
-            this._mode = '';
-            this._ids = [];
-            this._idSet.clear();
+    /**
+     * get id string list for selected items
+     */
+
+  }, {
+    key: "updateLayer",
+    value: function updateLayer(event) {
+      var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+      var layer = this.currentLayer;
+      if (layer) {
+        layer.reset(attrs);
+      }
+      (context || this.editor).emit(event, layer);
+    }
+  }, {
+    key: "updateRect",
+    value: function updateRect(event) {
+      var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+      var rect = this.currentRect;
+      if (rect) {
+        rect.reset(attrs);
+      }
+      (context || this.editor).emit(event, rect);
+    }
+  }, {
+    key: "updateArtBoard",
+    value: function updateArtBoard(event) {
+      var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+      var artboard = this.currentArtBoard;
+      if (artboard) {
+        artboard.reset(attrs);
+      }
+      (context || this.editor).emit(event, artboard);
+    }
+  }, {
+    key: "updateDirectory",
+    value: function updateDirectory(event) {
+      var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+      var directory = this.currentDirectory;
+      if (directory) {
+        directory.reset(attrs);
+      }
+      (context || this.editor).emit(event, directory);
+    }
+  }, {
+    key: "updateProject",
+    value: function updateProject(event) {
+      var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+      var project = this.currentProject;
+      if (project) {
+        project.reset(attrs);
+      }
+      (context || this.editor).emit(event, project);
+    }
+  }, {
+    key: "check",
+    value: function check(id) {
+      var hasKey = this._idSet.has(id);
+
+      if (!hasKey) {
+        var isArtBoard = this._artboard && this._artboard.id == id;
+        if (isArtBoard) {
+          return true;
         }
 
-        /**
-         * get id string list for selected items 
-         */
+        var isProject = this._project && this._project.id == id;
+        if (isProject) return true;
 
-    }, {
-        key: "updateLayer",
-        value: function updateLayer(event) {
-            var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-            var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+        return false;
+      }
 
-            var layer = this.currentLayer;
-            if (layer) {
-                layer.reset(attrs);
-            }
-            (context || this.editor).emit(event, layer);
-        }
-    }, {
-        key: "updateRect",
-        value: function updateRect(event) {
-            var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-            var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+      return true;
+    }
+  }, {
+    key: "checkOne",
+    value: function checkOne(id) {
+      return this._idSet.has(id);
+    }
+  }, {
+    key: "isEmpty",
+    value: function isEmpty() {
+      return this._ids.length === 0;
+    }
+  }, {
+    key: "isNotEmpty",
+    value: function isNotEmpty() {
+      return this._ids.length > 0;
+    }
+  }, {
+    key: "count",
+    value: function count() {
+      return this._ids.length;
+    }
+  }, {
+    key: "unitValues",
+    value: function unitValues() {
+      return this.items.map(function (item) {
+        var x = item.x.value;
+        var y = item.y.value;
+        var width = item.width.value;
+        var height = item.height.value;
+        var id = item.id;
 
-            var rect = this.currentRect;
-            if (rect) {
-                rect.reset(attrs);
-            }
-            (context || this.editor).emit(event, rect);
-        }
-    }, {
-        key: "updateArtBoard",
-        value: function updateArtBoard(event) {
-            var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-            var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+        return {
+          id: id,
+          x: x,
+          y: y,
+          width: width,
+          height: height,
+          x2: x + width,
+          y2: y + height,
+          centerX: x + width / 2,
+          centerY: y + height / 2
+        };
+      });
+    }
+  }, {
+    key: "search",
+    value: function search(itemType) {
+      return this.items.filter(function (item) {
+        return item.itemType === itemType;
+      });
+    }
+  }, {
+    key: "is",
+    value: function is(mode) {
+      return this._mode === mode;
+    }
+  }, {
+    key: "select",
+    value: function select() {
+      var _this = this;
 
-            var artboard = this.currentArtBoard;
-            if (artboard) {
-                artboard.reset(attrs);
-            }
-            (context || this.editor).emit(event, artboard);
-        }
-    }, {
-        key: "updateDirectory",
-        value: function updateDirectory(event) {
-            var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-            var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
 
-            var directory = this.currentDirectory;
-            if (directory) {
-                directory.reset(attrs);
-            }
-            (context || this.editor).emit(event, directory);
-        }
-    }, {
-        key: "updateProject",
-        value: function updateProject(event) {
-            var attrs = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-            var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+      var isAll = args.map(function (id) {
+        return _this._idSet.has(id);
+      }).every(function (it) {
+        return it;
+      });
 
-            var project = this.currentProject;
-            if (project) {
-                project.reset(attrs);
-            }
-            (context || this.editor).emit(event, project);
-        }
-    }, {
-        key: "check",
-        value: function check(id) {
-            var hasKey = this._idSet.has(id);
-
-            if (!hasKey) {
-                var isArtBoard = this._artboard && this._artboard.id == id;
-                if (isArtBoard) {
-                    return true;
-                }
-
-                var isProject = this._project && this._project.id == id;
-                if (isProject) return true;
-
-                return false;
-            }
-
-            return true;
-        }
-    }, {
-        key: "checkOne",
-        value: function checkOne(id) {
-            return this._idSet.has(id);
-        }
-    }, {
-        key: "isEmpty",
-        value: function isEmpty() {
-            return this._ids.length === 0;
-        }
-    }, {
-        key: "isNotEmpty",
-        value: function isNotEmpty() {
-            return this._ids.length > 0;
-        }
-    }, {
-        key: "count",
-        value: function count() {
-            return this._ids.length;
-        }
-    }, {
-        key: "unitValues",
-        value: function unitValues() {
-            return this.items.map(function (item) {
-
-                var x = item.x.value;
-                var y = item.y.value;
-                var width = item.width.value;
-                var height = item.height.value;
-                var id = item.id;
-
-                return {
-                    id: id, x: x, y: y, width: width, height: height,
-                    x2: x + width,
-                    y2: y + height,
-                    centerX: x + width / 2,
-                    centerY: y + height / 2
-                };
-            });
-        }
-    }, {
-        key: "search",
-        value: function search(itemType) {
-            return this.items.filter(function (item) {
-                return item.itemType === itemType;
-            });
-        }
-    }, {
-        key: "is",
-        value: function is(mode) {
-            return this._mode === mode;
-        }
-    }, {
-        key: "select",
-        value: function select() {
-            var _this = this;
-
-            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-                args[_key] = arguments[_key];
-            }
-
-            var isAll = args.map(function (id) {
-                return _this._idSet.has(id);
-            }).every(function (it) {
-                return it;
-            });
-
-            this._ids = args.map(function (it) {
-                if (it.id) {
-                    return it.id;
-                }
-
-                return it;
-            }).filter(function (id) {
-                return _this.editor.has(id);
-            });
-            this._idSet = new Set(this._ids);
-
-            this.generateCache();
-
-            if (!isAll) {
-                this.editor.send(CHANGE_SELECTION);
-            }
-
-            this.initRect();
-        }
-    }, {
-        key: "refresh",
-        value: function refresh() {
-            var _this2 = this;
-
-            this.select.apply(this, toConsumableArray(this._ids.filter(function (id) {
-                return _this2.editor.get(id);
-            })));
-        }
-    }, {
-        key: "generateCache",
-        value: function generateCache() {
-
-            if (this._ids.length) {
-                var parents = this.editor.get(this._ids[0]).path();
-
-                this._layer = parents.filter(function (it) {
-                    return it.itemType === 'layer';
-                })[0];
-                this._directory = parents.filter(function (it) {
-                    return it.itemType === 'directory';
-                })[0];
-                this._artboard = parents.filter(function (it) {
-                    return it.itemType === 'artboard';
-                })[0];
-                this._project = parents.filter(function (it) {
-                    return it.itemType === 'project';
-                })[0];
-            } else {
-
-                this._layer = null;
-                this._directory = null;
-                // this._artboard = null;
-                // this._project = null ;
-            }
-        }
-    }, {
-        key: "area",
-        value: function area(rect) {
-            var selectItems = this.editor.layers.filter(function (layer) {
-                return !layer.isLayoutItem() && !layer.lock && layer.checkInArea(rect);
-            }).map(function (it) {
-                return it.id;
-            });
-
-            if (selectItems) {
-                this.select.apply(this, toConsumableArray(selectItems));
-            } else {
-                var project = this.currentProject;
-                project && project.select();
-            }
-        }
-    }, {
-        key: "initRect",
-        value: function initRect() {
-            this.currentRect = this.rect();
-        }
-    }, {
-        key: "rect",
-        value: function rect() {
-            var minX = Number.MAX_SAFE_INTEGER;
-            var minY = Number.MAX_SAFE_INTEGER;
-            var maxX = Number.MIN_SAFE_INTEGER;
-            var maxY = Number.MIN_SAFE_INTEGER;
-
-            this.items.forEach(function (item) {
-
-                if (!item.screenX) return;
-
-                var x = item.screenX.value;
-                var y = item.screenY.value;
-                var x2 = item.screenX2.value;
-                var y2 = item.screenY2.value;
-
-                if (minX > x) minX = x;
-                if (minY > y) minY = y;
-                if (maxX < x2) maxX = x2;
-                if (maxY < y2) maxY = y2;
-            });
-
-            if (this.isEmpty()) {
-                minX = 0;
-                minY = 0;
-                maxX = 0;
-                maxY = 0;
-            }
-
-            var x = minX;
-            var y = minY;
-            var x2 = maxX;
-            var y2 = maxY;
-
-            var width = x2 - x;
-            var height = y2 - y;
-
-            x = Length$1.px(x);
-            y = Length$1.px(y);
-            width = Length$1.px(width);
-            height = Length$1.px(height);
-
-            return new RectItem({ x: x, y: y, width: width, height: height });
-        }
-    }, {
-        key: "ids",
-        get: function get() {
-            return this._ids;
+      this._ids = args.map(function (it) {
+        if (it.id) {
+          return it.id;
         }
 
-        /**
-         * get item instance 
-         */
+        return it;
+      }).filter(function (id) {
+        return _this.editor.has(id);
+      });
+      this._idSet = new Set(this._ids);
 
-    }, {
-        key: "items",
-        get: function get() {
-            var _this3 = this;
+      this.generateCache();
 
-            return this._ids.map(function (id) {
-                return _this3.editor.get(id);
-            });
-        }
+      if (!isAll) {
+        this.editor.send(CHANGE_SELECTION);
+      }
 
-        /**
-         * get first item instance 
-         */
+      this.initRect();
+    }
+  }, {
+    key: "refresh",
+    value: function refresh() {
+      var _this2 = this;
 
-    }, {
-        key: "current",
-        get: function get() {
-            var item = this.editor.get(this.ids[0]);
-            if (!item) return null;
+      this.select.apply(this, toConsumableArray(this._ids.filter(function (id) {
+        return _this2.editor.get(id);
+      })));
+    }
+  }, {
+    key: "generateCache",
+    value: function generateCache() {
+      if (this._ids.length) {
+        var parents = this.editor.get(this._ids[0]).path();
 
-            return item.itemType == 'project' ? null : item;
-        }
-    }, {
-        key: "layers",
-        get: function get() {
-            return this.search('layer');
-        }
-    }, {
-        key: "layer",
-        get: function get() {
-            return this.layers[0];
-        }
-    }, {
-        key: "artboards",
-        get: function get() {
-            return this.search('artboard');
-        }
-    }, {
-        key: "artboard",
-        get: function get() {
-            return this.artboards[0];
-        }
-    }, {
-        key: "projects",
-        get: function get() {
-            return this.search('project');
-        }
-    }, {
-        key: "project",
-        get: function get() {
-            return this.projects[0];
-        }
-    }, {
-        key: "directories",
-        get: function get() {
-            return this.search('directory');
-        }
-    }, {
-        key: "directory",
-        get: function get() {
-            return this.directories[0];
-        }
-    }, {
-        key: "currentDirectory",
-        get: function get() {
-            return this._directory;
-        }
-    }, {
-        key: "currentArtBoard",
-        get: function get() {
-            return this._artboard;
-        }
-    }, {
-        key: "currentProject",
-        get: function get() {
-            return this._project;
-        }
-    }, {
-        key: "currentLayer",
-        get: function get() {
-            return this._layer;
-        }
-    }, {
-        key: "mode",
-        get: function get() {
-            return this._mode;
-        },
-        set: function set$$1(mode) {
-            if (this._mode != mode) {
-                this._mode = mode;
-            }
-        }
-    }]);
-    return Selection;
+        this._layer = parents.filter(function (it) {
+          return it.itemType === "layer";
+        })[0];
+        this._directory = parents.filter(function (it) {
+          return it.itemType === "directory";
+        })[0];
+        this._artboard = parents.filter(function (it) {
+          return it.itemType === "artboard";
+        })[0];
+        this._project = parents.filter(function (it) {
+          return it.itemType === "project";
+        })[0];
+      } else {
+        this._layer = null;
+        this._directory = null;
+      }
+    }
+  }, {
+    key: "area",
+    value: function area(rect) {
+      var selectItems = this.editor.layers.filter(function (layer) {
+        return !layer.isLayoutItem() && !layer.lock && layer.checkInArea(rect);
+      }).map(function (it) {
+        return it.id;
+      });
+
+      if (selectItems) {
+        this.select.apply(this, toConsumableArray(selectItems));
+      } else {
+        var project = this.currentProject;
+        project && project.select();
+      }
+    }
+  }, {
+    key: "initRect",
+    value: function initRect() {
+      this.currentRect = this.rect();
+    }
+  }, {
+    key: "rect",
+    value: function rect() {
+      var minX = Number.MAX_SAFE_INTEGER;
+      var minY = Number.MAX_SAFE_INTEGER;
+      var maxX = Number.MIN_SAFE_INTEGER;
+      var maxY = Number.MIN_SAFE_INTEGER;
+
+      this.items.forEach(function (item) {
+        if (!item.screenX) return;
+
+        var x = item.screenX.value;
+        var y = item.screenY.value;
+        var x2 = item.screenX2.value;
+        var y2 = item.screenY2.value;
+
+        if (minX > x) minX = x;
+        if (minY > y) minY = y;
+        if (maxX < x2) maxX = x2;
+        if (maxY < y2) maxY = y2;
+      });
+
+      if (this.isEmpty()) {
+        minX = 0;
+        minY = 0;
+        maxX = 0;
+        maxY = 0;
+      }
+
+      var x = minX;
+      var y = minY;
+      var x2 = maxX;
+      var y2 = maxY;
+
+      var width = x2 - x;
+      var height = y2 - y;
+
+      x = Length$1.px(x);
+      y = Length$1.px(y);
+      width = Length$1.px(width);
+      height = Length$1.px(height);
+
+      return new RectItem({ x: x, y: y, width: width, height: height });
+    }
+  }, {
+    key: "ids",
+    get: function get() {
+      return this._ids;
+    }
+
+    /**
+     * get item instance
+     */
+
+  }, {
+    key: "items",
+    get: function get() {
+      var _this3 = this;
+
+      return this._ids.map(function (id) {
+        return _this3.editor.get(id);
+      });
+    }
+
+    /**
+     * get first item instance
+     */
+
+  }, {
+    key: "current",
+    get: function get() {
+      var item = this.editor.get(this.ids[0]);
+      if (!item) return null;
+
+      return item.itemType == "project" ? null : item;
+    }
+  }, {
+    key: "layers",
+    get: function get() {
+      return this.search("layer");
+    }
+  }, {
+    key: "layer",
+    get: function get() {
+      return this.layers[0];
+    }
+  }, {
+    key: "artboards",
+    get: function get() {
+      return this.search("artboard");
+    }
+  }, {
+    key: "artboard",
+    get: function get() {
+      return this.artboards[0];
+    }
+  }, {
+    key: "projects",
+    get: function get() {
+      return this.search("project");
+    }
+  }, {
+    key: "project",
+    get: function get() {
+      return this.projects[0];
+    }
+  }, {
+    key: "directories",
+    get: function get() {
+      return this.search("directory");
+    }
+  }, {
+    key: "directory",
+    get: function get() {
+      return this.directories[0];
+    }
+  }, {
+    key: "currentDirectory",
+    get: function get() {
+      return this._directory;
+    }
+  }, {
+    key: "currentArtBoard",
+    get: function get() {
+      return this._artboard;
+    }
+  }, {
+    key: "currentProject",
+    get: function get() {
+      return this._project;
+    }
+  }, {
+    key: "currentLayer",
+    get: function get() {
+      return this._layer;
+    }
+  }, {
+    key: "mode",
+    get: function get() {
+      return this._mode;
+    },
+    set: function set$$1(mode) {
+      if (this._mode != mode) {
+        this._mode = mode;
+      }
+    }
+  }]);
+  return Selection;
 }();
 
 var items = new Map();
 var linkedItems = new Map();
+var urlList = new Map();
 
 function traverse(item, results, parentId) {
   var newItem = item.clone(true);
@@ -10356,6 +10494,30 @@ var editor$1 = new (function () {
       }
 
       return results;
+    }
+  }, {
+    key: "hasFile",
+    value: function hasFile(url) {
+      return urlList.has(url);
+    }
+  }, {
+    key: "getFile",
+    value: function getFile(url) {
+      return urlList.get(url);
+    }
+  }, {
+    key: "createUrl",
+    value: function createUrl(file) {
+      var url = URL.createObjectURL(file);
+      urlList.set(url, file);
+      return url;
+    }
+  }, {
+    key: "revokeUrl",
+    value: function revokeUrl(url) {
+      if (urlList.delete(url)) {
+        URL.revokeObjectURL(url);
+      }
     }
   }, {
     key: "projects",
@@ -16168,8 +16330,6 @@ var BackgroundImage = function (_Property) {
     value: function toBackgroundColorCSS() {
       var json = this.json;
 
-      // json.color
-
       return {
         "background-color": json.color
       };
@@ -16889,6 +17049,16 @@ var GradientPosition = function (_UIElement) {
   }]);
   return GradientPosition;
 }(UIElement);
+
+/**
+ * Gradient Editor 를 구현한다.
+ * Gradient Editor 는 외부의 어떠한 데이타와도 연결 되지 않는다.
+ *
+ * 초기 셋팅된 colorsteps 을 가지고 변경한 이후
+ * 변경되 데이타만 이벤트로 전달한다.
+ *
+ * 순수한 UI Component 가 된다
+ */
 
 var VerticalColorStep = function (_UIElement) {
   inherits(VerticalColorStep, _UIElement);
@@ -20632,392 +20802,386 @@ var DragArea = function (_UIElement) {
     return DragArea;
 }(UIElement);
 
-var _templateObject$6 = taggedTemplateLiteral(["\n            <div \n                class='layer' \n                item-id=\"", "\" \n                style=\"", "\" \n                title=\"", "\" \n                data-depth=\"", "\"\n                data-layout-item=\"", "\"\n                data-root-item=\"", "\"\n                data-has-layout=\"", "\"\n                >\n                ", "\n                <div class='text-layer' style=\"pointer-events: none;\"></div>\n            </div>"], ["\n            <div \n                class='layer' \n                item-id=\"", "\" \n                style=\"", "\" \n                title=\"", "\" \n                data-depth=\"", "\"\n                data-layout-item=\"", "\"\n                data-root-item=\"", "\"\n                data-has-layout=\"", "\"\n                >\n                ", "\n                <div class='text-layer' style=\"pointer-events: none;\"></div>\n            </div>"]);
-var _templateObject2$3 = taggedTemplateLiteral(["\n            <div  \n                class='artboard-background' \n                style='", ";'>\n                    <div class='artboard-title' artboard-id=\"", "\">", "</div>\n            </div>\n            <div  \n                class='artboard' \n                item-id=\"", "\" \n                title=\"", "\" \n                style='", ";'>\n                ", "\n            </div>\n        "], ["\n            <div  \n                class='artboard-background' \n                style='", ";'>\n                    <div class='artboard-title' artboard-id=\"", "\">", "</div>\n            </div>\n            <div  \n                class='artboard' \n                item-id=\"", "\" \n                title=\"", "\" \n                style='", ";'>\n                ", "\n            </div>\n        "]);
+var _templateObject$6 = taggedTemplateLiteral(["\n      <div\n        class=\"layer\"\n        item-id=\"", "\"\n        style=\"", "\"\n        title=\"", "\"\n        data-depth=\"", "\"\n        data-layout-item=\"", "\"\n        data-root-item=\"", "\"\n        data-has-layout=\"", "\"\n      >\n        ", "\n        <div class=\"text-layer\" style=\"pointer-events: none;\"></div>\n      </div>\n    "], ["\n      <div\n        class=\"layer\"\n        item-id=\"", "\"\n        style=\"", "\"\n        title=\"", "\"\n        data-depth=\"", "\"\n        data-layout-item=\"", "\"\n        data-root-item=\"", "\"\n        data-has-layout=\"", "\"\n      >\n        ", "\n        <div class=\"text-layer\" style=\"pointer-events: none;\"></div>\n      </div>\n    "]);
+var _templateObject2$3 = taggedTemplateLiteral(["\n      <div class=\"artboard-background\" style=\"", ";\">\n        <div class=\"artboard-title\" artboard-id=\"", "\">\n          ", "\n        </div>\n      </div>\n      <div\n        class=\"artboard\"\n        item-id=\"", "\"\n        title=\"", "\"\n        style=\"", ";\"\n      >\n        ", "\n      </div>\n    "], ["\n      <div class=\"artboard-background\" style=\"", ";\">\n        <div class=\"artboard-title\" artboard-id=\"", "\">\n          ", "\n        </div>\n      </div>\n      <div\n        class=\"artboard\"\n        item-id=\"", "\"\n        title=\"", "\"\n        style=\"", ";\"\n      >\n        ", "\n      </div>\n    "]);
 
 var ItemManager = function (_UIElement) {
-    inherits(ItemManager, _UIElement);
+  inherits(ItemManager, _UIElement);
 
-    function ItemManager() {
-        classCallCheck(this, ItemManager);
-        return possibleConstructorReturn(this, (ItemManager.__proto__ || Object.getPrototypeOf(ItemManager)).apply(this, arguments));
+  function ItemManager() {
+    classCallCheck(this, ItemManager);
+    return possibleConstructorReturn(this, (ItemManager.__proto__ || Object.getPrototypeOf(ItemManager)).apply(this, arguments));
+  }
+
+  createClass(ItemManager, [{
+    key: "initialize",
+    value: function initialize() {
+      get$1(ItemManager.prototype.__proto__ || Object.getPrototypeOf(ItemManager.prototype), "initialize", this).call(this);
+
+      this.initializeLayerCache();
+    }
+  }, {
+    key: "templateClass",
+    value: function templateClass() {
+      return "area artboard-area";
+    }
+  }, {
+    key: "initializeLayerCache",
+    value: function initializeLayerCache() {
+      this.layerItems = {};
+      this.titleItems = {};
+    }
+  }, {
+    key: "getCachedLayerElement",
+    value: function getCachedLayerElement(id) {
+      if (!this.layerItems[id]) {
+        var $el = this.$el.$("[item-id=\"" + id + "\"]");
+
+        this.layerItems[id] = $el;
+      }
+
+      return this.layerItems[id];
+    }
+  }, {
+    key: "getCachedTitleElement",
+    value: function getCachedTitleElement(id) {
+      if (!this.titleItems[id]) {
+        var $el = this.$el.$("[artboard-id=\"" + id + "\"]");
+        this.titleItems[id] = $el;
+      }
+
+      return this.titleItems[id];
+    }
+  }, {
+    key: "makeLayer",
+    value: function makeLayer(layer) {
+      var _this2 = this;
+
+      var depth = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+
+      var children = layer.children;
+      var isLayoutItem = layer.isLayoutItem() ? "true" : "false";
+      var hasLayout = layer.hasLayout();
+      var hasRootItem = layer.isRootItem() ? "true" : "false";
+      return html(_templateObject$6, layer.id, layer.toString(), layer.title, depth, isLayoutItem, hasRootItem, hasLayout, children.map(function (it) {
+        return _this2.makeLayer(it, depth + 1);
+      }));
+    }
+  }, {
+    key: "makeArtBoard",
+    value: function makeArtBoard(artboard) {
+      var _this3 = this;
+
+      return html(_templateObject2$3, artboard.toBoundString(), artboard.id, artboard.title, artboard.id, artboard.title, artboard.toString(), artboard.rootItems.map(function (layer) {
+        return _this3.makeLayer(layer, 0);
+      }));
+    }
+  }, {
+    key: LOAD(),
+    value: function value$$1() {
+      var _this4 = this;
+
+      this.initializeLayerCache();
+      var project = editor$1.selection.currentProject;
+      if (!project) return EMPTY_STRING;
+
+      var list = project.artboards;
+
+      return list.map(function (artboard) {
+        return _this4.makeArtBoard(artboard);
+      });
+    }
+  }, {
+    key: "refresh",
+    value: function refresh() {
+      this.load();
+
+      this.refreshAllLayers();
+      // editor.selection.initRect()
+      // this.emit('setItemResizer')
+      // this.emit('removeGuideLine')
+    }
+  }, {
+    key: "selectItem",
+    value: function selectItem(item) {
+      if (item && item.isLayoutItem()) {
+        itemPositionCalc.clear();
+      } else {
+        itemPositionCalc.initialize(editor$1.config.get("selection.direction"));
+      }
+
+      // this.emit('removeGuideLine')
+    }
+  }, {
+    key: MOUSEOVER("$el .layer") + PREVENT + STOP,
+    value: function value$$1(e) {
+      var item = editor$1.get(e.$delegateTarget.attr("item-id"));
+    }
+  }, {
+    key: MOUSEOUT("$el .layer") + PREVENT + STOP,
+    value: function value$$1(e) {
+      var item = editor$1.get(e.$delegateTarget.attr("item-id"));
+    }
+  }, {
+    key: POINTERSTART("$el .artboard-title") + PREVENT + STOP + MOVE("moveArtBoard") + END("moveEndLayer"),
+    value: function value$$1(e) {
+      editor$1.config.set("selection.mode", "artboard");
+      editor$1.config.set("selection.direction", Segment.MOVE);
+
+      this.$artboardTitleContainer = e.$delegateTarget.parent();
+      this.item = editor$1.get(e.$delegateTarget.attr("artboard-id"));
+      this.item.select();
+      this.selectItem(this.item);
+      this.emit(CHANGE_SELECTION);
+    }
+  }, {
+    key: POINTERSTART("$el .layer") + PREVENT + STOP + MOVE("moveLayer") + END("moveEndLayer"),
+    value: function value$$1(e) {
+      editor$1.config.set("selection.mode", "layer");
+      editor$1.config.set("selection.direction", Segment.MOVE);
+
+      this.item = editor$1.get(e.$delegateTarget.attr("item-id"));
+      this.item.select();
+
+      if (e.altKey) {
+        // alt key 누르 상태로 시작하면 copy , 복사본만 움직임
+        var ids = editor$1.copy();
+        this.item = editor$1.get(ids[0]);
+        this.item.select();
+        this.refresh();
+        this.emit(COPY_ITEMS);
+      }
+
+      this.selectItem(this.item);
+
+      this.isLayoutItem = this.item.isLayoutItem();
+      this.emit(CHANGE_SELECTION);
+    }
+  }, {
+    key: "matchArtboardTitlePosition",
+    value: function matchArtboardTitlePosition(item) {
+      var $title = this.getCachedTitleElement(item.id);
+      if ($title) {
+        $title.parent().cssText(item.toBoundString());
+      }
+    }
+  }, {
+    key: "matchPosition",
+    value: function matchPosition() {
+      var items = editor$1.selection.items;
+      for (var i = 0, len = items.length; i < len; i++) {
+        var item = items[i];
+        itemPositionCalc.recover(item);
+        this.getCachedLayerElement(item.id).css(item.toBoundCSS());
+        this.matchArtboardTitlePosition(item);
+      }
+
+      this.emit("setItemResizer");
+    }
+  }, {
+    key: "matchGridPosition",
+    value: function matchGridPosition() {
+      editor$1.send(CHANGE_LAYER);
+      this.emit("setItemResizer");
+    }
+  }, {
+    key: EVENT("matchPosition"),
+    value: function value$$1() {
+      this.matchPosition();
+    }
+  }, {
+    key: "movePosition",
+    value: function movePosition(dx, dy) {
+      itemPositionCalc.calculateMove(dx, dy);
+      // this.emit('setGuideLine');
+      this.matchPosition();
+    }
+  }, {
+    key: "moveArtBoard",
+    value: function moveArtBoard(dx, dy) {
+      this.movePosition(dx, dy);
+      this.matchArtboardTitlePosition(this.item);
+      this.emit("setGuideLine");
+      this.emit(CHANGE_RECT);
+    }
+  }, {
+    key: "moveLayer",
+    value: function moveLayer(dx, dy) {
+      if (!this.isLayoutItem) {
+        this.movePosition(dx, dy);
+        this.emit("setGuideLine");
+        this.emit(CHANGE_RECT);
+      }
+    }
+  }, {
+    key: "moveEndLayer",
+    value: function moveEndLayer() {
+      this.emit(CHANGE_RECT);
+    }
+  }, {
+    key: "moveResizeEnd",
+    value: function moveResizeEnd() {
+      var _this5 = this;
+
+      editor$1.selection.items.forEach(function (item) {
+        return _this5.refreshLayerOffset(item);
+      });
+    }
+  }, {
+    key: EVENT("moveResizeEnd"),
+    value: function value$$1() {
+      this.moveResizeEnd();
+    }
+  }, {
+    key: "refreshLayerOffset",
+    value: function refreshLayerOffset(item) {
+      var _this6 = this;
+
+      var $el = this.getCachedLayerElement(item.id);
+
+      item.offset = $el.offsetRect();
+
+      item.children.forEach(function (child) {
+        _this6.refreshLayerOffset(child);
+      });
+    }
+  }, {
+    key: "refreshLayerOne",
+    value: function refreshLayerOne(item) {
+      var _this7 = this;
+
+      var $el = this.getCachedLayerElement(item.id);
+
+      var content = item.content || EMPTY_STRING;
+      $el.$(".text-layer").html(content);
+
+      $el.cssText(item.toString());
+      $el.attr("data-layout-item", item.isLayoutItem() ? "true" : "false");
+      $el.attr("data-has-layout", item.hasLayout() ? "true" : "false");
+
+      item.offset = $el.offsetRect();
+
+      item.children.forEach(function (child) {
+        _this7.refreshLayerOne(child);
+      });
+
+      this.refreshLayerOffset(item);
+    }
+  }, {
+    key: "refreshLayer",
+    value: function refreshLayer(layers) {
+      var _this8 = this;
+
+      layers = layers || editor$1.selection.layers;
+
+      layers.forEach(function (item) {
+        _this8.refreshLayerOne(item);
+      });
+    }
+  }, {
+    key: "refreshArtBoard",
+    value: function refreshArtBoard(artboards) {
+      var _this9 = this;
+
+      artboards = artboards || editor$1.selection.artboards;
+
+      artboards.forEach(function (artboard) {
+        _this9.refreshArtBoardOne(artboard);
+      });
+    }
+  }, {
+    key: "refreshArtBoardOne",
+    value: function refreshArtBoardOne(item) {
+      var _this10 = this;
+
+      var $el = this.getCachedLayerElement(item.id);
+
+      $el.cssText(item.toString());
+
+      item.allLayers.forEach(function (layer) {
+        _this10.refreshLayerOne(layer);
+      });
+
+      this.refreshLayerOffset(item);
+    }
+  }, {
+    key: "refreshAllLayers",
+    value: function refreshAllLayers() {
+      var _this11 = this;
+
+      var project = editor$1.selection.currentProject;
+      if (project) {
+        project.artboards.forEach(function (artboard) {
+          _this11.refreshArtBoardOne(artboard);
+        });
+      }
+    }
+  }, {
+    key: EVENT(CHANGE_INSPECTOR),
+    value: function value$$1() {
+      var current = editor$1.selection.current;
+
+      if (current) {
+        if (current.itemType == "artboard") {
+          this.refreshArtBoard(editor$1.selection.artboards);
+        } else {
+          this.refreshLayer(editor$1.selection.layers);
+        }
+      }
+    }
+  }, {
+    key: EVENT(CHANGE_ARTBOARD),
+    value: function value$$1(current) {
+      var artboards = current ? [current] : editor$1.selection.artboards;
+      this.refreshArtBoard(artboards);
     }
 
-    createClass(ItemManager, [{
-        key: "initialize",
-        value: function initialize() {
-            get$1(ItemManager.prototype.__proto__ || Object.getPrototypeOf(ItemManager.prototype), "initialize", this).call(this);
+    // indivisual layer effect
 
-            this.initializeLayerCache();
-        }
-    }, {
-        key: "templateClass",
-        value: function templateClass() {
-            return "area artboard-area";
-        }
-    }, {
-        key: "initializeLayerCache",
-        value: function initializeLayerCache() {
-            this.layerItems = {};
-            this.titleItems = {};
-        }
-    }, {
-        key: "getCachedLayerElement",
-        value: function getCachedLayerElement(id) {
+  }, {
+    key: EVENT(CHANGE_LAYER),
+    value: function value$$1(current) {
+      var layers = current ? [current] : editor$1.selection.layers;
+      this.refreshLayer(layers);
+    }
+  }, {
+    key: EVENT("refreshItem"),
+    value: function value$$1(item) {
+      if (item.itemType == "artboard") {
+        this.refreshArtBoard([item]);
+      } else if (item.itemType == "layer") {
+        this.refreshLayer([item]);
+      }
+    }
+  }, {
+    key: EVENT(CHANGE_RECT),
+    value: function value$$1(changeType) {
+      if (changeType == "grid") {
+        this.matchGridPosition();
+      } else {
+        this.matchPosition();
+      }
 
-            if (!this.layerItems[id]) {
-                var $el = this.$el.$("[item-id=\"" + id + "\"]");
+      // this.emit('removeGuideLine')
+    }
 
-                this.layerItems[id] = $el;
-            }
+    // all effect
 
-            return this.layerItems[id];
-        }
-    }, {
-        key: "getCachedTitleElement",
-        value: function getCachedTitleElement(id) {
-
-            if (!this.titleItems[id]) {
-                var $el = this.$el.$("[artboard-id=\"" + id + "\"]");
-                this.titleItems[id] = $el;
-            }
-
-            return this.titleItems[id];
-        }
-    }, {
-        key: "makeLayer",
-        value: function makeLayer(layer) {
-            var _this2 = this;
-
-            var depth = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-
-            var children = layer.children;
-            var isLayoutItem = layer.isLayoutItem() ? 'true' : 'false';
-            var hasLayout = layer.hasLayout();
-            var hasRootItem = layer.isRootItem() ? 'true' : 'false';
-            return html(_templateObject$6, layer.id, layer.toString(), layer.title, depth, isLayoutItem, hasRootItem, hasLayout, children.map(function (it) {
-                return _this2.makeLayer(it, depth + 1);
-            }));
-        }
-    }, {
-        key: "makeArtBoard",
-        value: function makeArtBoard(artboard) {
-            var _this3 = this;
-
-            return html(_templateObject2$3, artboard.toBoundString(), artboard.id, artboard.title, artboard.id, artboard.title, artboard.toString(), artboard.rootItems.map(function (layer) {
-                return _this3.makeLayer(layer, 0);
-            }));
-        }
-    }, {
-        key: LOAD(),
-        value: function value$$1() {
-            var _this4 = this;
-
-            this.initializeLayerCache();
-            var project = editor$1.selection.currentProject;
-            if (!project) return EMPTY_STRING;
-
-            var list = project.artboards;
-
-            return list.map(function (artboard) {
-                return _this4.makeArtBoard(artboard);
-            });
-        }
-    }, {
-        key: "refresh",
-        value: function refresh() {
-            this.load();
-
-            this.refreshAllLayers();
-            // editor.selection.initRect()
-            // this.emit('setItemResizer')
-            // this.emit('removeGuideLine')
-        }
-    }, {
-        key: "selectItem",
-        value: function selectItem(item) {
-            if (item && item.isLayoutItem()) {
-                itemPositionCalc.clear();
-            } else {
-                itemPositionCalc.initialize(editor$1.config.get('selection.direction'));
-            }
-
-            // this.emit('removeGuideLine')    
-        }
-    }, {
-        key: MOUSEOVER('$el .layer') + PREVENT + STOP,
-        value: function value$$1(e) {
-            var item = editor$1.get(e.$delegateTarget.attr('item-id'));
-        }
-    }, {
-        key: MOUSEOUT('$el .layer') + PREVENT + STOP,
-        value: function value$$1(e) {
-            var item = editor$1.get(e.$delegateTarget.attr('item-id'));
-        }
-    }, {
-        key: POINTERSTART('$el .artboard-title') + PREVENT + STOP + MOVE('moveArtBoard') + END('moveEndLayer'),
-        value: function value$$1(e) {
-            editor$1.config.set('selection.mode', 'artboard');
-            editor$1.config.set('selection.direction', Segment.MOVE);
-
-            this.$artboardTitleContainer = e.$delegateTarget.parent();
-            this.item = editor$1.get(e.$delegateTarget.attr('artboard-id'));
-            this.item.select();
-            this.selectItem(this.item);
-            this.emit(CHANGE_SELECTION);
-        }
-    }, {
-        key: POINTERSTART('$el .layer') + PREVENT + STOP + MOVE('moveLayer') + END('moveEndLayer'),
-        value: function value$$1(e) {
-            editor$1.config.set('selection.mode', 'layer');
-            editor$1.config.set('selection.direction', Segment.MOVE);
-
-            this.item = editor$1.get(e.$delegateTarget.attr('item-id'));
-            this.item.select();
-
-            if (e.altKey) {
-                // alt key 누르 상태로 시작하면 copy , 복사본만 움직임 
-                var ids = editor$1.copy();
-                this.item = editor$1.get(ids[0]);
-                this.item.select();
-                this.refresh();
-                this.emit(COPY_ITEMS);
-            }
-
-            this.selectItem(this.item);
-
-            this.isLayoutItem = this.item.isLayoutItem();
-            this.emit(CHANGE_SELECTION);
-        }
-    }, {
-        key: "matchArtboardTitlePosition",
-        value: function matchArtboardTitlePosition(item) {
-            var $title = this.getCachedTitleElement(item.id);
-            if ($title) {
-                $title.parent().cssText(item.toBoundString());
-            }
-        }
-    }, {
-        key: "matchPosition",
-        value: function matchPosition() {
-            var items = editor$1.selection.items;
-            for (var i = 0, len = items.length; i < len; i++) {
-                var item = items[i];
-                itemPositionCalc.recover(item);
-                this.getCachedLayerElement(item.id).css(item.toBoundCSS());
-                this.matchArtboardTitlePosition(item);
-            }
-
-            this.emit('setItemResizer');
-        }
-    }, {
-        key: "matchGridPosition",
-        value: function matchGridPosition() {
-
-            editor$1.send(CHANGE_LAYER);
-            this.emit('setItemResizer');
-        }
-    }, {
-        key: EVENT('matchPosition'),
-        value: function value$$1() {
-            this.matchPosition();
-        }
-    }, {
-        key: "movePosition",
-        value: function movePosition(dx, dy) {
-            itemPositionCalc.calculateMove(dx, dy);
-            // this.emit('setGuideLine');         
-            this.matchPosition();
-        }
-    }, {
-        key: "moveArtBoard",
-        value: function moveArtBoard(dx, dy) {
-            this.movePosition(dx, dy);
-            this.matchArtboardTitlePosition(this.item);
-            this.emit('setGuideLine');
-            this.emit(CHANGE_RECT);
-        }
-    }, {
-        key: "moveLayer",
-        value: function moveLayer(dx, dy) {
-
-            if (!this.isLayoutItem) {
-                this.movePosition(dx, dy);
-                this.emit('setGuideLine');
-                this.emit(CHANGE_RECT);
-            }
-        }
-    }, {
-        key: "moveEndLayer",
-        value: function moveEndLayer() {
-            this.emit(CHANGE_RECT);
-        }
-    }, {
-        key: "moveResizeEnd",
-        value: function moveResizeEnd() {
-            var _this5 = this;
-
-            editor$1.selection.items.forEach(function (item) {
-                return _this5.refreshLayerOffset(item);
-            });
-        }
-    }, {
-        key: EVENT('moveResizeEnd'),
-        value: function value$$1() {
-            this.moveResizeEnd();
-        }
-    }, {
-        key: "refreshLayerOffset",
-        value: function refreshLayerOffset(item) {
-            var _this6 = this;
-
-            var $el = this.getCachedLayerElement(item.id);
-
-            item.offset = $el.offsetRect();
-
-            item.children.forEach(function (child) {
-                _this6.refreshLayerOffset(child);
-            });
-        }
-    }, {
-        key: "refreshLayerOne",
-        value: function refreshLayerOne(item) {
-            var _this7 = this;
-
-            var $el = this.getCachedLayerElement(item.id);
-
-            var content = item.content || EMPTY_STRING;
-            $el.$('.text-layer').html(content);
-
-            $el.cssText(item.toString());
-            $el.attr('data-layout-item', item.isLayoutItem() ? 'true' : 'false');
-            $el.attr('data-has-layout', item.hasLayout() ? 'true' : 'false');
-
-            item.offset = $el.offsetRect();
-
-            item.children.forEach(function (child) {
-                _this7.refreshLayerOne(child);
-            });
-
-            this.refreshLayerOffset(item);
-        }
-    }, {
-        key: "refreshLayer",
-        value: function refreshLayer(layers) {
-            var _this8 = this;
-
-            layers = layers || editor$1.selection.layers;
-
-            layers.forEach(function (item) {
-                _this8.refreshLayerOne(item);
-            });
-        }
-    }, {
-        key: "refreshArtBoard",
-        value: function refreshArtBoard(artboards) {
-            var _this9 = this;
-
-            artboards = artboards || editor$1.selection.artboards;
-
-            artboards.forEach(function (artboard) {
-                _this9.refreshArtBoardOne(artboard);
-            });
-        }
-    }, {
-        key: "refreshArtBoardOne",
-        value: function refreshArtBoardOne(item) {
-            var _this10 = this;
-
-            var $el = this.getCachedLayerElement(item.id);
-
-            $el.cssText(item.toString());
-
-            item.allLayers.forEach(function (layer) {
-                _this10.refreshLayerOne(layer);
-            });
-
-            this.refreshLayerOffset(item);
-        }
-    }, {
-        key: "refreshAllLayers",
-        value: function refreshAllLayers() {
-            var _this11 = this;
-
-            var project = editor$1.selection.currentProject;
-            if (project) {
-                project.artboards.forEach(function (artboard) {
-                    _this11.refreshArtBoardOne(artboard);
-                });
-            }
-        }
-    }, {
-        key: EVENT(CHANGE_INSPECTOR),
-        value: function value$$1() {
-            var current = editor$1.selection.current;
-
-            if (current) {
-                if (current.itemType == 'artboard') {
-                    this.refreshArtBoard(editor$1.selection.artboards);
-                } else {
-                    this.refreshLayer(editor$1.selection.layers);
-                }
-            }
-        }
-    }, {
-        key: EVENT(CHANGE_ARTBOARD),
-        value: function value$$1(current) {
-            var artboards = current ? [current] : editor$1.selection.artboards;
-            this.refreshArtBoard(artboards);
-        }
-
-        // indivisual layer effect 
-
-    }, {
-        key: EVENT(CHANGE_LAYER),
-        value: function value$$1(current) {
-            var layers = current ? [current] : editor$1.selection.layers;
-            this.refreshLayer(layers);
-        }
-    }, {
-        key: EVENT('refreshItem'),
-        value: function value$$1(item) {
-            if (item.itemType == 'artboard') {
-                this.refreshArtBoard([item]);
-                // this.emit(CHANGE_ARTBOARD, item);
-            } else if (item.itemType == 'layer') {
-                this.refreshLayer([item]);
-                // this.emit(CHANGE_LAYER, item);
-            }
-        }
-    }, {
-        key: EVENT(CHANGE_RECT),
-        value: function value$$1(changeType) {
-            if (changeType == 'grid') {
-                this.matchGridPosition();
-            } else {
-                this.matchPosition();
-            }
-
-            // this.emit('removeGuideLine')        
-        }
-
-        // all effect 
-
-    }, {
-        key: EVENT('refreshItemManager'),
-        value: function value$$1() {
-            this.refresh();
-            // editor.selection.initRect()
-            this.emit('setItemResizer');
-            this.emit('removeGuideLine');
-        }
-    }, {
-        key: EVENT(COPY_ITEMS),
-        value: function value$$1() {
-            this.refresh();
-        }
-    }]);
-    return ItemManager;
+  }, {
+    key: EVENT("refreshItemManager"),
+    value: function value$$1() {
+      this.refresh();
+      // editor.selection.initRect()
+      this.emit("setItemResizer");
+      this.emit("removeGuideLine");
+    }
+  }, {
+    key: EVENT(COPY_ITEMS),
+    value: function value$$1() {
+      this.refresh();
+    }
+  }]);
+  return ItemManager;
 }(UIElement);
 
 var RowEditor = function (_UIElement) {
@@ -22077,6 +22241,15 @@ var GridLayoutEditor = function (_UIElement) {
         value: function moveResizeEnd(dx, dy) {
             this.emit('moveResizeEnd', dx, dy);
         }
+    }, {
+        key: EVENT('toggleDisplayGridEditor'),
+        value: function value() {
+            if (this.$el.css('left') === '-10000px') {
+                this.refresh();
+            } else {
+                this.initGridLayoutEditor();
+            }
+        }
     }]);
     return GridLayoutEditor;
 }(UIElement);
@@ -22237,7 +22410,13 @@ var setting = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"2
 
 var remove2 = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path d=\"M19 13H5v-2h14v2z\"/></svg>";
 
+var repeat$2 = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path d=\"M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z\"/></svg>";
+
+var screen = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path d=\"M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z\"/></svg>";
+
 var icon = {
+  screen: screen,
+  repeat: repeat$2,
   remove2: remove2,
   setting: setting,
   image: image$3,
@@ -23871,308 +24050,306 @@ var Directory = function (_Item) {
     return Directory;
 }(Item);
 
-var _templateObject$9 = taggedTemplateLiteral(["\n            <div class='tree-item depth-", " ", " ", "' item-id=\"", "\" item-type='", "' ", ">\n                <div class=\"item-depth\"></div>            \n                ", "\n                ", "\n                <div class=\"item-title\" data-label='", "'>", " ", "</div> \n                <div class='item-tools'>          \n                    ", "\n                    ", "\n                    <button type=\"button\" class='delete-item' title=\"Remove\">", "</button>\n                    <button type=\"button\" class='copy-item' title=\"Copy\">", "</button>\n                </div>                \n            </div>\n            ", "\n        "], ["\n            <div class='tree-item depth-", " ", " ", "' item-id=\"", "\" item-type='", "' ", ">\n                <div class=\"item-depth\"></div>            \n                ", "\n                ", "\n                <div class=\"item-title\" data-label='", "'>", " ", "</div> \n                <div class='item-tools'>          \n                    ", "\n                    ", "\n                    <button type=\"button\" class='delete-item' title=\"Remove\">", "</button>\n                    <button type=\"button\" class='copy-item' title=\"Copy\">", "</button>\n                </div>                \n            </div>\n            ", "\n        "]);
-var _templateObject2$4 = taggedTemplateLiteral(["<div class='tree-children'>\n                ", "\n            </div>"], ["<div class='tree-children'>\n                ", "\n            </div>"]);
+var _templateObject$9 = taggedTemplateLiteral(["\n      <div\n        class=\"tree-item depth-", " ", " ", "\"\n        item-id=\"", "\"\n        item-type=\"", "\"\n        ", "\n      >\n        <div class=\"item-depth\"></div>\n        ", "\n        ", "\n        <div class=\"item-title\" data-label=\"", "\">\n          ", " ", "\n        </div>\n        <div class=\"item-tools\">\n          ", "\n          ", "\n          <button type=\"button\" class=\"delete-item\" title=\"Remove\">\n            ", "\n          </button>\n          <button type=\"button\" class=\"copy-item\" title=\"Copy\">\n            ", "\n          </button>\n        </div>\n      </div>\n      ", "\n    "], ["\n      <div\n        class=\"tree-item depth-", " ", " ", "\"\n        item-id=\"", "\"\n        item-type=\"", "\"\n        ", "\n      >\n        <div class=\"item-depth\"></div>\n        ", "\n        ", "\n        <div class=\"item-title\" data-label=\"", "\">\n          ", " ", "\n        </div>\n        <div class=\"item-tools\">\n          ", "\n          ", "\n          <button type=\"button\" class=\"delete-item\" title=\"Remove\">\n            ", "\n          </button>\n          <button type=\"button\" class=\"copy-item\" title=\"Copy\">\n            ", "\n          </button>\n        </div>\n      </div>\n      ", "\n    "]);
+var _templateObject2$4 = taggedTemplateLiteral(["\n          <div class=\"tree-children\">\n            ", "\n          </div>\n        "], ["\n          <div class=\"tree-children\">\n            ", "\n          </div>\n        "]);
 
 var LayerListView = function (_UIElement) {
-    inherits(LayerListView, _UIElement);
+  inherits(LayerListView, _UIElement);
 
-    function LayerListView() {
-        classCallCheck(this, LayerListView);
-        return possibleConstructorReturn(this, (LayerListView.__proto__ || Object.getPrototypeOf(LayerListView)).apply(this, arguments));
+  function LayerListView() {
+    classCallCheck(this, LayerListView);
+    return possibleConstructorReturn(this, (LayerListView.__proto__ || Object.getPrototypeOf(LayerListView)).apply(this, arguments));
+  }
+
+  createClass(LayerListView, [{
+    key: "template",
+    value: function template() {
+      return "\n            <div class='layer-list-view'>\n                <div class=\"layer-list-toolbar\">\n                    <span class='title' ref=\"$title\"></span>\n                    <span class='layer-tools'>\n                        <div class=\"button-group\">\n                            <button type=\"button\" ref=\"$addArtBoard\" title=\"add ArtBoard\">" + icon.add_note + "</button>\n                            <button type=\"button\" ref=\"$addDirectory\" title=\"add Directory\">" + icon.create_folder + "</button>\n                        </div>\n                    </span> \n                </div>\n                <div class=\"layer-list\" ref=\"$layerList\"></div>\n            </div>\n        ";
+    }
+  }, {
+    key: "makeItem",
+    value: function makeItem(item, depth) {
+      var _this2 = this;
+
+      var isArtBoard = item.itemType == "artboard";
+      var isDirectory = item.itemType == "directory";
+      var isLayer = item.itemType == "layer";
+
+      var children = item.children;
+
+      var isGroup = isArtBoard || isDirectory || children.length;
+      var hasLock = isDirectory || isLayer;
+      var isDraggable = isLayer;
+      var hasIcon = isArtBoard || isDirectory || isLayer;
+      var hasVisible = isDirectory || isLayer;
+
+      var draggable = isDraggable ? 'draggable="true"' : EMPTY_STRING;
+      var lock = hasLock && item.lock ? "lock" : EMPTY_STRING;
+      var visible = item.visible ? "visible" : EMPTY_STRING;
+      var selected = item.selectedOne ? "selected" : EMPTY_STRING;
+
+      var iconString = EMPTY_STRING;
+      if (isArtBoard) {
+        iconString = "" + icon.artboard;
+      } else if (isDirectory) {
+        iconString = "" + icon.folder;
+      } else if (isLayer) {
+        iconString = "<span class='icon-" + item.type + "'></span>";
+      }
+
+      var label = "";
+      var display = item.display.type;
+      if (display == "flex" || display == "grid") {
+        label = display;
+      }
+
+      return html(_templateObject$9, depth, selected, item.index, item.id, item.itemType, draggable, isGroup && "<div class='item-icon-group'>" + icon.chevron_right + "</div>", !isGroup && hasIcon && "<div class='item-icon'>" + iconString + "</div>", label, item.toGridString(), item.title, hasLock && "<button type=\"button\" class='lock-item " + lock + "' title=\"Visible\">" + icon.lock + "</button>", hasVisible && "<button type=\"button\" class='visible-item " + visible + "' title=\"Visible\">" + icon.visible + "</button>", icon.remove, icon.copy, isGroup && html(_templateObject2$4, item.children.map(function (child) {
+        return _this2.makeItem(child, depth + 1);
+      })));
+    }
+  }, {
+    key: LOAD("$title"),
+    value: function value$$1() {
+      var project = editor$1.selection.currentProject;
+      var title = project ? project.title : "ArtBoard";
+      return "<span>" + title + "</span>";
+    }
+  }, {
+    key: LOAD("$layerList"),
+    value: function value$$1() {
+      var _this3 = this;
+
+      var project = editor$1.selection.currentProject || editor$1.selection.project;
+      if (!project) return EMPTY_STRING;
+
+      return project.artboards.map(function (item, index) {
+        return _this3.makeItem(item, 0, index);
+      });
+    }
+  }, {
+    key: "refresh",
+    value: function refresh() {
+      this.load();
+    }
+  }, {
+    key: "refreshSelection",
+    value: function refreshSelection(id) {
+      var $selected = this.$el.$(".selected");
+
+      if ($selected) {
+        $selected.removeClass("selected");
+      }
+
+      this.$el.$("[id=\"" + id + "\"]").addClass("selected");
+    }
+  }, {
+    key: EVENT("refreshLayerListView"),
+    value: function value$$1() {
+      this.refresh();
     }
 
-    createClass(LayerListView, [{
-        key: "template",
-        value: function template() {
-            return "\n            <div class='layer-list-view'>\n                <div class=\"layer-list-toolbar\">\n                    <span class='title' ref=\"$title\"></span>\n                    <span class='layer-tools'>\n                        <div class=\"button-group\">\n                            <button type=\"button\" ref=\"$addArtBoard\" title=\"add ArtBoard\">" + icon.add_note + "</button>\n                            <button type=\"button\" ref=\"$addDirectory\" title=\"add Directory\">" + icon.create_folder + "</button>\n                        </div>\n                    </span> \n                </div>\n                <div class=\"layer-list\" ref=\"$layerList\"></div>\n            </div>\n        ";
+    // all effect
+
+  }, {
+    key: EVENT(CHANGE_EDITOR, COPY_ITEMS),
+    value: function value$$1() {
+      this.refresh();
+    }
+  }, {
+    key: "refreshLayer",
+    value: function refreshLayer() {
+      var _this4 = this;
+
+      editor$1.selection.items.forEach(function (item) {
+        var $item = _this4.refs.$layerList.$("[item-id=\"" + item.id + "\"]");
+        if ($item) {
+          var label = "";
+          var display = item.display.type;
+          if (display == "flex" || display == "grid") {
+            label = display;
+          }
+          var $title = $item.$(".item-title");
+
+          $title.attr("data-label", label);
+          $title.text(item.toGridString() + " " + item.title);
         }
-    }, {
-        key: "makeItem",
-        value: function makeItem(item, depth) {
-            var _this2 = this;
-
-            var isArtBoard = item.itemType == 'artboard';
-            var isDirectory = item.itemType == 'directory';
-            var isLayer = item.itemType == 'layer';
-
-            var children = item.children;
-
-            var isGroup = isArtBoard || isDirectory || children.length;
-            var hasLock = isDirectory || isLayer;
-            var isDraggable = isLayer;
-            var hasIcon = isArtBoard || isDirectory || isLayer;
-            var hasVisible = isDirectory || isLayer;
-
-            var draggable = isDraggable ? 'draggable="true"' : EMPTY_STRING;
-            var lock = hasLock && item.lock ? 'lock' : EMPTY_STRING;
-            var visible = item.visible ? 'visible' : EMPTY_STRING;
-            var selected = item.selectedOne ? 'selected' : EMPTY_STRING;
-
-            var iconString = EMPTY_STRING;
-            if (isArtBoard) {
-                iconString = "" + icon.artboard;
-            } else if (isDirectory) {
-                iconString = "" + icon.folder;
-            } else if (isLayer) {
-                iconString = "<span class='icon-" + item.type + "'></span>";
-            }
-
-            var label = '';
-            var display = item.display.type;
-            if (display == 'flex' || display == 'grid') {
-                label = display;
-            }
-
-            return html(_templateObject$9, depth, selected, item.index, item.id, item.itemType, draggable, isGroup && "<div class='item-icon-group'>" + icon.chevron_right + "</div>", !isGroup && hasIcon && "<div class='item-icon'>" + iconString + "</div>", label, item.toGridString(), item.title, hasLock && "<button type=\"button\" class='lock-item " + lock + "' title=\"Visible\">" + icon.lock + "</button>", hasVisible && "<button type=\"button\" class='visible-item " + visible + "' title=\"Visible\">" + icon.visible + "</button>", icon.remove, icon.copy, isGroup && html(_templateObject2$4, item.children.map(function (child) {
-                return _this2.makeItem(child, depth + 1);
-            })));
+      });
+    }
+  }, {
+    key: EVENT(CHANGE_LAYER, CHANGE_RECT, CHANGE_ARTBOARD),
+    value: function value$$1() {
+      this.refreshLayer();
+    }
+  }, {
+    key: EVENT(CHANGE_SELECTION),
+    value: function value$$1() {
+      var current = editor$1.selection.current;
+      if (current) {
+        this.toggleSelectedItem(current.id);
+      }
+    }
+  }, {
+    key: CLICK("$addArtBoard"),
+    value: function value$$1() {
+      var project = editor$1.selection.currentProject;
+      if (project) {
+        var artboard = project.addArtBoard(new ArtBoard({
+          name: "New ArtBoard"
+        }));
+        artboard.select();
+        editor$1.send(CHANGE_EDITOR);
+      }
+    }
+  }, {
+    key: CLICK("$addDirectory"),
+    value: function value$$1() {
+      var currentItem = editor$1.selection.current;
+      if (currentItem) {
+        if (currentItem instanceof ArtBoard || currentItem instanceof Directory) {
+          var directory = currentItem.add(new Directory({
+            name: "New Directory"
+          }));
+        } else if (currentItem instanceof Layer) {
+          var directory = currentItem.parentDirectory().add(new Directory({
+            name: "New Directory",
+            index: currentItem.index + 1
+          }));
         }
-    }, {
-        key: LOAD('$title'),
-        value: function value$$1() {
-            var project = editor$1.selection.currentProject;
-            var title = project ? project.title : 'ArtBoard';
-            return "<span>" + title + "</span>";
-        }
-    }, {
-        key: LOAD('$layerList'),
-        value: function value$$1() {
-            var _this3 = this;
+        directory.select();
+        this.refresh();
+        editor$1.send(CHANGE_SELECTION);
+      }
+    }
+  }, {
+    key: "removeSelectionItem",
+    value: function removeSelectionItem() {
+      this.refs.$layerList.$$(".selected").forEach(function ($el) {
+        return $el.removeClass("selected");
+      });
+    }
+  }, {
+    key: "toggleSelectedItem",
+    value: function toggleSelectedItem(id) {
+      this.removeSelectionItem();
 
-            var project = editor$1.selection.currentProject || editor$1.selection.project;
-            if (!project) return EMPTY_STRING;
+      var item = this.refs.$layerList.$("[item-id=\"" + id + "\"]");
+      if (item) {
+        item.addClass("selected");
+      }
+    }
+  }, {
+    key: "getItem",
+    value: function getItem(e) {
+      var $dt = e.$delegateTarget.closest("tree-item");
+      var id = $dt.attr("item-id");
+      var item = editor$1.get(id);
 
-            return project.artboards.map(function (item, index) {
-                return _this3.makeItem(item, 0, index);
-            });
-        }
-    }, {
-        key: "refresh",
-        value: function refresh() {
-            this.load();
-        }
-    }, {
-        key: "refreshSelection",
-        value: function refreshSelection(id) {
-            var $selected = this.$el.$(".selected");
+      return { item: item, $dt: $dt };
+    }
+  }, {
+    key: CLICK("$layerList .copy-item"),
+    value: function value$$1(e) {
+      var _getItem = this.getItem(e),
+          item = _getItem.item;
 
-            if ($selected) {
-                $selected.removeClass('selected');
-            }
+      item.copy();
 
-            this.$el.$("[id=\"" + id + "\"]").addClass('selected');
-        }
-    }, {
-        key: EVENT('refreshLayerListView'),
-        value: function value$$1() {
-            this.refresh();
-        }
+      editor$1.emit(CHANGE_EDITOR);
+    }
+  }, {
+    key: CLICK("$layerList .delete-item"),
+    value: function value$$1(e) {
+      var _getItem2 = this.getItem(e),
+          item = _getItem2.item;
 
-        // all effect 
+      item.remove();
+      editor$1.selection.refresh();
+      editor$1.emit(CHANGE_EDITOR, null, this);
+    }
+  }, {
+    key: CLICK("$layerList .visible-item"),
+    value: function value$$1(e) {
+      var _getItem3 = this.getItem(e),
+          item = _getItem3.item;
 
-    }, {
-        key: EVENT(CHANGE_EDITOR, COPY_ITEMS),
-        value: function value$$1() {
-            this.refresh();
-        }
-    }, {
-        key: "refreshLayer",
-        value: function refreshLayer() {
-            var _this4 = this;
+      e.$delegateTarget.toggleClass("visible");
+      item.toggle("visible");
 
-            editor$1.selection.items.forEach(function (item) {
-                var $item = _this4.refs.$layerList.$("[item-id=\"" + item.id + "\"]");
-                if ($item) {
-                    var label = '';
-                    var display = item.display.type;
-                    if (display == 'flex' || display == 'grid') {
-                        label = display;
-                    }
-                    var $title = $item.$('.item-title');
+      editor$1.emit(CHANGE_LAYER, null, this);
+    }
+  }, {
+    key: CLICK("$layerList .lock-item"),
+    value: function value$$1(e) {
+      var _getItem4 = this.getItem(e),
+          item = _getItem4.item;
 
-                    $title.attr('data-label', label);
-                    $title.text(item.toGridString() + " " + item.title);
-                }
-            });
-        }
-    }, {
-        key: EVENT(CHANGE_LAYER, CHANGE_RECT, CHANGE_ARTBOARD),
-        value: function value$$1() {
-            this.refreshLayer();
-        }
-    }, {
-        key: EVENT(CHANGE_SELECTION),
-        value: function value$$1() {
-            var current = editor$1.selection.current;
-            if (current) {
-                this.toggleSelectedItem(current.id);
-            }
-        }
-    }, {
-        key: CLICK('$addArtBoard'),
-        value: function value$$1() {
-            var project = editor$1.selection.currentProject;
-            if (project) {
-                var artboard = project.addArtBoard(new ArtBoard({
-                    name: 'New ArtBoard'
-                }));
-                artboard.select();
-                editor$1.send(CHANGE_EDITOR);
-            }
-        }
-    }, {
-        key: CLICK('$addDirectory'),
-        value: function value$$1() {
-            var currentItem = editor$1.selection.current;
-            if (currentItem) {
+      e.$delegateTarget.toggleClass("lock");
+      item.toggle("lock");
 
-                if (currentItem instanceof ArtBoard || currentItem instanceof Directory) {
-                    var directory = currentItem.add(new Directory({
-                        name: 'New Directory'
-                    }));
-                } else if (currentItem instanceof Layer) {
-                    var directory = currentItem.parentDirectory().add(new Directory({
-                        name: 'New Directory',
-                        index: currentItem.index + 1
-                    }));
-                }
-                directory.select();
-                this.refresh();
-                editor$1.send(CHANGE_SELECTION);
-            }
-        }
-    }, {
-        key: "removeSelectionItem",
-        value: function removeSelectionItem() {
-            this.refs.$layerList.$$('.selected').forEach(function ($el) {
-                return $el.removeClass('selected');
-            });
-        }
-    }, {
-        key: "toggleSelectedItem",
-        value: function toggleSelectedItem(id) {
+      editor$1.emit(CHANGE_LAYER, null, this);
+    }
+  }, {
+    key: CLICK("$layerList .item-icon-group"),
+    value: function value$$1(e) {
+      var _getItem5 = this.getItem(e),
+          item = _getItem5.item,
+          $dt = _getItem5.$dt;
 
-            this.removeSelectionItem();
+      item.collapsed = true;
+      $dt.toggleClass("collapsed");
+    }
+  }, {
+    key: CLICK("$layerList .item-title"),
+    value: function value$$1(e) {
+      var _getItem6 = this.getItem(e),
+          item = _getItem6.item;
 
-            var item = this.refs.$layerList.$("[item-id=\"" + id + "\"]");
-            if (item) {
-                item.addClass('selected');
-            }
-        }
-    }, {
-        key: "getItem",
-        value: function getItem(e) {
-            var $dt = e.$delegateTarget.closest('tree-item');
-            var id = $dt.attr('item-id');
-            var item = editor$1.get(id);
+      this.toggleSelectedItem(item.id);
+      item.select();
+      editor$1.send(CHANGE_SELECTION, null, this);
+    }
+  }, {
+    key: DRAGSTART("$layerList .tree-item"),
+    value: function value$$1(e) {
+      this.draggedLayer = e.$delegateTarget;
+      this.draggedLayerId = e.$delegateTarget.attr("item-id");
+      this.draggedLayer.css("opacity", 0.5).css("background-color", "yellow");
+      e.dataTransfer.setData("text", e.$delegateTarget.attr("item-id"));
+      this.$el.addClass("dragging");
+    }
+  }, {
+    key: DRAGEND("$layerList .tree-item"),
+    value: function value$$1(e) {
+      if (this.draggedLayer) {
+        this.draggedLayer.css("opacity", 1).css("background-color", "");
+        this.draggedLayer = null;
+        this.draggedLayerId = null;
+      }
+      this.$el.removeClass("dragging");
+    }
+  }, {
+    key: DRAGOVER("$layerList .tree-item") + PREVENT,
+    value: function value$$1(e) {
+      // PREVENT
+    }
+  }, {
+    key: DROP("$layerList .tree-item") + SELF + PREVENT,
+    value: function value$$1(e) {
+      var $item = e.$delegateTarget;
+      if (this.draggedLayerId) {
+        var source = editor$1.get(this.draggedLayerId);
+        var target = editor$1.get($item.attr("item-id"));
 
-            return { item: item, $dt: $dt };
-        }
-    }, {
-        key: CLICK('$layerList .copy-item'),
-        value: function value$$1(e) {
-            var _getItem = this.getItem(e),
-                item = _getItem.item;
+        target.insertLast(source);
+        source.select();
 
-            item.copy();
+        editor$1.send(CHANGE_EDITOR);
+      }
 
-            editor$1.emit(CHANGE_EDITOR);
-        }
-    }, {
-        key: CLICK('$layerList .delete-item'),
-        value: function value$$1(e) {
-            var _getItem2 = this.getItem(e),
-                item = _getItem2.item;
-
-            item.remove();
-            editor$1.selection.refresh();
-            editor$1.emit(CHANGE_EDITOR, null, this);
-        }
-    }, {
-        key: CLICK('$layerList .visible-item'),
-        value: function value$$1(e) {
-            var _getItem3 = this.getItem(e),
-                item = _getItem3.item;
-
-            e.$delegateTarget.toggleClass('visible');
-            item.toggle('visible');
-
-            editor$1.emit(CHANGE_LAYER, null, this);
-        }
-    }, {
-        key: CLICK('$layerList .lock-item'),
-        value: function value$$1(e) {
-            var _getItem4 = this.getItem(e),
-                item = _getItem4.item;
-
-            e.$delegateTarget.toggleClass('lock');
-            item.toggle('lock');
-
-            editor$1.emit(CHANGE_LAYER, null, this);
-        }
-    }, {
-        key: CLICK('$layerList .item-icon-group'),
-        value: function value$$1(e) {
-            var _getItem5 = this.getItem(e),
-                item = _getItem5.item,
-                $dt = _getItem5.$dt;
-
-            item.collapsed = true;
-            $dt.toggleClass('collapsed');
-        }
-    }, {
-        key: CLICK('$layerList .item-title'),
-        value: function value$$1(e) {
-            var _getItem6 = this.getItem(e),
-                item = _getItem6.item;
-
-            this.toggleSelectedItem(item.id);
-            item.select();
-            editor$1.send(CHANGE_SELECTION, null, this);
-        }
-    }, {
-        key: DRAGSTART('$layerList .tree-item'),
-        value: function value$$1(e) {
-            this.draggedLayer = e.$delegateTarget;
-            this.draggedLayerId = e.$delegateTarget.attr('item-id');
-            this.draggedLayer.css('opacity', 0.5).css('background-color', 'yellow');
-            e.dataTransfer.setData('text', e.$delegateTarget.attr('item-id'));
-            this.$el.addClass('dragging');
-        }
-    }, {
-        key: DRAGEND('$layerList .tree-item'),
-        value: function value$$1(e) {
-            if (this.draggedLayer) {
-                this.draggedLayer.css('opacity', 1).css('background-color', '');
-                this.draggedLayer = null;
-                this.draggedLayerId = null;
-            }
-            this.$el.removeClass('dragging');
-        }
-    }, {
-        key: DRAGOVER('$layerList .tree-item') + PREVENT,
-        value: function value$$1(e) {
-            // PREVENT
-        }
-    }, {
-        key: DROP('$layerList .tree-item') + SELF + PREVENT,
-        value: function value$$1(e) {
-            var $item = e.$delegateTarget;
-            if (this.draggedLayerId) {
-                var source = editor$1.get(this.draggedLayerId);
-                var target = editor$1.get($item.attr('item-id'));
-
-                target.insertLast(source);
-                source.select();
-
-                editor$1.send(CHANGE_EDITOR);
-            }
-
-            this.$el.removeClass('dragging');
-        }
-    }]);
-    return LayerListView;
+      this.$el.removeClass("dragging");
+    }
+  }]);
+  return LayerListView;
 }(UIElement);
 
 var ITEM_ADD_CACHE = 'item/addCache';
@@ -25419,6 +25596,7 @@ var ColorStepsInfo = function (_UIElement) {
     return ColorStepsInfo;
 }(UIElement);
 
+// import ColorPicker  from "./color/ColorPicker";
 var ColorPickerPanel = function (_UIElement) {
     inherits(ColorPickerPanel, _UIElement);
 
@@ -25719,7 +25897,6 @@ var UnitRange = function (_UIElement) {
     key: CHANGE("$select"),
     value: function value$$1() {
       var unit$$1 = this.refs.$select.value;
-      console.log(unit$$1, this.maxValueFunction());
       this.selectUnit(this.len.to(unit$$1, this.maxValueFunction()));
     }
   }, {
@@ -29001,6 +29178,7 @@ var BorderColorFixed = function (_BasePropertyItem) {
     return BorderColorFixed;
 }(BasePropertyItem);
 
+// import ClipPathSVG from "./ClipPathSVG";
 var patterns = {
     RotatePattern: RotatePattern
 };
@@ -29228,7 +29406,12 @@ var LayoutProperty = function (_BaseProperty) {
   }, {
     key: "getBody",
     value: function getBody() {
-      return "\n      <div class='property-item display-manager'>\n        <label class='property-item-label'>Display</label>\n        <div class='property-item-input-field display-list' ref=\"$displayList\" selected-type=\"inline\">\n          <div class='display' display-type='inline'>INLINE</div>\n          <div class='display' display-type='block'>BLOCK</div>\n          <div class='display' display-type='flex'>FLEX</div>\n          <div class='display' display-type='grid'>GRID</div>\n        </div>\n      </div>\n    ";
+      return "\n      <div class='property-item display-manager'>\n        <label class='property-item-label' data-display='inline' ref='$label'>\n          Display\n          <button type=\"button\" ref='$screen'>" + icon.screen + "</button>\n        </label>\n        <div class='property-item-input-field display-list' ref=\"$displayList\" selected-type=\"inline\">\n          <div class='display' display-type='inline'>INLINE</div>\n          <div class='display' display-type='block'>BLOCK</div>\n          <div class='display' display-type='flex'>FLEX</div>\n          <div class='display' display-type='grid'>GRID</div>\n          <div class='tools' >\n            <button type=\"button\" ref=\"$setting\">" + icon.setting + "</button>\n          </div>\n        </div>\n      </div>\n    ";
+    }
+  }, {
+    key: CLICK('$screen'),
+    value: function value() {
+      this.emit('toggleDisplayGridEditor');
     }
   }, {
     key: EVENT(CHANGE_RECT, CHANGE_LAYER, CHANGE_ARTBOARD, CHANGE_EDITOR, CHANGE_SELECTION),
@@ -29242,6 +29425,7 @@ var LayoutProperty = function (_BaseProperty) {
       if (!item) return;
 
       if (item.display) {
+        this.refs.$label.attr("data-display", item.display.type);
         this.refs.$displayList.attr("selected-type", item.display.type);
       }
     }
@@ -29253,188 +29437,54 @@ var LayoutProperty = function (_BaseProperty) {
 
       if (current) {
         this.refs.$displayList.attr("selected-type", display);
+        this.refs.$label.attr('data-display', display);
         current.changeDisplay(display);
 
         this.emit(CHANGE_INSPECTOR);
       }
     }
+  }, {
+    key: "getDisplayPropertyData",
+    value: function getDisplayPropertyData() {
+      var data = {};
+      var current = editor$1.selection.current;
+
+      if (current) {
+        data.flexDirection = current.flexDirection;
+        data.flexWrap = current.flexWrap;
+        data.justifyContent = current.justifyContent;
+      }
+
+      return data;
+    }
+  }, {
+    key: CLICK('$setting'),
+    value: function value(e) {
+
+      var rect = this.refs.$setting.rect();
+      this.emit('showDisplayPropertyPopup', _extends({}, this.getDisplayPropertyData(), {
+        top: rect.top + 30
+      }));
+    }
   }]);
   return LayoutProperty;
-}(BaseProperty);
-
-var FlexDirectionProperty = function (_BaseProperty) {
-  inherits(FlexDirectionProperty, _BaseProperty);
-
-  function FlexDirectionProperty() {
-    classCallCheck(this, FlexDirectionProperty);
-    return possibleConstructorReturn(this, (FlexDirectionProperty.__proto__ || Object.getPrototypeOf(FlexDirectionProperty)).apply(this, arguments));
-  }
-
-  createClass(FlexDirectionProperty, [{
-    key: "isHideHeader",
-    value: function isHideHeader() {
-      return true;
-    }
-  }, {
-    key: "getBody",
-    value: function getBody() {
-      return "\n      <div class='property-item display-manager'>\n        <label class='property-item-label'>Flex Direction</label>\n        <div class='property-item-input-field flex-direction' ref=\"$flexDirection\" selected-type=\"row\">\n          <div class='display' display-type='row'>row</div>\n          <div class='display' display-type='row-reverse'>row-reverse</div>\n          <div class='display' display-type='column'>column</div>\n          <div class='display' display-type='column-reverse'>column-reverse</div>\n        </div>\n      </div>    \n    ";
-    }
-  }, {
-    key: EVENT(CHANGE_RECT, CHANGE_LAYER, CHANGE_ARTBOARD, CHANGE_EDITOR, CHANGE_SELECTION),
-    value: function value() {
-      this.refresh();
-    }
-  }, {
-    key: "refresh",
-    value: function refresh() {
-      var item = editor$1.selection.currentRect;
-      if (!item) return;
-
-      if (item.display) {
-        if (item.display.type == "flex") {
-          this.refs.$flexDirection.attr("selected-type", item.display.direction);
-        }
-      }
-    }
-  }, {
-    key: CLICK("$flexDirection .display"),
-    value: function value(e) {
-      var display = e.$delegateTarget.attr("display-type");
-      var current = editor$1.selection.current;
-
-      if (current) {
-        this.refs.$flexDirection.attr("selected-type", display);
-        current.display.direction = display;
-
-        this.emit(CHANGE_INSPECTOR);
-      }
-    }
-  }]);
-  return FlexDirectionProperty;
-}(BaseProperty);
-
-var JustifyContentProperty = function (_BaseProperty) {
-  inherits(JustifyContentProperty, _BaseProperty);
-
-  function JustifyContentProperty() {
-    classCallCheck(this, JustifyContentProperty);
-    return possibleConstructorReturn(this, (JustifyContentProperty.__proto__ || Object.getPrototypeOf(JustifyContentProperty)).apply(this, arguments));
-  }
-
-  createClass(JustifyContentProperty, [{
-    key: "isHideHeader",
-    value: function isHideHeader() {
-      return true;
-    }
-  }, {
-    key: "getBody",
-    value: function getBody() {
-      return "\n      <div class='property-item display-manager'>\n        <label class='property-item-label'>Justify Content</label>\n        <div class='property-item-input-field justify-content' ref='$justifyContent' selected-type='flex-start'>\n          <div class='display' display-type='flex-start'>flex-start</div>\n          <div class='display' display-type='flex-end'>flex-end</div>\n          <div class='display' display-type='center'>center</div>\n          <div class='display' display-type='space-between'>space-between</div>\n          <div class='display' display-type='space-around'>space-around</div>\n        </div>\n      </div>                             \n    ";
-    }
-  }, {
-    key: EVENT(CHANGE_RECT, CHANGE_LAYER, CHANGE_ARTBOARD, CHANGE_EDITOR, CHANGE_SELECTION),
-    value: function value() {
-      this.refresh();
-    }
-  }, {
-    key: "refresh",
-    value: function refresh() {
-      var item = editor$1.selection.currentRect;
-      if (!item) return;
-
-      if (item.display) {
-        this.refs.$displayList.attr("selected-type", item.display.type);
-
-        if (item.display.type == "flex") {
-          this.refs.$justifyContent.attr("selected-type", item.display.justifyContent);
-        }
-      }
-    }
-  }, {
-    key: CLICK("$justifyContent .display"),
-    value: function value(e) {
-      var display = e.$delegateTarget.attr("display-type");
-      var current = editor$1.selection.current;
-
-      if (current) {
-        this.refs.$justifyContent.attr("selected-type", display);
-        current.display.justifyContent = display;
-
-        this.emit(CHANGE_INSPECTOR);
-      }
-    }
-  }]);
-  return JustifyContentProperty;
-}(BaseProperty);
-
-var FlexWrapProperty = function (_BaseProperty) {
-  inherits(FlexWrapProperty, _BaseProperty);
-
-  function FlexWrapProperty() {
-    classCallCheck(this, FlexWrapProperty);
-    return possibleConstructorReturn(this, (FlexWrapProperty.__proto__ || Object.getPrototypeOf(FlexWrapProperty)).apply(this, arguments));
-  }
-
-  createClass(FlexWrapProperty, [{
-    key: "isHideHeader",
-    value: function isHideHeader() {
-      return true;
-    }
-  }, {
-    key: "getBody",
-    value: function getBody() {
-      return "\n      <div class='property-item display-manager'>\n        <label class='property-item-label'>Flex Wrap</label>\n        <div class='property-item-input-field flex-wrap' ref='$flexWrap' selected-type='nowrap'>\n          <div class='display' display-type='nowrap'>nowrap</div>\n          <div class='display' display-type='wrap'>wrap</div>\n          <div class='display' display-type='wrap-reverse'>wrap-reverse</div>\n        </div>\n      </div>    \n\n    ";
-    }
-  }, {
-    key: EVENT(CHANGE_RECT, CHANGE_LAYER, CHANGE_ARTBOARD, CHANGE_EDITOR, CHANGE_SELECTION),
-    value: function value() {
-      this.refresh();
-    }
-  }, {
-    key: "refresh",
-    value: function refresh() {
-      var item = editor$1.selection.currentRect;
-      if (!item) return;
-
-      if (item.display) {
-        if (item.display.type == "flex") {
-          this.refs.$flexWrap.attr("selected-type", item.display.flexWrap);
-        }
-      }
-    }
-  }, {
-    key: CLICK("$flexWrap .display"),
-    value: function value(e) {
-      var display = e.$delegateTarget.attr("display-type");
-      var current = editor$1.selection.current;
-
-      if (current) {
-        this.refs.$flexWrap.attr("selected-type", display);
-        current.display.flexWrap = display;
-
-        this.emit(CHANGE_INSPECTOR);
-      }
-    }
-  }]);
-  return FlexWrapProperty;
 }(BaseProperty);
 
 var names = {
   color: "Color",
   image: "Image",
   linear: "Linear",
-  "repeating-linear": "Repeating Linear",
+  "repeating-linear": icon.repeat + " Linear",
   radial: "Radial",
-  "repeating-radial": "Repeating Radial",
+  "repeating-radial": icon.repeat + " Radial",
   conic: "Conic",
-  "repeating-conic": "Repeating Conic",
+  "repeating-conic": icon.repeat + " Conic",
   "linear-gradient": "Linear",
-  "repeating-linear-gradient": "Repeating Linear",
+  "repeating-linear-gradient": icon.repeat + " Linear",
   "radial-gradient": "Radial",
-  "repeating-radial-gradient": "Repeating Radial",
+  "repeating-radial-gradient": icon.repeat + " Radial",
   "conic-gradient": "Conic",
-  "repeating-conic-gradient": "Repeating Conic"
+  "repeating-conic-gradient": icon.repeat + " Conic"
 };
 
 var types = {
@@ -29517,7 +29567,7 @@ var FillProperty = function (_BaseProperty) {
         if (it.type === "color") {
           imageCSS = "background-color: " + it.color;
         } else {
-          imageCSS = "background-image: " + (it.image ? it.image.toString() : "none");
+          imageCSS = "background-image: " + (it.image ? it.image.toString() : "none") + "; background-size: cover;";
         }
 
         return "\n            <div class='fill-item' data-index='" + index + "' ref=\"fillIndex" + index + "\" draggable='true' data-fill-type=\"" + backgroundType + "\" >\n                <div class='check'><input type='checkbox' checked='" + (it.check ? "true" : "false") + "'/></div>\n                <div class='preview' data-index=\"" + index + "\">\n                    <div class='mini-view' style=\"" + imageCSS + "\" ref=\"miniView" + index + "\"></div>\n                </div>\n                <div class='fill-title' ref=\"fillTitle" + index + "\">" + backgroundTypeName + "</div>\n                <div class='colorcode'>\n                    <input type='text' placeholder='#999999'  ref=\"colorText" + index + "\"/>\n                </div>\n                <div class='colorsteps' ref=\"colorsteps" + index + "\">\n                  " + _this2.getColorStepList(it) + "\n                </div>\n                <div class='tools'>\n                  <button type=\"button\" class='setting' data-index='" + index + "'>" + icon.setting + "</button>\n                  <button type=\"button\" class='remove' data-index='" + index + "'>" + icon.remove2 + "</button>\n                </div>\n            </div>\n        ";
@@ -29578,7 +29628,7 @@ var FillProperty = function (_BaseProperty) {
           data.color = backgroundImage.color;
           break;
         case "image":
-          data.image = backgroundImage.image;
+          data.url = backgroundImage.image ? backgroundImage.image.url : '';
           break;
         default:
           if (backgroundImage.image) {
@@ -29651,24 +29701,21 @@ var FillProperty = function (_BaseProperty) {
       if (!this.current) return;
       this.currentBackgroundImage = this.current.backgroundImages[this.selectedIndex];
 
-      var x = this.currentBackgroundImage.x;
-      var y = this.currentBackgroundImage.y;
-      var width = this.currentBackgroundImage.width;
-      var height = this.currentBackgroundImage.height;
+      var back = this.currentBackgroundImage;
+
+      var x = back.x;
+      var y = back.y;
+      var width = back.width;
+      var height = back.height;
       var maxWidth = this.current.width;
       var maxHeight = this.current.height;
-      var repeat$$1 = this.currentBackgroundImage.repeat;
-      var size = this.currentBackgroundImage.size;
+      var repeat$$1 = back.repeat;
+      var size = back.size;
+      var blendMode = back.blendMode;
 
       this.emit("showBackgroundPropertyPopup", {
-        x: x,
-        y: y,
-        width: width,
-        height: height,
-        maxWidth: maxWidth,
-        maxHeight: maxHeight,
-        repeat: repeat$$1,
-        size: size
+        x: x, y: y, width: width, height: height,
+        maxWidth: maxWidth, maxHeight: maxHeight, repeat: repeat$$1, size: size, blendMode: blendMode
       });
       // this.emit("hideFillPicker");
     }
@@ -29683,6 +29730,26 @@ var FillProperty = function (_BaseProperty) {
       this.viewBackgroundPropertyPopup(e.$delegateTarget);
     }
   }, {
+    key: "viewChangeColor",
+    value: function viewChangeColor(data) {
+      var backgroundImage = this.currentBackgroundImage;
+      if (!backgroundImage) return;
+      var $el = this.refs["miniView" + this.selectedIndex];
+      if ($el) {
+        $el.cssText(backgroundImage.toString());
+      }
+
+      var $el = this.refs["fillTitle" + this.selectedIndex];
+      if ($el) {
+        $el.html(names["color"]);
+      }
+
+      var $el = this.refs["colorText" + this.selectedIndex];
+      if ($el) {
+        $el.val(data.color);
+      }
+    }
+  }, {
     key: "setBackgroundColor",
     value: function setBackgroundColor(color$$1) {
       if (this.currentBackgroundImage) {
@@ -29691,20 +29758,44 @@ var FillProperty = function (_BaseProperty) {
           color: color$$1
         });
 
-        var $el = this.refs["miniView" + this.selectedIndex];
-        if ($el) {
-          $el.cssText(this.currentBackgroundImage.toString());
-        }
+        this.viewChangeColor({ color: color$$1 });
 
-        var $el = this.refs["fillTitle" + this.selectedIndex];
-        if ($el) {
-          $el.text(names["color"]);
+        if (this.current) {
+          this.emit("refreshItem", this.current);
         }
+      }
+    }
+  }, {
+    key: "viewChangeImage",
+    value: function viewChangeImage(data) {
+      var backgroundImage = this.currentBackgroundImage;
+      if (!backgroundImage) return;
+      var $el = this.refs["miniView" + this.selectedIndex];
+      if ($el) {
+        $el.css(_extends({}, backgroundImage.toCSS(), {
+          'background-size': 'cover'
+        }));
+      }
 
-        var $el = this.refs["colorText" + this.selectedIndex];
-        if ($el) {
-          $el.val(color$$1);
-        }
+      var $el = this.refs["fillTitle" + this.selectedIndex];
+      if ($el) {
+        $el.html(names["image"]);
+      }
+    }
+  }, {
+    key: "setImage",
+    value: function setImage(data) {
+      if (!data.images) return;
+      if (!data.images.length) return;
+      if (this.currentBackgroundImage) {
+        this.currentBackgroundImage.reset({
+          type: "image",
+          image: new URLImageResource({
+            url: data.images[0]
+          })
+        });
+
+        this.viewChangeImage(data);
 
         if (this.current) {
           this.emit("refreshItem", this.current);
@@ -29768,10 +29859,47 @@ var FillProperty = function (_BaseProperty) {
     }
   }, {
     key: EVENT("selectFillPickerTab"),
-    value: function value$$1(type) {
+    value: function value$$1(type, data) {
       var typeName = types[type];
       var $fillItem = this.refs["fillIndex" + this.selectedIndex];
       $fillItem.attr("data-fill-type", typeName);
+
+      // TODO: 탭만 바뀌어도 현재 상태에서 Preview 가 바뀌어야 한다. 
+
+      // switch(type) {
+      //   case'color':
+      //     this.currentBackgroundImage.type = 'color'
+      //     this.viewChangeColor(data);
+      //     break; 
+      //   case 'image':
+      //     this.currentBackgroundImage.type = 'image'
+      //     this.viewChangeImage(data);
+      //     break;
+      //   default: 
+      //     this.viewChangeGradient(data);
+      //     break; 
+      // }
+    }
+  }, {
+    key: "viewChangeGradient",
+    value: function viewChangeGradient(data) {
+      var backgroundImage = this.currentBackgroundImage;
+
+      if (!backgroundImage) return;
+      var $el = this.refs["miniView" + this.selectedIndex];
+      if ($el) {
+        $el.cssText(backgroundImage.toString());
+      }
+
+      var $el = this.refs["fillTitle" + this.selectedIndex];
+      if ($el) {
+        $el.html(names[data.type]);
+      }
+
+      var $el = this.refs["colorsteps" + this.selectedIndex];
+      if ($el) {
+        $el.html(this.getColorStepString(data.colorsteps));
+      }
     }
   }, {
     key: "setGradient",
@@ -29782,20 +29910,7 @@ var FillProperty = function (_BaseProperty) {
           image: this.createGradient(data, this.currentBackgroundImage.image)
         });
 
-        var $el = this.refs["miniView" + this.selectedIndex];
-        if ($el) {
-          $el.cssText(this.currentBackgroundImage.toString());
-        }
-
-        var $el = this.refs["fillTitle" + this.selectedIndex];
-        if ($el) {
-          $el.text(names[data.type]);
-        }
-
-        var $el = this.refs["colorsteps" + this.selectedIndex];
-        if ($el) {
-          $el.html(this.getColorStepString(data.colorsteps));
-        }
+        this.viewChangeGradient(data);
 
         if (this.current) {
           this.emit("refreshItem", this.current);
@@ -29810,6 +29925,7 @@ var FillProperty = function (_BaseProperty) {
           this.setBackgroundColor(data.color);
           break;
         case "image":
+          this.setImage(data);
           break;
         default:
           this.setGradient(data);
@@ -29853,9 +29969,6 @@ var FillProperty = function (_BaseProperty) {
 // import LayerBorderRadiusProperty from "./LayerBorderRadiusProperty";
 var property = {
   FillProperty: FillProperty,
-  FlexWrapProperty: FlexWrapProperty,
-  JustifyContentProperty: JustifyContentProperty,
-  FlexDirectionProperty: FlexDirectionProperty,
   LayoutProperty: LayoutProperty,
   BoundProperty: BoundProperty
   // BackgroundPositionProperty,
@@ -30045,6 +30158,8 @@ var Alignment = function (_UIElement) {
     return Alignment;
 }(UIElement);
 
+// import { HOTKEY_EXECUTE } from "../../types/HotkeyTypes";
+
 var HotKey = function (_UIElement) {
     inherits(HotKey, _UIElement);
 
@@ -30064,7 +30179,7 @@ var HotKey = function (_UIElement) {
 
 var LOAD_START = 'load/start';
 
-var _templateObject$21 = taggedTemplateLiteral(["\n      <div class=\"feature-control\">\n        <BoundProperty />\n        <LayoutProperty />\n        <FlexDirectionProperty />\n        <FlexWrapProperty />\n        <JustifyContentProperty />\n        <FillProperty />\n      </div>\n    "], ["\n      <div class=\"feature-control\">\n        <BoundProperty />\n        <LayoutProperty />\n        <FlexDirectionProperty />\n        <FlexWrapProperty />\n        <JustifyContentProperty />\n        <FillProperty />\n      </div>\n    "]);
+var _templateObject$21 = taggedTemplateLiteral(["\n      <div class=\"feature-control\">\n        <BoundProperty />\n        <LayoutProperty />\n        <FillProperty />\n      </div>\n    "], ["\n      <div class=\"feature-control\">\n        <BoundProperty />\n        <LayoutProperty />\n        <FillProperty />\n      </div>\n    "]);
 
 var Inspector = function (_UIElement) {
   inherits(Inspector, _UIElement);
@@ -30093,7 +30208,7 @@ var Inspector = function (_UIElement) {
   return Inspector;
 }(UIElement);
 
-var _templateObject$22 = taggedTemplateLiteral(["\n      <div class=\"fill-picker\">\n        <div class=\"picker-tab\">\n          <div class=\"picker-tab-list\" ref=\"$tab\">\n            ", "\n          </div>\n        </div>\n        <div class=\"picker-tab-container\" ref=\"$tabContainer\">\n          <div\n            class=\"picker-tab-content selected\"\n            data-content-type=\"color\"\n            ref=\"$color\"\n          ></div>\n          <div class=\"picker-tab-content\" data-type=\"image\" ref=\"$image\"></div>\n        </div>\n      </div>\n    "], ["\n      <div class=\"fill-picker\">\n        <div class=\"picker-tab\">\n          <div class=\"picker-tab-list\" ref=\"$tab\">\n            ", "\n          </div>\n        </div>\n        <div class=\"picker-tab-container\" ref=\"$tabContainer\">\n          <div\n            class=\"picker-tab-content selected\"\n            data-content-type=\"color\"\n            ref=\"$color\"\n          ></div>\n          <div class=\"picker-tab-content\" data-type=\"image\" ref=\"$image\"></div>\n        </div>\n      </div>\n    "]);
+var _templateObject$22 = taggedTemplateLiteral(["\n      <div class=\"fill-picker\">\n        <div class=\"picker-tab\">\n          <div class=\"picker-tab-list\" ref=\"$tab\">\n            ", "\n          </div>\n        </div>\n        <div class=\"picker-tab-container\" ref=\"$tabContainer\">\n          <div\n            class=\"picker-tab-content selected\"\n            data-content-type=\"color\"\n            ref=\"$color\"\n          ></div>\n          <div class=\"picker-tab-content\" data-content-type=\"image\" ref=\"$image\">\n            <div class='image-preview'>\n              <figure>\n                <img src='' ref='$imagePreview' />\n                <div class='select-text'>Select a image</div>                \n              </figure>\n              <input type=\"file\" ref='$imageFile' accept=\"image/*\" />\n            </div>\n          </div>\n        </div>\n      </div>\n    "], ["\n      <div class=\"fill-picker\">\n        <div class=\"picker-tab\">\n          <div class=\"picker-tab-list\" ref=\"$tab\">\n            ", "\n          </div>\n        </div>\n        <div class=\"picker-tab-container\" ref=\"$tabContainer\">\n          <div\n            class=\"picker-tab-content selected\"\n            data-content-type=\"color\"\n            ref=\"$color\"\n          ></div>\n          <div class=\"picker-tab-content\" data-content-type=\"image\" ref=\"$image\">\n            <div class='image-preview'>\n              <figure>\n                <img src='' ref='$imagePreview' />\n                <div class='select-text'>Select a image</div>                \n              </figure>\n              <input type=\"file\" ref='$imageFile' accept=\"image/*\" />\n            </div>\n          </div>\n        </div>\n      </div>\n    "]);
 
 var tabs = [{ type: "color", title: "Color", selected: true }, { type: "linear-gradient", title: "Linear Gradient" }, { type: "repeating-linear-gradient", title: "Repeating Linear Gradient" }, { type: "radial-gradient", title: "Radial Gradient" }, { type: "repeating-radial-gradient", title: "Repeating Radial Gradient" }, { type: "conic-gradient", title: "Conic Gradient" }, { type: "repeating-conic-gradient", title: "Repeating Conic Gradient" }, { type: "image", title: "Image", icon: icon.image }];
 
@@ -30133,7 +30248,7 @@ var FillPicker = function (_UIElement) {
     value: function initialize() {
       get$1(FillPicker.prototype.__proto__ || Object.getPrototypeOf(FillPicker.prototype), "initialize", this).call(this);
 
-      this.selectedTab = "color";
+      this.selectedTab = "image";
     }
   }, {
     key: "template",
@@ -30141,6 +30256,26 @@ var FillPicker = function (_UIElement) {
       return html(_templateObject$22, tabs.map(function (it) {
         return "\n                <span \n                    class='picker-tab-item " + (it.selected ? "selected" : EMPTY_STRING) + "' \n                    data-select-type='" + it.type + "'\n                    title='" + it.title + "'\n                >\n                    <div class='icon'>" + (it.icon || EMPTY_STRING) + "</div>\n                </span>";
       }));
+    }
+  }, {
+    key: CHANGE('$imageFile'),
+    value: function value$$1(e) {
+      var files = this.refs.$imageFile.files;
+
+      //화면 표시 하기 
+      // files.length 따라 Preview 에 표시 하기 
+      // URL.createObjectUrl 로 임시 url 생성 (임시 URL 은 어디서 관리하나)
+      // emit('changeFillPicker', { images: [........] })
+
+
+      var images = files.map(function (file) {
+        return editor$1.createUrl(file);
+      });
+
+      if (images) {
+        this.refs.$imagePreview.attr('src', images[0]);
+        this.emit('changeFillPicker', { type: 'image', images: images });
+      }
     }
   }, {
     key: CLICK("$tab .picker-tab-item"),
@@ -30151,9 +30286,9 @@ var FillPicker = function (_UIElement) {
 
       //TODO: picker 타입이 바뀌면 내부 속성도 같이 바뀌어야 한다.
       this.selectTabContent(type, {
-        type: type
+        type: type,
+        selectTab: true
       });
-      this.emit("selectFillPickerTab", type);
     }
   }, {
     key: "selectTabContent",
@@ -30163,6 +30298,7 @@ var FillPicker = function (_UIElement) {
       this.selectedTab = type;
       switch (type) {
         case "image":
+          this.refs.$imagePreview.attr('src', data.url);
           this.refs.$image.onlyOneClass("selected");
           this.emit("hideGradientEditor");
           break;
@@ -30189,7 +30325,7 @@ var FillPicker = function (_UIElement) {
           if (data.colorsteps) {
             sample.colorsteps = data.colorsteps;
           }
-          this.emit("showGradientEditor", sample);
+          this.emit("showGradientEditor", sample, data.selectTab);
 
           break;
       }
@@ -30221,6 +30357,13 @@ var FillPicker = function (_UIElement) {
       this.emit("hideGradientEditor");
     }
   }, {
+    key: EVENT('hidePropertyPopup'),
+    value: function value$$1() {
+      this.$el.hide();
+
+      this.emit('hideGradientEditor');
+    }
+  }, {
     key: EVENT("selectColorStep"),
     value: function value$$1(color$$1) {
       this.colorPicker.initColorWithoutChangeEvent(color$$1);
@@ -30237,6 +30380,10 @@ var FillPicker = function (_UIElement) {
   }]);
   return FillPicker;
 }(UIElement);
+
+var _templateObject$23 = taggedTemplateLiteral(["\n    <div class='popup-item'>\n      <label>Blend</label>\n      <div class='blend-list' \">\n        <select ref='$blend' class='full-size'>\n          ", "\n        </select>\n      </div>\n    </div>\n    "], ["\n    <div class='popup-item'>\n      <label>Blend</label>\n      <div class='blend-list' \">\n        <select ref='$blend' class='full-size'>\n          ", "\n        </select>\n      </div>\n    </div>\n    "]);
+
+var blend_list = ["normal", "multiply", "screen", "overlay", "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion", "hue", "saturation", "color", "luminosity"];
 
 var BackgroundPropertyPopup = function (_UIElement) {
   inherits(BackgroundPropertyPopup, _UIElement);
@@ -30353,9 +30500,22 @@ var BackgroundPropertyPopup = function (_UIElement) {
       this.updateData({ repeat: $t.value });
     }
   }, {
+    key: "templateForBlendMode",
+    value: function templateForBlendMode() {
+      return html(_templateObject$23, blend_list.map(function (it) {
+        return "<option value=" + it + ">" + it + "</option>";
+      }));
+    }
+  }, {
+    key: CHANGE('$blend'),
+    value: function value() {
+      var blendMode = this.refs.$blend.value;
+      this.updateData({ blendMode: blendMode });
+    }
+  }, {
     key: "template",
     value: function template() {
-      return "\n      <div class='popup background-property-popup'>\n        <div class='popup-title'>Background Image</div>\n        <div class='popup-content'>\n          " + this.templateForSize() + "        \n          " + this.templateForX() + "\n          " + this.templateForY() + "\n          " + this.templateForWidth() + "\n          " + this.templateForHeight() + "\n          " + this.templateForRepeat() + "\n        </div>\n      </div>\n    ";
+      return "\n      <div class='popup background-property-popup'>\n        <div class='popup-title'>Background Image</div>\n        <div class='popup-content'>\n          " + this.templateForSize() + "        \n          " + this.templateForX() + "\n          " + this.templateForY() + "\n          " + this.templateForWidth() + "\n          " + this.templateForHeight() + "\n          " + this.templateForRepeat() + "\n          " + this.templateForBlendMode() + "\n        </div>\n      </div>\n    ";
     }
   }, {
     key: "refreshUnitRange",
@@ -30366,6 +30526,7 @@ var BackgroundPropertyPopup = function (_UIElement) {
       this.children.$height.refreshValue(this.data.height);
       this.refs.$size.attr("data-value", this.data.size);
       this.refs.$repeat.val(this.data.repeat);
+      this.refs.$blend.val(this.data.blendMode);
     }
   }, {
     key: EVENT("showBackgroundPropertyPopup"),
@@ -30385,12 +30546,114 @@ var BackgroundPropertyPopup = function (_UIElement) {
       this.$el.show("inline-block");
     }
   }, {
-    key: EVENT("hideBackgroundPropertyPopup"),
+    key: EVENT("hideBackgroundPropertyPopup", 'hidePropertyPopup', CHANGE_EDITOR, CHANGE_SELECTION),
     value: function value() {
       this.$el.hide();
     }
   }]);
   return BackgroundPropertyPopup;
+}(UIElement);
+
+var DisplayPropertyPopup = function (_UIElement) {
+  inherits(DisplayPropertyPopup, _UIElement);
+
+  function DisplayPropertyPopup() {
+    classCallCheck(this, DisplayPropertyPopup);
+    return possibleConstructorReturn(this, (DisplayPropertyPopup.__proto__ || Object.getPrototypeOf(DisplayPropertyPopup)).apply(this, arguments));
+  }
+
+  createClass(DisplayPropertyPopup, [{
+    key: "initialize",
+    value: function initialize() {
+      get$1(DisplayPropertyPopup.prototype.__proto__ || Object.getPrototypeOf(DisplayPropertyPopup.prototype), "initialize", this).call(this);
+
+      this.data = {
+        flexDirection: 'row',
+        flexWrap: 'nowrap',
+        justifyContent: 'flex-start'
+      };
+    }
+  }, {
+    key: "templateForFlexDirection",
+    value: function templateForFlexDirection() {
+      return "\n      <div class='popup-item'>\n        <label>Flex Direction</label>\n        <div class='flex-direction grid-5' ref=\"$flexDirection\" data-value=\"row\">\n            <button type=\"button\" value=\"row\" >row</button>\n            <button type=\"button\" value=\"row-reverse\">row-reverse</button>\n            <button type=\"button\" value=\"column\">column</button>\n            <button type=\"button\" value=\"column-reverse\">column-reverse</button>\n        </div>\n      </div> \n    ";
+    }
+  }, {
+    key: CLICK('$flexDirection button'),
+    value: function value(_ref) {
+      var $t = _ref.$delegateTarget;
+
+      var flexDirection = $t.value;
+      this.refs.$flexDirection.attr('data-value', flexDirection);
+      this.updateData({ flexDirection: flexDirection });
+    }
+  }, {
+    key: "templateForFlexWrap",
+    value: function templateForFlexWrap() {
+      return "\n      <div class='popup-item'>\n        <label>Flex Wrap</label>\n        <div class='flex-wrap grid-5' ref=\"$flexWrap\" data-value=\"nowrap\">\n            <button type=\"button\" value=\"nowrap\" >nowrap</button>\n            <button type=\"button\" value=\"wrap\">wrap</button>\n            <button type=\"button\" value=\"wrap-reverse\">wrap-reverse</button>\n        </div>\n      </div> \n    ";
+    }
+  }, {
+    key: CLICK('$flexWrap button'),
+    value: function value(_ref2) {
+      var $t = _ref2.$delegateTarget;
+
+      var flexWrap = $t.value;
+      this.refs.$flexWrap.attr('data-value', flexWrap);
+      this.updateData({ flexWrap: flexWrap });
+    }
+  }, {
+    key: "templateForJustifyContent",
+    value: function templateForJustifyContent() {
+      return "\n      <div class='popup-item'>\n        <label>Justify Content</label>\n        <div class='justify-content grid-5' ref=\"$justifyContent\" data-value=\"flex-start\">\n            <button type=\"button\" value=\"flex-start\" >flex-start</button>\n            <button type=\"button\" value=\"flex-end\">flex-end</button>\n            <button type=\"button\" value=\"center\">center</button>\n            <button type=\"button\" value=\"space-between\">space-between</button>\n            <button type=\"button\" value=\"space-around\">space-around</button>\n        </div>\n      </div> \n    ";
+    }
+  }, {
+    key: CLICK('$justifyContent button'),
+    value: function value(_ref3) {
+      var $t = _ref3.$delegateTarget;
+
+      var justifyContent = $t.value;
+      this.refs.$justifyContent.attr('data-value', justifyContent);
+      this.updateData({ justifyContent: justifyContent });
+    }
+  }, {
+    key: "template",
+    value: function template() {
+      return "\n      <div class='popup display-property-popup'>\n        <div class='popup-title'>Display</div>\n        <div class='popup-content'>\n          " + this.templateForFlexDirection() + "        \n          " + this.templateForFlexWrap() + "\n          " + this.templateForJustifyContent() + "          \n        </div>\n      </div>\n    ";
+    }
+  }, {
+    key: "updateData",
+    value: function updateData(data) {
+      this.emit('changeDisplayPropertyPopup', data);
+    }
+  }, {
+    key: "refreshDisplayProperty",
+    value: function refreshDisplayProperty() {
+      this.refs.$flexDirection.attr('data-value', this.data.flexDirection);
+      this.refs.$flexWrap.attr('data-value', this.data.flexWrap);
+      this.refs.$justifyContent.attr('data-value', this.data.justifyContent);
+    }
+  }, {
+    key: EVENT("showDisplayPropertyPopup"),
+    value: function value(data) {
+
+      this.data = _extends({}, this.data, data);
+
+      this.refreshDisplayProperty();
+
+      this.$el.css({
+        top: Length$1.px(this.data.top),
+        bottom: 'auto'
+      }).show("inline-block");
+
+      this.emit('hidePropertyPopup');
+    }
+  }, {
+    key: EVENT("hideDisplayPropertyPopup", 'hidePropertyPopup', CHANGE_EDITOR, CHANGE_SELECTION),
+    value: function value() {
+      this.$el.hide();
+    }
+  }]);
+  return DisplayPropertyPopup;
 }(UIElement);
 
 var CSSEditor$1 = function (_UIElement) {
@@ -30416,12 +30679,13 @@ var CSSEditor$1 = function (_UIElement) {
     }, {
         key: "template",
         value: function template() {
-            return "\n            <div class=\"layout-main -show-timeline\" ref=\"$layoutMain\">\n                <div class=\"layout-header\">\n                    <div class=\"page-tab-menu\"><ToolMenu /></div>\n                </div>\n                <div class=\"layout-middle\">\n                    <div class=\"layout-left\">      \n                        <SelectLayerView/>\n                    </div>\n                    <div class=\"layout-body\">\n                        <LayerToolbar />\n                        <CanvasView />\n                        <VerticalColorStep />                        \n                    </div>                \n                    <div class=\"layout-right\">\n                        <Alignment />\n                        <Inspector />\n                    </div>\n                </div>\n                <div class=\"layout-footer\" ref=\"$footer\">\n                    <!-- TimelineSplitter /-->\n                    <!-- Timeline /-->\n                </div>\n                <ExportWindow />\n                <DropView />\n                <HotKey />       \n                <FillPicker ref=\"$picker\" />\n                <BackgroundPropertyPopup />\n            </div>\n  \n        ";
+            return "\n            <div class=\"layout-main -show-timeline\" ref=\"$layoutMain\">\n                <div class=\"layout-header\">\n                    <div class=\"page-tab-menu\"><ToolMenu /></div>\n                </div>\n                <div class=\"layout-middle\">\n                    <div class=\"layout-left\">      \n                        <SelectLayerView/>\n                    </div>\n                    <div class=\"layout-body\">\n                        <LayerToolbar />\n                        <CanvasView />\n                        <VerticalColorStep />                        \n                    </div>                \n                    <div class=\"layout-right\">\n                        <Alignment />\n                        <Inspector />\n                    </div>\n                </div>\n                <div class=\"layout-footer\" ref=\"$footer\">\n                    <!-- TimelineSplitter /-->\n                    <!-- Timeline /-->\n                </div>\n                <ExportWindow />\n                <DropView />\n                <HotKey />       \n                <FillPicker ref=\"$picker\" />\n                <BackgroundPropertyPopup />\n                <DisplayPropertyPopup />\n            </div>\n  \n        ";
         }
     }, {
         key: "components",
         value: function components() {
             return {
+                DisplayPropertyPopup: DisplayPropertyPopup,
                 BackgroundPropertyPopup: BackgroundPropertyPopup,
                 FillPicker: FillPicker,
                 HotKey: HotKey,

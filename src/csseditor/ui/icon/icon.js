@@ -17,8 +17,13 @@ import artboard from "./artboard";
 import image from "./image";
 import setting from "./setting";
 import remove2 from "./remove2";
+import repeat from "./repeat";
+import screen from "./screen";
+
 
 export default {
+  screen,
+  repeat,
   remove2,
   setting,
   image,

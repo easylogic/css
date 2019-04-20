@@ -7498,6 +7498,11 @@ var Dom = function () {
     get: function get$$1() {
       return this.el.value;
     }
+  }, {
+    key: "files",
+    get: function get$$1() {
+      return this.el.files ? [].concat(toConsumableArray(this.el.files)) : [];
+    }
   }], [{
     key: "getScrollTop",
     value: function getScrollTop() {
@@ -10105,6 +10110,7 @@ var Selection = function () {
 
 var items = new Map();
 var linkedItems = new Map();
+var urlList = new Map();
 
 function traverse(item, results, parentId) {
   var newItem = item.clone(true);
@@ -10498,6 +10504,30 @@ var editor$1 = new (function () {
       }
 
       return results;
+    }
+  }, {
+    key: "hasFile",
+    value: function hasFile(url) {
+      return urlList.has(url);
+    }
+  }, {
+    key: "getFile",
+    value: function getFile(url) {
+      return urlList.get(url);
+    }
+  }, {
+    key: "createUrl",
+    value: function createUrl(file) {
+      var url = URL.createObjectURL(file);
+      urlList.set(url, file);
+      return url;
+    }
+  }, {
+    key: "revokeUrl",
+    value: function revokeUrl(url) {
+      if (urlList.delete(url)) {
+        URL.revokeObjectURL(url);
+      }
     }
   }, {
     key: "projects",
@@ -22220,6 +22250,15 @@ var GridLayoutEditor = function (_UIElement) {
         value: function moveResizeEnd(dx, dy) {
             this.emit('moveResizeEnd', dx, dy);
         }
+    }, {
+        key: EVENT('toggleDisplayGridEditor'),
+        value: function value() {
+            if (this.$el.css('left') === '-10000px') {
+                this.refresh();
+            } else {
+                this.initGridLayoutEditor();
+            }
+        }
     }]);
     return GridLayoutEditor;
 }(UIElement);
@@ -22380,7 +22419,13 @@ var setting = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"2
 
 var remove2 = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path d=\"M19 13H5v-2h14v2z\"/></svg>";
 
+var repeat$2 = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path d=\"M7 7h10v3l4-4-4-4v3H5v6h2V7zm10 10H7v-3l-4 4 4 4v-3h12v-6h-2v4z\"/></svg>";
+
+var screen = "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\"><path d=\"M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z\"/></svg>";
+
 var icon = {
+  screen: screen,
+  repeat: repeat$2,
   remove2: remove2,
   setting: setting,
   image: image$3,
@@ -29370,7 +29415,12 @@ var LayoutProperty = function (_BaseProperty) {
   }, {
     key: "getBody",
     value: function getBody() {
-      return "\n      <div class='property-item display-manager'>\n        <label class='property-item-label'>Display</label>\n        <div class='property-item-input-field display-list' ref=\"$displayList\" selected-type=\"inline\">\n          <div class='display' display-type='inline'>INLINE</div>\n          <div class='display' display-type='block'>BLOCK</div>\n          <div class='display' display-type='flex'>FLEX</div>\n          <div class='display' display-type='grid'>GRID</div>\n        </div>\n      </div>\n    ";
+      return "\n      <div class='property-item display-manager'>\n        <label class='property-item-label' data-display='inline' ref='$label'>\n          Display\n          <button type=\"button\" ref='$screen'>" + icon.screen + "</button>\n        </label>\n        <div class='property-item-input-field display-list' ref=\"$displayList\" selected-type=\"inline\">\n          <div class='display' display-type='inline'>INLINE</div>\n          <div class='display' display-type='block'>BLOCK</div>\n          <div class='display' display-type='flex'>FLEX</div>\n          <div class='display' display-type='grid'>GRID</div>\n          <div class='tools' >\n            <button type=\"button\" ref=\"$setting\">" + icon.setting + "</button>\n          </div>\n        </div>\n      </div>\n    ";
+    }
+  }, {
+    key: CLICK('$screen'),
+    value: function value() {
+      this.emit('toggleDisplayGridEditor');
     }
   }, {
     key: EVENT(CHANGE_RECT, CHANGE_LAYER, CHANGE_ARTBOARD, CHANGE_EDITOR, CHANGE_SELECTION),
@@ -29384,6 +29434,7 @@ var LayoutProperty = function (_BaseProperty) {
       if (!item) return;
 
       if (item.display) {
+        this.refs.$label.attr("data-display", item.display.type);
         this.refs.$displayList.attr("selected-type", item.display.type);
       }
     }
@@ -29395,188 +29446,54 @@ var LayoutProperty = function (_BaseProperty) {
 
       if (current) {
         this.refs.$displayList.attr("selected-type", display);
+        this.refs.$label.attr('data-display', display);
         current.changeDisplay(display);
 
         this.emit(CHANGE_INSPECTOR);
       }
     }
+  }, {
+    key: "getDisplayPropertyData",
+    value: function getDisplayPropertyData() {
+      var data = {};
+      var current = editor$1.selection.current;
+
+      if (current) {
+        data.flexDirection = current.flexDirection;
+        data.flexWrap = current.flexWrap;
+        data.justifyContent = current.justifyContent;
+      }
+
+      return data;
+    }
+  }, {
+    key: CLICK('$setting'),
+    value: function value(e) {
+
+      var rect = this.refs.$setting.rect();
+      this.emit('showDisplayPropertyPopup', _extends({}, this.getDisplayPropertyData(), {
+        top: rect.top + 30
+      }));
+    }
   }]);
   return LayoutProperty;
-}(BaseProperty);
-
-var FlexDirectionProperty = function (_BaseProperty) {
-  inherits(FlexDirectionProperty, _BaseProperty);
-
-  function FlexDirectionProperty() {
-    classCallCheck(this, FlexDirectionProperty);
-    return possibleConstructorReturn(this, (FlexDirectionProperty.__proto__ || Object.getPrototypeOf(FlexDirectionProperty)).apply(this, arguments));
-  }
-
-  createClass(FlexDirectionProperty, [{
-    key: "isHideHeader",
-    value: function isHideHeader() {
-      return true;
-    }
-  }, {
-    key: "getBody",
-    value: function getBody() {
-      return "\n      <div class='property-item display-manager'>\n        <label class='property-item-label'>Flex Direction</label>\n        <div class='property-item-input-field flex-direction' ref=\"$flexDirection\" selected-type=\"row\">\n          <div class='display' display-type='row'>row</div>\n          <div class='display' display-type='row-reverse'>row-reverse</div>\n          <div class='display' display-type='column'>column</div>\n          <div class='display' display-type='column-reverse'>column-reverse</div>\n        </div>\n      </div>    \n    ";
-    }
-  }, {
-    key: EVENT(CHANGE_RECT, CHANGE_LAYER, CHANGE_ARTBOARD, CHANGE_EDITOR, CHANGE_SELECTION),
-    value: function value() {
-      this.refresh();
-    }
-  }, {
-    key: "refresh",
-    value: function refresh() {
-      var item = editor$1.selection.currentRect;
-      if (!item) return;
-
-      if (item.display) {
-        if (item.display.type == "flex") {
-          this.refs.$flexDirection.attr("selected-type", item.display.direction);
-        }
-      }
-    }
-  }, {
-    key: CLICK("$flexDirection .display"),
-    value: function value(e) {
-      var display = e.$delegateTarget.attr("display-type");
-      var current = editor$1.selection.current;
-
-      if (current) {
-        this.refs.$flexDirection.attr("selected-type", display);
-        current.display.direction = display;
-
-        this.emit(CHANGE_INSPECTOR);
-      }
-    }
-  }]);
-  return FlexDirectionProperty;
-}(BaseProperty);
-
-var JustifyContentProperty = function (_BaseProperty) {
-  inherits(JustifyContentProperty, _BaseProperty);
-
-  function JustifyContentProperty() {
-    classCallCheck(this, JustifyContentProperty);
-    return possibleConstructorReturn(this, (JustifyContentProperty.__proto__ || Object.getPrototypeOf(JustifyContentProperty)).apply(this, arguments));
-  }
-
-  createClass(JustifyContentProperty, [{
-    key: "isHideHeader",
-    value: function isHideHeader() {
-      return true;
-    }
-  }, {
-    key: "getBody",
-    value: function getBody() {
-      return "\n      <div class='property-item display-manager'>\n        <label class='property-item-label'>Justify Content</label>\n        <div class='property-item-input-field justify-content' ref='$justifyContent' selected-type='flex-start'>\n          <div class='display' display-type='flex-start'>flex-start</div>\n          <div class='display' display-type='flex-end'>flex-end</div>\n          <div class='display' display-type='center'>center</div>\n          <div class='display' display-type='space-between'>space-between</div>\n          <div class='display' display-type='space-around'>space-around</div>\n        </div>\n      </div>                             \n    ";
-    }
-  }, {
-    key: EVENT(CHANGE_RECT, CHANGE_LAYER, CHANGE_ARTBOARD, CHANGE_EDITOR, CHANGE_SELECTION),
-    value: function value() {
-      this.refresh();
-    }
-  }, {
-    key: "refresh",
-    value: function refresh() {
-      var item = editor$1.selection.currentRect;
-      if (!item) return;
-
-      if (item.display) {
-        this.refs.$displayList.attr("selected-type", item.display.type);
-
-        if (item.display.type == "flex") {
-          this.refs.$justifyContent.attr("selected-type", item.display.justifyContent);
-        }
-      }
-    }
-  }, {
-    key: CLICK("$justifyContent .display"),
-    value: function value(e) {
-      var display = e.$delegateTarget.attr("display-type");
-      var current = editor$1.selection.current;
-
-      if (current) {
-        this.refs.$justifyContent.attr("selected-type", display);
-        current.display.justifyContent = display;
-
-        this.emit(CHANGE_INSPECTOR);
-      }
-    }
-  }]);
-  return JustifyContentProperty;
-}(BaseProperty);
-
-var FlexWrapProperty = function (_BaseProperty) {
-  inherits(FlexWrapProperty, _BaseProperty);
-
-  function FlexWrapProperty() {
-    classCallCheck(this, FlexWrapProperty);
-    return possibleConstructorReturn(this, (FlexWrapProperty.__proto__ || Object.getPrototypeOf(FlexWrapProperty)).apply(this, arguments));
-  }
-
-  createClass(FlexWrapProperty, [{
-    key: "isHideHeader",
-    value: function isHideHeader() {
-      return true;
-    }
-  }, {
-    key: "getBody",
-    value: function getBody() {
-      return "\n      <div class='property-item display-manager'>\n        <label class='property-item-label'>Flex Wrap</label>\n        <div class='property-item-input-field flex-wrap' ref='$flexWrap' selected-type='nowrap'>\n          <div class='display' display-type='nowrap'>nowrap</div>\n          <div class='display' display-type='wrap'>wrap</div>\n          <div class='display' display-type='wrap-reverse'>wrap-reverse</div>\n        </div>\n      </div>    \n\n    ";
-    }
-  }, {
-    key: EVENT(CHANGE_RECT, CHANGE_LAYER, CHANGE_ARTBOARD, CHANGE_EDITOR, CHANGE_SELECTION),
-    value: function value() {
-      this.refresh();
-    }
-  }, {
-    key: "refresh",
-    value: function refresh() {
-      var item = editor$1.selection.currentRect;
-      if (!item) return;
-
-      if (item.display) {
-        if (item.display.type == "flex") {
-          this.refs.$flexWrap.attr("selected-type", item.display.flexWrap);
-        }
-      }
-    }
-  }, {
-    key: CLICK("$flexWrap .display"),
-    value: function value(e) {
-      var display = e.$delegateTarget.attr("display-type");
-      var current = editor$1.selection.current;
-
-      if (current) {
-        this.refs.$flexWrap.attr("selected-type", display);
-        current.display.flexWrap = display;
-
-        this.emit(CHANGE_INSPECTOR);
-      }
-    }
-  }]);
-  return FlexWrapProperty;
 }(BaseProperty);
 
 var names = {
   color: "Color",
   image: "Image",
   linear: "Linear",
-  "repeating-linear": "Repeating Linear",
+  "repeating-linear": icon.repeat + " Linear",
   radial: "Radial",
-  "repeating-radial": "Repeating Radial",
+  "repeating-radial": icon.repeat + " Radial",
   conic: "Conic",
-  "repeating-conic": "Repeating Conic",
+  "repeating-conic": icon.repeat + " Conic",
   "linear-gradient": "Linear",
-  "repeating-linear-gradient": "Repeating Linear",
+  "repeating-linear-gradient": icon.repeat + " Linear",
   "radial-gradient": "Radial",
-  "repeating-radial-gradient": "Repeating Radial",
+  "repeating-radial-gradient": icon.repeat + " Radial",
   "conic-gradient": "Conic",
-  "repeating-conic-gradient": "Repeating Conic"
+  "repeating-conic-gradient": icon.repeat + " Conic"
 };
 
 var types = {
@@ -29659,7 +29576,7 @@ var FillProperty = function (_BaseProperty) {
         if (it.type === "color") {
           imageCSS = "background-color: " + it.color;
         } else {
-          imageCSS = "background-image: " + (it.image ? it.image.toString() : "none");
+          imageCSS = "background-image: " + (it.image ? it.image.toString() : "none") + "; background-size: cover;";
         }
 
         return "\n            <div class='fill-item' data-index='" + index + "' ref=\"fillIndex" + index + "\" draggable='true' data-fill-type=\"" + backgroundType + "\" >\n                <div class='check'><input type='checkbox' checked='" + (it.check ? "true" : "false") + "'/></div>\n                <div class='preview' data-index=\"" + index + "\">\n                    <div class='mini-view' style=\"" + imageCSS + "\" ref=\"miniView" + index + "\"></div>\n                </div>\n                <div class='fill-title' ref=\"fillTitle" + index + "\">" + backgroundTypeName + "</div>\n                <div class='colorcode'>\n                    <input type='text' placeholder='#999999'  ref=\"colorText" + index + "\"/>\n                </div>\n                <div class='colorsteps' ref=\"colorsteps" + index + "\">\n                  " + _this2.getColorStepList(it) + "\n                </div>\n                <div class='tools'>\n                  <button type=\"button\" class='setting' data-index='" + index + "'>" + icon.setting + "</button>\n                  <button type=\"button\" class='remove' data-index='" + index + "'>" + icon.remove2 + "</button>\n                </div>\n            </div>\n        ";
@@ -29720,7 +29637,7 @@ var FillProperty = function (_BaseProperty) {
           data.color = backgroundImage.color;
           break;
         case "image":
-          data.image = backgroundImage.image;
+          data.url = backgroundImage.image ? backgroundImage.image.url : '';
           break;
         default:
           if (backgroundImage.image) {
@@ -29793,24 +29710,21 @@ var FillProperty = function (_BaseProperty) {
       if (!this.current) return;
       this.currentBackgroundImage = this.current.backgroundImages[this.selectedIndex];
 
-      var x = this.currentBackgroundImage.x;
-      var y = this.currentBackgroundImage.y;
-      var width = this.currentBackgroundImage.width;
-      var height = this.currentBackgroundImage.height;
+      var back = this.currentBackgroundImage;
+
+      var x = back.x;
+      var y = back.y;
+      var width = back.width;
+      var height = back.height;
       var maxWidth = this.current.width;
       var maxHeight = this.current.height;
-      var repeat$$1 = this.currentBackgroundImage.repeat;
-      var size = this.currentBackgroundImage.size;
+      var repeat$$1 = back.repeat;
+      var size = back.size;
+      var blendMode = back.blendMode;
 
       this.emit("showBackgroundPropertyPopup", {
-        x: x,
-        y: y,
-        width: width,
-        height: height,
-        maxWidth: maxWidth,
-        maxHeight: maxHeight,
-        repeat: repeat$$1,
-        size: size
+        x: x, y: y, width: width, height: height,
+        maxWidth: maxWidth, maxHeight: maxHeight, repeat: repeat$$1, size: size, blendMode: blendMode
       });
       // this.emit("hideFillPicker");
     }
@@ -29825,6 +29739,26 @@ var FillProperty = function (_BaseProperty) {
       this.viewBackgroundPropertyPopup(e.$delegateTarget);
     }
   }, {
+    key: "viewChangeColor",
+    value: function viewChangeColor(data) {
+      var backgroundImage = this.currentBackgroundImage;
+      if (!backgroundImage) return;
+      var $el = this.refs["miniView" + this.selectedIndex];
+      if ($el) {
+        $el.cssText(backgroundImage.toString());
+      }
+
+      var $el = this.refs["fillTitle" + this.selectedIndex];
+      if ($el) {
+        $el.html(names["color"]);
+      }
+
+      var $el = this.refs["colorText" + this.selectedIndex];
+      if ($el) {
+        $el.val(data.color);
+      }
+    }
+  }, {
     key: "setBackgroundColor",
     value: function setBackgroundColor(color$$1) {
       if (this.currentBackgroundImage) {
@@ -29833,20 +29767,44 @@ var FillProperty = function (_BaseProperty) {
           color: color$$1
         });
 
-        var $el = this.refs["miniView" + this.selectedIndex];
-        if ($el) {
-          $el.cssText(this.currentBackgroundImage.toString());
-        }
+        this.viewChangeColor({ color: color$$1 });
 
-        var $el = this.refs["fillTitle" + this.selectedIndex];
-        if ($el) {
-          $el.text(names["color"]);
+        if (this.current) {
+          this.emit("refreshItem", this.current);
         }
+      }
+    }
+  }, {
+    key: "viewChangeImage",
+    value: function viewChangeImage(data) {
+      var backgroundImage = this.currentBackgroundImage;
+      if (!backgroundImage) return;
+      var $el = this.refs["miniView" + this.selectedIndex];
+      if ($el) {
+        $el.css(_extends({}, backgroundImage.toCSS(), {
+          'background-size': 'cover'
+        }));
+      }
 
-        var $el = this.refs["colorText" + this.selectedIndex];
-        if ($el) {
-          $el.val(color$$1);
-        }
+      var $el = this.refs["fillTitle" + this.selectedIndex];
+      if ($el) {
+        $el.html(names["image"]);
+      }
+    }
+  }, {
+    key: "setImage",
+    value: function setImage(data) {
+      if (!data.images) return;
+      if (!data.images.length) return;
+      if (this.currentBackgroundImage) {
+        this.currentBackgroundImage.reset({
+          type: "image",
+          image: new URLImageResource({
+            url: data.images[0]
+          })
+        });
+
+        this.viewChangeImage(data);
 
         if (this.current) {
           this.emit("refreshItem", this.current);
@@ -29910,10 +29868,47 @@ var FillProperty = function (_BaseProperty) {
     }
   }, {
     key: EVENT("selectFillPickerTab"),
-    value: function value$$1(type) {
+    value: function value$$1(type, data) {
       var typeName = types[type];
       var $fillItem = this.refs["fillIndex" + this.selectedIndex];
       $fillItem.attr("data-fill-type", typeName);
+
+      // TODO: 탭만 바뀌어도 현재 상태에서 Preview 가 바뀌어야 한다. 
+
+      // switch(type) {
+      //   case'color':
+      //     this.currentBackgroundImage.type = 'color'
+      //     this.viewChangeColor(data);
+      //     break; 
+      //   case 'image':
+      //     this.currentBackgroundImage.type = 'image'
+      //     this.viewChangeImage(data);
+      //     break;
+      //   default: 
+      //     this.viewChangeGradient(data);
+      //     break; 
+      // }
+    }
+  }, {
+    key: "viewChangeGradient",
+    value: function viewChangeGradient(data) {
+      var backgroundImage = this.currentBackgroundImage;
+
+      if (!backgroundImage) return;
+      var $el = this.refs["miniView" + this.selectedIndex];
+      if ($el) {
+        $el.cssText(backgroundImage.toString());
+      }
+
+      var $el = this.refs["fillTitle" + this.selectedIndex];
+      if ($el) {
+        $el.html(names[data.type]);
+      }
+
+      var $el = this.refs["colorsteps" + this.selectedIndex];
+      if ($el) {
+        $el.html(this.getColorStepString(data.colorsteps));
+      }
     }
   }, {
     key: "setGradient",
@@ -29924,20 +29919,7 @@ var FillProperty = function (_BaseProperty) {
           image: this.createGradient(data, this.currentBackgroundImage.image)
         });
 
-        var $el = this.refs["miniView" + this.selectedIndex];
-        if ($el) {
-          $el.cssText(this.currentBackgroundImage.toString());
-        }
-
-        var $el = this.refs["fillTitle" + this.selectedIndex];
-        if ($el) {
-          $el.text(names[data.type]);
-        }
-
-        var $el = this.refs["colorsteps" + this.selectedIndex];
-        if ($el) {
-          $el.html(this.getColorStepString(data.colorsteps));
-        }
+        this.viewChangeGradient(data);
 
         if (this.current) {
           this.emit("refreshItem", this.current);
@@ -29952,6 +29934,7 @@ var FillProperty = function (_BaseProperty) {
           this.setBackgroundColor(data.color);
           break;
         case "image":
+          this.setImage(data);
           break;
         default:
           this.setGradient(data);
@@ -29995,9 +29978,6 @@ var FillProperty = function (_BaseProperty) {
 // import LayerBorderRadiusProperty from "./LayerBorderRadiusProperty";
 var property = {
   FillProperty: FillProperty,
-  FlexWrapProperty: FlexWrapProperty,
-  JustifyContentProperty: JustifyContentProperty,
-  FlexDirectionProperty: FlexDirectionProperty,
   LayoutProperty: LayoutProperty,
   BoundProperty: BoundProperty
   // BackgroundPositionProperty,
@@ -30208,7 +30188,7 @@ var HotKey = function (_UIElement) {
 
 var LOAD_START = 'load/start';
 
-var _templateObject$21 = taggedTemplateLiteral(["\n      <div class=\"feature-control\">\n        <BoundProperty />\n        <LayoutProperty />\n        <FlexDirectionProperty />\n        <FlexWrapProperty />\n        <JustifyContentProperty />\n        <FillProperty />\n      </div>\n    "], ["\n      <div class=\"feature-control\">\n        <BoundProperty />\n        <LayoutProperty />\n        <FlexDirectionProperty />\n        <FlexWrapProperty />\n        <JustifyContentProperty />\n        <FillProperty />\n      </div>\n    "]);
+var _templateObject$21 = taggedTemplateLiteral(["\n      <div class=\"feature-control\">\n        <BoundProperty />\n        <LayoutProperty />\n        <FillProperty />\n      </div>\n    "], ["\n      <div class=\"feature-control\">\n        <BoundProperty />\n        <LayoutProperty />\n        <FillProperty />\n      </div>\n    "]);
 
 var Inspector = function (_UIElement) {
   inherits(Inspector, _UIElement);
@@ -30237,7 +30217,7 @@ var Inspector = function (_UIElement) {
   return Inspector;
 }(UIElement);
 
-var _templateObject$22 = taggedTemplateLiteral(["\n      <div class=\"fill-picker\">\n        <div class=\"picker-tab\">\n          <div class=\"picker-tab-list\" ref=\"$tab\">\n            ", "\n          </div>\n        </div>\n        <div class=\"picker-tab-container\" ref=\"$tabContainer\">\n          <div\n            class=\"picker-tab-content selected\"\n            data-content-type=\"color\"\n            ref=\"$color\"\n          ></div>\n          <div class=\"picker-tab-content\" data-type=\"image\" ref=\"$image\"></div>\n        </div>\n      </div>\n    "], ["\n      <div class=\"fill-picker\">\n        <div class=\"picker-tab\">\n          <div class=\"picker-tab-list\" ref=\"$tab\">\n            ", "\n          </div>\n        </div>\n        <div class=\"picker-tab-container\" ref=\"$tabContainer\">\n          <div\n            class=\"picker-tab-content selected\"\n            data-content-type=\"color\"\n            ref=\"$color\"\n          ></div>\n          <div class=\"picker-tab-content\" data-type=\"image\" ref=\"$image\"></div>\n        </div>\n      </div>\n    "]);
+var _templateObject$22 = taggedTemplateLiteral(["\n      <div class=\"fill-picker\">\n        <div class=\"picker-tab\">\n          <div class=\"picker-tab-list\" ref=\"$tab\">\n            ", "\n          </div>\n        </div>\n        <div class=\"picker-tab-container\" ref=\"$tabContainer\">\n          <div\n            class=\"picker-tab-content selected\"\n            data-content-type=\"color\"\n            ref=\"$color\"\n          ></div>\n          <div class=\"picker-tab-content\" data-content-type=\"image\" ref=\"$image\">\n            <div class='image-preview'>\n              <figure>\n                <img src='' ref='$imagePreview' />\n                <div class='select-text'>Select a image</div>                \n              </figure>\n              <input type=\"file\" ref='$imageFile' accept=\"image/*\" />\n            </div>\n          </div>\n        </div>\n      </div>\n    "], ["\n      <div class=\"fill-picker\">\n        <div class=\"picker-tab\">\n          <div class=\"picker-tab-list\" ref=\"$tab\">\n            ", "\n          </div>\n        </div>\n        <div class=\"picker-tab-container\" ref=\"$tabContainer\">\n          <div\n            class=\"picker-tab-content selected\"\n            data-content-type=\"color\"\n            ref=\"$color\"\n          ></div>\n          <div class=\"picker-tab-content\" data-content-type=\"image\" ref=\"$image\">\n            <div class='image-preview'>\n              <figure>\n                <img src='' ref='$imagePreview' />\n                <div class='select-text'>Select a image</div>                \n              </figure>\n              <input type=\"file\" ref='$imageFile' accept=\"image/*\" />\n            </div>\n          </div>\n        </div>\n      </div>\n    "]);
 
 var tabs = [{ type: "color", title: "Color", selected: true }, { type: "linear-gradient", title: "Linear Gradient" }, { type: "repeating-linear-gradient", title: "Repeating Linear Gradient" }, { type: "radial-gradient", title: "Radial Gradient" }, { type: "repeating-radial-gradient", title: "Repeating Radial Gradient" }, { type: "conic-gradient", title: "Conic Gradient" }, { type: "repeating-conic-gradient", title: "Repeating Conic Gradient" }, { type: "image", title: "Image", icon: icon.image }];
 
@@ -30277,7 +30257,7 @@ var FillPicker = function (_UIElement) {
     value: function initialize() {
       get$1(FillPicker.prototype.__proto__ || Object.getPrototypeOf(FillPicker.prototype), "initialize", this).call(this);
 
-      this.selectedTab = "color";
+      this.selectedTab = "image";
     }
   }, {
     key: "template",
@@ -30285,6 +30265,26 @@ var FillPicker = function (_UIElement) {
       return html(_templateObject$22, tabs.map(function (it) {
         return "\n                <span \n                    class='picker-tab-item " + (it.selected ? "selected" : EMPTY_STRING) + "' \n                    data-select-type='" + it.type + "'\n                    title='" + it.title + "'\n                >\n                    <div class='icon'>" + (it.icon || EMPTY_STRING) + "</div>\n                </span>";
       }));
+    }
+  }, {
+    key: CHANGE('$imageFile'),
+    value: function value$$1(e) {
+      var files = this.refs.$imageFile.files;
+
+      //화면 표시 하기 
+      // files.length 따라 Preview 에 표시 하기 
+      // URL.createObjectUrl 로 임시 url 생성 (임시 URL 은 어디서 관리하나)
+      // emit('changeFillPicker', { images: [........] })
+
+
+      var images = files.map(function (file) {
+        return editor$1.createUrl(file);
+      });
+
+      if (images) {
+        this.refs.$imagePreview.attr('src', images[0]);
+        this.emit('changeFillPicker', { type: 'image', images: images });
+      }
     }
   }, {
     key: CLICK("$tab .picker-tab-item"),
@@ -30295,9 +30295,9 @@ var FillPicker = function (_UIElement) {
 
       //TODO: picker 타입이 바뀌면 내부 속성도 같이 바뀌어야 한다.
       this.selectTabContent(type, {
-        type: type
+        type: type,
+        selectTab: true
       });
-      this.emit("selectFillPickerTab", type);
     }
   }, {
     key: "selectTabContent",
@@ -30307,6 +30307,7 @@ var FillPicker = function (_UIElement) {
       this.selectedTab = type;
       switch (type) {
         case "image":
+          this.refs.$imagePreview.attr('src', data.url);
           this.refs.$image.onlyOneClass("selected");
           this.emit("hideGradientEditor");
           break;
@@ -30333,7 +30334,7 @@ var FillPicker = function (_UIElement) {
           if (data.colorsteps) {
             sample.colorsteps = data.colorsteps;
           }
-          this.emit("showGradientEditor", sample);
+          this.emit("showGradientEditor", sample, data.selectTab);
 
           break;
       }
@@ -30365,6 +30366,13 @@ var FillPicker = function (_UIElement) {
       this.emit("hideGradientEditor");
     }
   }, {
+    key: EVENT('hidePropertyPopup'),
+    value: function value$$1() {
+      this.$el.hide();
+
+      this.emit('hideGradientEditor');
+    }
+  }, {
     key: EVENT("selectColorStep"),
     value: function value$$1(color$$1) {
       this.colorPicker.initColorWithoutChangeEvent(color$$1);
@@ -30381,6 +30389,10 @@ var FillPicker = function (_UIElement) {
   }]);
   return FillPicker;
 }(UIElement);
+
+var _templateObject$23 = taggedTemplateLiteral(["\n    <div class='popup-item'>\n      <label>Blend</label>\n      <div class='blend-list' \">\n        <select ref='$blend' class='full-size'>\n          ", "\n        </select>\n      </div>\n    </div>\n    "], ["\n    <div class='popup-item'>\n      <label>Blend</label>\n      <div class='blend-list' \">\n        <select ref='$blend' class='full-size'>\n          ", "\n        </select>\n      </div>\n    </div>\n    "]);
+
+var blend_list = ["normal", "multiply", "screen", "overlay", "darken", "lighten", "color-dodge", "color-burn", "hard-light", "soft-light", "difference", "exclusion", "hue", "saturation", "color", "luminosity"];
 
 var BackgroundPropertyPopup = function (_UIElement) {
   inherits(BackgroundPropertyPopup, _UIElement);
@@ -30497,9 +30509,22 @@ var BackgroundPropertyPopup = function (_UIElement) {
       this.updateData({ repeat: $t.value });
     }
   }, {
+    key: "templateForBlendMode",
+    value: function templateForBlendMode() {
+      return html(_templateObject$23, blend_list.map(function (it) {
+        return "<option value=" + it + ">" + it + "</option>";
+      }));
+    }
+  }, {
+    key: CHANGE('$blend'),
+    value: function value() {
+      var blendMode = this.refs.$blend.value;
+      this.updateData({ blendMode: blendMode });
+    }
+  }, {
     key: "template",
     value: function template() {
-      return "\n      <div class='popup background-property-popup'>\n        <div class='popup-title'>Background Image</div>\n        <div class='popup-content'>\n          " + this.templateForSize() + "        \n          " + this.templateForX() + "\n          " + this.templateForY() + "\n          " + this.templateForWidth() + "\n          " + this.templateForHeight() + "\n          " + this.templateForRepeat() + "\n        </div>\n      </div>\n    ";
+      return "\n      <div class='popup background-property-popup'>\n        <div class='popup-title'>Background Image</div>\n        <div class='popup-content'>\n          " + this.templateForSize() + "        \n          " + this.templateForX() + "\n          " + this.templateForY() + "\n          " + this.templateForWidth() + "\n          " + this.templateForHeight() + "\n          " + this.templateForRepeat() + "\n          " + this.templateForBlendMode() + "\n        </div>\n      </div>\n    ";
     }
   }, {
     key: "refreshUnitRange",
@@ -30510,6 +30535,7 @@ var BackgroundPropertyPopup = function (_UIElement) {
       this.children.$height.refreshValue(this.data.height);
       this.refs.$size.attr("data-value", this.data.size);
       this.refs.$repeat.val(this.data.repeat);
+      this.refs.$blend.val(this.data.blendMode);
     }
   }, {
     key: EVENT("showBackgroundPropertyPopup"),
@@ -30529,12 +30555,114 @@ var BackgroundPropertyPopup = function (_UIElement) {
       this.$el.show("inline-block");
     }
   }, {
-    key: EVENT("hideBackgroundPropertyPopup"),
+    key: EVENT("hideBackgroundPropertyPopup", 'hidePropertyPopup', CHANGE_EDITOR, CHANGE_SELECTION),
     value: function value() {
       this.$el.hide();
     }
   }]);
   return BackgroundPropertyPopup;
+}(UIElement);
+
+var DisplayPropertyPopup = function (_UIElement) {
+  inherits(DisplayPropertyPopup, _UIElement);
+
+  function DisplayPropertyPopup() {
+    classCallCheck(this, DisplayPropertyPopup);
+    return possibleConstructorReturn(this, (DisplayPropertyPopup.__proto__ || Object.getPrototypeOf(DisplayPropertyPopup)).apply(this, arguments));
+  }
+
+  createClass(DisplayPropertyPopup, [{
+    key: "initialize",
+    value: function initialize() {
+      get$1(DisplayPropertyPopup.prototype.__proto__ || Object.getPrototypeOf(DisplayPropertyPopup.prototype), "initialize", this).call(this);
+
+      this.data = {
+        flexDirection: 'row',
+        flexWrap: 'nowrap',
+        justifyContent: 'flex-start'
+      };
+    }
+  }, {
+    key: "templateForFlexDirection",
+    value: function templateForFlexDirection() {
+      return "\n      <div class='popup-item'>\n        <label>Flex Direction</label>\n        <div class='flex-direction grid-5' ref=\"$flexDirection\" data-value=\"row\">\n            <button type=\"button\" value=\"row\" >row</button>\n            <button type=\"button\" value=\"row-reverse\">row-reverse</button>\n            <button type=\"button\" value=\"column\">column</button>\n            <button type=\"button\" value=\"column-reverse\">column-reverse</button>\n        </div>\n      </div> \n    ";
+    }
+  }, {
+    key: CLICK('$flexDirection button'),
+    value: function value(_ref) {
+      var $t = _ref.$delegateTarget;
+
+      var flexDirection = $t.value;
+      this.refs.$flexDirection.attr('data-value', flexDirection);
+      this.updateData({ flexDirection: flexDirection });
+    }
+  }, {
+    key: "templateForFlexWrap",
+    value: function templateForFlexWrap() {
+      return "\n      <div class='popup-item'>\n        <label>Flex Wrap</label>\n        <div class='flex-wrap grid-5' ref=\"$flexWrap\" data-value=\"nowrap\">\n            <button type=\"button\" value=\"nowrap\" >nowrap</button>\n            <button type=\"button\" value=\"wrap\">wrap</button>\n            <button type=\"button\" value=\"wrap-reverse\">wrap-reverse</button>\n        </div>\n      </div> \n    ";
+    }
+  }, {
+    key: CLICK('$flexWrap button'),
+    value: function value(_ref2) {
+      var $t = _ref2.$delegateTarget;
+
+      var flexWrap = $t.value;
+      this.refs.$flexWrap.attr('data-value', flexWrap);
+      this.updateData({ flexWrap: flexWrap });
+    }
+  }, {
+    key: "templateForJustifyContent",
+    value: function templateForJustifyContent() {
+      return "\n      <div class='popup-item'>\n        <label>Justify Content</label>\n        <div class='justify-content grid-5' ref=\"$justifyContent\" data-value=\"flex-start\">\n            <button type=\"button\" value=\"flex-start\" >flex-start</button>\n            <button type=\"button\" value=\"flex-end\">flex-end</button>\n            <button type=\"button\" value=\"center\">center</button>\n            <button type=\"button\" value=\"space-between\">space-between</button>\n            <button type=\"button\" value=\"space-around\">space-around</button>\n        </div>\n      </div> \n    ";
+    }
+  }, {
+    key: CLICK('$justifyContent button'),
+    value: function value(_ref3) {
+      var $t = _ref3.$delegateTarget;
+
+      var justifyContent = $t.value;
+      this.refs.$justifyContent.attr('data-value', justifyContent);
+      this.updateData({ justifyContent: justifyContent });
+    }
+  }, {
+    key: "template",
+    value: function template() {
+      return "\n      <div class='popup display-property-popup'>\n        <div class='popup-title'>Display</div>\n        <div class='popup-content'>\n          " + this.templateForFlexDirection() + "        \n          " + this.templateForFlexWrap() + "\n          " + this.templateForJustifyContent() + "          \n        </div>\n      </div>\n    ";
+    }
+  }, {
+    key: "updateData",
+    value: function updateData(data) {
+      this.emit('changeDisplayPropertyPopup', data);
+    }
+  }, {
+    key: "refreshDisplayProperty",
+    value: function refreshDisplayProperty() {
+      this.refs.$flexDirection.attr('data-value', this.data.flexDirection);
+      this.refs.$flexWrap.attr('data-value', this.data.flexWrap);
+      this.refs.$justifyContent.attr('data-value', this.data.justifyContent);
+    }
+  }, {
+    key: EVENT("showDisplayPropertyPopup"),
+    value: function value(data) {
+
+      this.data = _extends({}, this.data, data);
+
+      this.refreshDisplayProperty();
+
+      this.$el.css({
+        top: Length$1.px(this.data.top),
+        bottom: 'auto'
+      }).show("inline-block");
+
+      this.emit('hidePropertyPopup');
+    }
+  }, {
+    key: EVENT("hideDisplayPropertyPopup", 'hidePropertyPopup', CHANGE_EDITOR, CHANGE_SELECTION),
+    value: function value() {
+      this.$el.hide();
+    }
+  }]);
+  return DisplayPropertyPopup;
 }(UIElement);
 
 var CSSEditor$1 = function (_UIElement) {
@@ -30560,12 +30688,13 @@ var CSSEditor$1 = function (_UIElement) {
     }, {
         key: "template",
         value: function template() {
-            return "\n            <div class=\"layout-main -show-timeline\" ref=\"$layoutMain\">\n                <div class=\"layout-header\">\n                    <div class=\"page-tab-menu\"><ToolMenu /></div>\n                </div>\n                <div class=\"layout-middle\">\n                    <div class=\"layout-left\">      \n                        <SelectLayerView/>\n                    </div>\n                    <div class=\"layout-body\">\n                        <LayerToolbar />\n                        <CanvasView />\n                        <VerticalColorStep />                        \n                    </div>                \n                    <div class=\"layout-right\">\n                        <Alignment />\n                        <Inspector />\n                    </div>\n                </div>\n                <div class=\"layout-footer\" ref=\"$footer\">\n                    <!-- TimelineSplitter /-->\n                    <!-- Timeline /-->\n                </div>\n                <ExportWindow />\n                <DropView />\n                <HotKey />       \n                <FillPicker ref=\"$picker\" />\n                <BackgroundPropertyPopup />\n            </div>\n  \n        ";
+            return "\n            <div class=\"layout-main -show-timeline\" ref=\"$layoutMain\">\n                <div class=\"layout-header\">\n                    <div class=\"page-tab-menu\"><ToolMenu /></div>\n                </div>\n                <div class=\"layout-middle\">\n                    <div class=\"layout-left\">      \n                        <SelectLayerView/>\n                    </div>\n                    <div class=\"layout-body\">\n                        <LayerToolbar />\n                        <CanvasView />\n                        <VerticalColorStep />                        \n                    </div>                \n                    <div class=\"layout-right\">\n                        <Alignment />\n                        <Inspector />\n                    </div>\n                </div>\n                <div class=\"layout-footer\" ref=\"$footer\">\n                    <!-- TimelineSplitter /-->\n                    <!-- Timeline /-->\n                </div>\n                <ExportWindow />\n                <DropView />\n                <HotKey />       \n                <FillPicker ref=\"$picker\" />\n                <BackgroundPropertyPopup />\n                <DisplayPropertyPopup />\n            </div>\n  \n        ";
         }
     }, {
         key: "components",
         value: function components() {
             return {
+                DisplayPropertyPopup: DisplayPropertyPopup,
                 BackgroundPropertyPopup: BackgroundPropertyPopup,
                 FillPicker: FillPicker,
                 HotKey: HotKey,

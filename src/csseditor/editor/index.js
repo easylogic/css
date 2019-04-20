@@ -24,6 +24,9 @@ import Inspector from "../ui/control/Inspector";
 import { editor } from "../../editor/editor";
 import FillPicker from "../ui/control/FillPicker";
 import BackgroundPropertyPopup from "../ui/control/BackgroundPropertyPopup";
+import DisplayPropertyPopup from "../ui/control/DisplayPropertyPopup";
+
+
 
 export default class CSSEditor extends UIElement {
   afterRender() {
@@ -64,6 +67,7 @@ export default class CSSEditor extends UIElement {
                 <HotKey />       
                 <FillPicker ref="$picker" />
                 <BackgroundPropertyPopup />
+                <DisplayPropertyPopup />
             </div>
   
         `;
@@ -71,6 +75,7 @@ export default class CSSEditor extends UIElement {
 
   components() {
     return {
+      DisplayPropertyPopup,
       BackgroundPropertyPopup,
       FillPicker,
       HotKey,

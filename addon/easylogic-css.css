@@ -3129,8 +3129,8 @@ html, body {
               transform: translateX(-50%);
       top: 0px; }
       .csseditor .vertical-colorstep-container .gradient-tools .guide-button {
-        width: 10px;
-        height: 10px;
+        width: 14px;
+        height: 14px;
         padding: 0px;
         -webkit-appearance: none;
            -moz-appearance: none;
@@ -3142,14 +3142,13 @@ html, body {
         background-image: -webkit-gradient(linear, left bottom, left top, from(black), to(black));
         background-image: linear-gradient(to top, black 0%, black 100%);
         background-size: 2px 2px;
-        background-position: 2.5px center;
+        background-position: center center;
         background-repeat: repeat-y;
         -webkit-box-sizing: border-box;
                 box-sizing: border-box;
         outline: none;
         vertical-align: middle; }
         .csseditor .vertical-colorstep-container .gradient-tools .guide-button.cut {
-          background-position: center 2.5px;
           background-repeat: repeat-x; }
       .csseditor .vertical-colorstep-container .gradient-tools .radial-gradient-shape {
         width: 14px;
@@ -3233,8 +3232,7 @@ html, body {
           cursor: copy;
           height: 14px;
           z-index: 1;
-          border-radius: 14px;
-          border: 1px solid rgba(0, 0, 0, 0.7); }
+          border-radius: 14px; }
           .csseditor .vertical-colorstep .gradient-steps .hue > .step-list.mode-drag {
             cursor: pointer; }
         .csseditor .vertical-colorstep .gradient-steps .hue .drag-bar {
@@ -3884,7 +3882,8 @@ html, body {
           left: 50%;
           top: 50%;
           -webkit-transform: translateX(-50%) translateY(-50%);
-                  transform: translateX(-50%) translateY(-50%); }
+                  transform: translateX(-50%) translateY(-50%);
+          font-size: 11px; }
           .csseditor .page-view .grid-layout-editor .grid-item .column + .delete {
             position: absolute;
             display: inline-block;
@@ -3904,7 +3903,8 @@ html, body {
           -webkit-transform: translateY(-50%) translateX(-50%) rotate(270deg);
                   transform: translateY(-50%) translateX(-50%) rotate(270deg);
           -webkit-transform-origin: center center;
-                  transform-origin: center center; }
+                  transform-origin: center center;
+          font-size: 11px; }
           .csseditor .page-view .grid-layout-editor .grid-item .row:focus {
             -webkit-transform: translateY(-50%) translateX(-50%);
                     transform: translateY(-50%) translateX(-50%);
@@ -3916,20 +3916,18 @@ html, body {
         pointer-events: all;
         left: 0px;
         right: 0px;
-        height: 25px;
+        height: 18px;
         top: -1px;
-        -webkit-transform: translateY(-25px);
-                transform: translateY(-25px);
+        -webkit-transform: translateY(-18px);
+                transform: translateY(-18px);
         display: grid; }
-        .csseditor .page-view .grid-layout-editor .column-editor .grid-item {
-          margin-bottom: 2px; }
-          .csseditor .page-view .grid-layout-editor .column-editor .grid-item.selected {
-            background-color: black; }
+        .csseditor .page-view .grid-layout-editor .column-editor .grid-item.selected {
+          background-color: black; }
       .csseditor .page-view .grid-layout-editor .add-column {
         position: absolute;
         pointer-events: all;
-        right: -27px;
-        top: -27px;
+        right: -20px;
+        top: -20px;
         display: inline-block;
         background-color: white;
         -webkit-appearance: none;
@@ -3939,14 +3937,15 @@ html, body {
         border-radius: 3px;
         -webkit-box-sizing: border-box;
                 box-sizing: border-box;
-        width: 25px;
-        height: 25px;
+        width: 18px;
+        height: 18px;
         outline: none;
-        cursor: pointer; }
+        cursor: pointer;
+        padding: 2px; }
       .csseditor .page-view .grid-layout-editor .column-gap-editor {
         position: absolute;
         left: 0px;
-        top: -50px;
+        top: -36px;
         display: inline-block;
         pointer-events: all; }
         .csseditor .page-view .grid-layout-editor .column-gap-editor label, .csseditor .page-view .grid-layout-editor .column-gap-editor input {
@@ -3965,7 +3964,7 @@ html, body {
       .csseditor .page-view .grid-layout-editor .row-gap-editor {
         position: absolute;
         left: 150px;
-        top: -50px;
+        top: -36px;
         display: inline-block;
         pointer-events: all; }
         .csseditor .page-view .grid-layout-editor .row-gap-editor label, .csseditor .page-view .grid-layout-editor .row-gap-editor input {
@@ -3987,19 +3986,17 @@ html, body {
         left: -1px;
         top: 0px;
         bottom: 0px;
-        min-width: 25px;
-        -webkit-transform: translateX(-25px);
-                transform: translateX(-25px);
+        min-width: 18px;
+        -webkit-transform: translateX(-18px);
+                transform: translateX(-18px);
         display: grid; }
-        .csseditor .page-view .grid-layout-editor .row-editor .grid-item {
-          margin-right: 2px; }
-          .csseditor .page-view .grid-layout-editor .row-editor .grid-item.selected {
-            background-color: black; }
+        .csseditor .page-view .grid-layout-editor .row-editor .grid-item.selected {
+          background-color: black; }
       .csseditor .page-view .grid-layout-editor .add-row {
         position: absolute;
         pointer-events: all;
-        bottom: -27px;
-        left: -27px;
+        bottom: -20px;
+        left: -20px;
         display: inline-block;
         background-color: white;
         -webkit-appearance: none;
@@ -4009,15 +4006,16 @@ html, body {
         border-radius: 3px;
         -webkit-box-sizing: border-box;
                 box-sizing: border-box;
-        width: 25px;
-        height: 25px;
+        width: 18px;
+        height: 18px;
         outline: none;
-        cursor: pointer; }
+        cursor: pointer;
+        padding: 2px; }
       .csseditor .page-view .grid-layout-editor .move-layout {
         position: absolute;
         pointer-events: all;
-        top: -27px;
-        left: -27px;
+        top: -20px;
+        left: -20px;
         display: inline-block;
         background-color: white;
         -webkit-appearance: none;
@@ -4027,10 +4025,11 @@ html, body {
         border-radius: 3px;
         -webkit-box-sizing: border-box;
                 box-sizing: border-box;
-        width: 25px;
-        height: 25px;
+        width: 18px;
+        height: 18px;
         outline: none;
-        cursor: move; }
+        cursor: move;
+        padding: 2px; }
       .csseditor .page-view .grid-layout-editor .preview {
         position: absolute;
         left: 0px;
@@ -4850,7 +4849,7 @@ html, body {
     .csseditor .property.show > .property-body {
       display: block; }
     .csseditor .property > .property-title {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 400;
       padding: 2px 5px;
       padding-left: 10px;
@@ -4894,6 +4893,25 @@ html, body {
         .csseditor .property > .property-body .property-item .property-item-label,
         .csseditor .property > .property-body .property-item .property-item-input-field {
           vertical-align: middle; }
+          .csseditor .property > .property-body .property-item .property-item-label .tools,
+          .csseditor .property > .property-body .property-item .property-item-input-field .tools {
+            padding: 2px;
+            text-align: right; }
+          .csseditor .property > .property-body .property-item .property-item-label button,
+          .csseditor .property > .property-body .property-item .property-item-input-field button {
+            -webkit-appearance: none;
+               -moz-appearance: none;
+                    appearance: none;
+            background-color: transparent;
+            border: 0px;
+            cursor: pointer;
+            padding: 0px 3px;
+            outline: none;
+            vertical-align: middle; }
+            .csseditor .property > .property-body .property-item .property-item-label button svg,
+            .csseditor .property > .property-body .property-item .property-item-input-field button svg {
+              width: 16px;
+              height: 16px; }
         .csseditor .property > .property-body .property-item .property-item-label {
           -webkit-box-sizing: border-box;
                   box-sizing: border-box;
@@ -4912,7 +4930,7 @@ html, body {
           .csseditor .property > .property-body .property-item.fill-list .fill-item {
             display: grid;
             height: 24px;
-            grid-template-columns: 20px 24px 2fr 2fr 40px;
+            grid-template-columns: 20px 24px 1fr 2fr 40px;
             grid-column-gap: 5px;
             margin-bottom: 5px;
             text-align: center; }
@@ -4939,17 +4957,21 @@ html, body {
               padding: 4px 0px;
               -webkit-box-sizing: border-box;
                       box-sizing: border-box; }
+              .csseditor .property > .property-body .property-item.fill-list .fill-item .fill-title svg {
+                width: 16px;
+                height: 16px;
+                vertical-align: middle; }
             .csseditor .property > .property-body .property-item.fill-list .fill-item .colorcode input {
               width: 100%; }
             .csseditor .property > .property-body .property-item.fill-list .fill-item .colorsteps {
               display: none;
               text-align: left; }
               .csseditor .property > .property-body .property-item.fill-list .fill-item .colorsteps .step {
-                border: 2px solid white;
+                border: 1px solid #333;
                 display: inline-block;
                 margin-left: -5px;
-                width: 20px;
-                height: 20px;
+                width: 16px;
+                height: 16px;
                 -webkit-box-sizing: border-box;
                         box-sizing: border-box;
                 border-radius: 100%;
@@ -5792,6 +5814,10 @@ html, body {
           padding: 5px;
           text-align: center;
           cursor: pointer; }
+        .csseditor .property > .property-body .property-item.display-manager .property-item-label button {
+          display: none; }
+        .csseditor .property > .property-body .property-item.display-manager .property-item-label[data-display='grid'] button {
+          display: inline-block; }
         .csseditor .property > .property-body .property-item.display-manager .display-list {
           display: grid;
           -webkit-box-sizing: border-box;
@@ -6204,9 +6230,53 @@ html, body {
         border: 0px;
         -webkit-box-shadow: none;
                 box-shadow: none; }
+      .csseditor .fill-picker .picker-tab-container .picker-tab-content[data-content-type="image"] .image-preview {
+        width: 100%;
+        height: 140px;
+        position: relative;
+        display: block; }
+        .csseditor .fill-picker .picker-tab-container .picker-tab-content[data-content-type="image"] .image-preview figure {
+          width: 100%;
+          height: 100%;
+          padding: 10px 20px;
+          margin: 0px;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box;
+          position: relative; }
+          .csseditor .fill-picker .picker-tab-container .picker-tab-content[data-content-type="image"] .image-preview figure .select-text {
+            display: inline-block;
+            position: absolute;
+            left: 0px;
+            right: 0px;
+            top: 0px;
+            bottom: 0px;
+            font-size: 20px;
+            padding: 10px 20px; }
+          .csseditor .fill-picker .picker-tab-container .picker-tab-content[data-content-type="image"] .image-preview figure img {
+            width: 100%;
+            height: 100%; }
+            .csseditor .fill-picker .picker-tab-container .picker-tab-content[data-content-type="image"] .image-preview figure img[src=''] {
+              display: none; }
+          .csseditor .fill-picker .picker-tab-container .picker-tab-content[data-content-type="image"] .image-preview figure img:not([src='']) + .select-text {
+            display: none; }
+        .csseditor .fill-picker .picker-tab-container .picker-tab-content[data-content-type="image"] .image-preview input[type='file'] {
+          position: absolute;
+          left: 0px;
+          top: 0px;
+          width: 220px;
+          height: 140px;
+          padding: 10px 20px;
+          opacity: 0;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box;
+          -webkit-appearance: none;
+             -moz-appearance: none;
+                  appearance: none;
+          background-color: transparent;
+          cursor: pointer; }
   .csseditor .popup {
     position: absolute;
-    display: block;
+    display: none;
     right: 10px;
     bottom: 10px;
     -webkit-box-sizing: border-box;
@@ -6255,7 +6325,8 @@ html, body {
         border: 0px;
         background-color: transparent;
         border-radius: 0px;
-        margin-left: 5px; }
+        margin-left: 5px;
+        outline: none; }
     .csseditor .popup.background-property-popup {
       width: 250px; }
       .csseditor .popup.background-property-popup .size-list button {
@@ -6332,3 +6403,43 @@ html, body {
         background-color: #cccccc;
         -webkit-box-shadow: 0 0 1px 0px black;
                 box-shadow: 0 0 1px 0px black; }
+      .csseditor .popup.background-property-popup .blend-list select.full-size {
+        width: 100px; }
+    .csseditor .popup.display-property-popup .popup-item {
+      height: auto;
+      margin-bottom: 2px; }
+    .csseditor .popup.display-property-popup .grid-5 {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-column-gap: 2px; }
+    .csseditor .popup.display-property-popup button {
+      -webkit-appearance: none;
+         -moz-appearance: none;
+              appearance: none;
+      background-color: transparent;
+      border: 0px;
+      padding: 2px 5px;
+      cursor: pointer;
+      outline: none;
+      -webkit-box-sizing: border-box;
+              box-sizing: border-box;
+      width: 50px;
+      background-color: rgba(204, 204, 204, 0.5); }
+    .csseditor .popup.display-property-popup .flex-direction[data-value='row'] button[value='row'],
+    .csseditor .popup.display-property-popup .flex-direction[data-value='row-reverse'] button[value='row-reverse'],
+    .csseditor .popup.display-property-popup .flex-direction[data-value='column'] button[value='column'],
+    .csseditor .popup.display-property-popup .flex-direction[data-value='column-reverse'] button[value='column-reverse'] {
+      background-color: #cccccc;
+      font-weight: bold; }
+    .csseditor .popup.display-property-popup .flex-wrap[data-value='nowrap'] button[value='nowrap'],
+    .csseditor .popup.display-property-popup .flex-wrap[data-value='wrap'] button[value='wrap'],
+    .csseditor .popup.display-property-popup .flex-wrap[data-value='wrap-reverse'] button[value='wrap-reverse'] {
+      background-color: #cccccc;
+      font-weight: bold; }
+    .csseditor .popup.display-property-popup .justify-content[data-value='flex-start'] button[value='flex-start'],
+    .csseditor .popup.display-property-popup .justify-content[data-value='flex-end'] button[value='flex-end'],
+    .csseditor .popup.display-property-popup .justify-content[data-value='center'] button[value='center'],
+    .csseditor .popup.display-property-popup .justify-content[data-value='space-between'] button[value='space-between'],
+    .csseditor .popup.display-property-popup .justify-content[data-value='space-around'] button[value='space-around'] {
+      background-color: #cccccc;
+      font-weight: bold; }
