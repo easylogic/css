@@ -1,8 +1,7 @@
 import { Length, Position } from "../unit/Length";
 import { keyMap } from "../../util/functions/func";
 import { Property } from "../items/Property";
-import { Gradient } from "../image-resource/Gradient";
-import { ImageResource } from "../image-resource/ImageResource";
+import { StaticGradient } from "../image-resource/StaticGradient";
 
 const RepeatList = ["repeat", "no-repeat", "repeat-x", "repeat-y"];
 
@@ -23,10 +22,7 @@ export class BackgroundImage extends Property {
   getDefaultObject() {
     return super.getDefaultObject({
       itemType: "background-image",
-      type: "color",
-      color: "#FFFFFF",
       checked: false,
-      opacity: 1,
       blendMode: "normal",
       size: "auto",
       repeat: "repeat",
@@ -34,7 +30,7 @@ export class BackgroundImage extends Property {
       height: Length.percent(100),
       x: Length.percent(0),
       y: Length.percent(0),
-      image: new ImageResource()
+      image: new StaticGradient()
     });
   }
 

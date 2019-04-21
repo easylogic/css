@@ -25,10 +25,12 @@ import { ColorStep } from "../../../../../editor/image-resource/ColorStep";
 import { Position } from "../../../../../editor/unit/Length";
 import { ImageResource } from "../../../../../editor/image-resource/ImageResource";
 import { URLImageResource } from "../../../../../editor/image-resource/URLImageResource";
+import { StaticGradient } from "../../../../../editor/image-resource/StaticGradient";
 
 const names = {
-  color: "Color",
   image: "Image",
+  'static': "Static",
+  'static-gradient': "Static",
   linear: "Linear",
   "repeating-linear": `${icon.repeat} Linear`,
   radial: "Radial",
@@ -44,9 +46,10 @@ const names = {
 };
 
 const types = {
-  color: "color",
   image: "image",
-  linear: "gradient",
+  'static': "gradient",
+  'static-gradient': "gradient",  
+  linear: "gradient",  
   "repeating-linear": "gradient",
   radial: "gradient",
   "repeating-radial": "gradient",
@@ -62,7 +65,7 @@ const types = {
 
 export default class FillProperty extends BaseProperty {
   getTitle() {
-    return "Background";
+    return "Background Image";
   }
   getBody() {
     return `<div class='property-item fill-list' ref='$fillList'></div>`;
@@ -74,15 +77,16 @@ export default class FillProperty extends BaseProperty {
     `;
   }
 
-  getColorStepList(backgroundImage) {
-    switch (backgroundImage.image.type) {
+  getColorStepList(image) {
+    switch (image.type) {
+      case "static-gradient":      
       case "linear-gradient":
       case "repeating-linear-gradient":
       case "radial-gradient":
       case "repeating-radial-gradient":
       case "conic-gradient":
       case "repeating-conic-gradient":
-        return this.getColorStepString(backgroundImage.image.colorsteps);
+        return this.getColorStepString(image.colorsteps);
     }
 
     return EMPTY_STRING;
@@ -104,16 +108,11 @@ export default class FillProperty extends BaseProperty {
     if (!current) return EMPTY_STRING;
 
     return current.backgroundImages.map((it, index) => {
-      var backgroundType = types[it.type];
-      var backgroundTypeName = names[it.type];
+      var image = it.image; 
+      var backgroundType = types[image.type];
+      var backgroundTypeName = names[image.type];
 
-      var imageCSS = {};
-
-      if (it.type === "color") {
-        imageCSS = `background-color: ${it.color}`;
-      } else {
-        imageCSS = `background-image: ${ it.image ? it.image.toString() : "none" }; background-size: cover;`;
-      }
+      const imageCSS = `background-image: ${ image.toString() }; background-size: cover;`;
 
       return `
             <div class='fill-item' data-index='${index}' ref="fillIndex${index}" draggable='true' data-fill-type="${backgroundType}" >
@@ -124,16 +123,10 @@ export default class FillProperty extends BaseProperty {
                     <div class='mini-view' style="${imageCSS}" ref="miniView${index}"></div>
                 </div>
                 <div class='fill-title' ref="fillTitle${index}">${backgroundTypeName}</div>
-                <div class='colorcode'>
-                    <input type='text' placeholder='#999999'  ref="colorText${index}"/>
-                </div>
                 <div class='colorsteps' ref="colorsteps${index}">
-                  ${this.getColorStepList(it)}
+                  ${this.getColorStepList(image)}
                 </div>
                 <div class='tools'>
-                  <button type="button" class='setting' data-index='${index}'>${
-        icon.setting
-      }</button>
                   <button type="button" class='remove' data-index='${index}'>${
         icon.remove2
       }</button>
@@ -157,35 +150,17 @@ export default class FillProperty extends BaseProperty {
     var current = editor.selection.current;
 
     if (current) {
-      var backgroundColor = current.backgroundImages.filter(
-        img => img.type === "color"
-      );
-
-      if (backgroundColor.length) {
-        var image = new BackgroundImage({
-          type: "linear",
-          checked: true,
-          image: new LinearGradient({
-            colorsteps: [
-              new ColorStep({ color: "yellow", percent: 0, index: 0 }),
-              new ColorStep({ color: "red", percent: 100, index: 100 })
-            ]
-          })
-        });
-
-        current.addBackgroundImage(image);
-      } else {
         current.addBackgroundImage(
           new BackgroundImage({
             checked: true
           })
         );
-      }
+    }
+
 
       this.refresh();
 
       this.emit(CHANGE_INSPECTOR);
-    }
   }
 
   getFillData(backgroundImage) {
@@ -194,9 +169,6 @@ export default class FillProperty extends BaseProperty {
     };
 
     switch (data.type) {
-      case "color":
-        data.color = backgroundImage.color;
-        break;
       case "image":
         data.url = backgroundImage.image ? backgroundImage.image.url : '';
         break;
@@ -259,10 +231,7 @@ export default class FillProperty extends BaseProperty {
     this.viewBackgroundPropertyPopup();
   }
 
-  viewBackgroundPropertyPopup($setting) {
-    if ($setting) {
-      this.selectedIndex = +$setting.attr("data-index");
-    }
+  viewBackgroundPropertyPopup() {
 
     this.current = editor.selection.current;
 
@@ -292,44 +261,6 @@ export default class FillProperty extends BaseProperty {
 
   [CLICK("$fillList .preview")](e) {
     this.viewFillPicker(e.$delegateTarget);
-  }
-
-  [CLICK("$fillList .setting")](e) {
-    this.viewBackgroundPropertyPopup(e.$delegateTarget);
-  }
-
-  viewChangeColor (data) {
-    var backgroundImage = this.currentBackgroundImage;
-    if (!backgroundImage) return; 
-    var $el = this.refs[`miniView${this.selectedIndex}`];
-    if ($el) {
-      $el.cssText(backgroundImage.toString());
-    }
-
-    var $el = this.refs[`fillTitle${this.selectedIndex}`];
-    if ($el) {
-      $el.html(names["color"]);
-    }
-
-    var $el = this.refs[`colorText${this.selectedIndex}`];
-    if ($el) {
-      $el.val(data.color);
-    }
-  }
-
-  setBackgroundColor(color) {
-    if (this.currentBackgroundImage) {
-      this.currentBackgroundImage.reset({
-        type: "color",
-        color
-      });
-
-      this.viewChangeColor({color});
-
-      if (this.current) {
-        this.emit("refreshItem", this.current);
-      }
-    }
   }
 
   viewChangeImage (data) {
@@ -383,6 +314,13 @@ export default class FillProperty extends BaseProperty {
     delete json.type;
 
     switch (data.type) {
+
+      case 'static-gradient': 
+        return new StaticGradient({
+          ...json,
+          colorsteps
+        });
+        break; 
       case "linear-gradient":
         return new LinearGradient({
           ...json,
@@ -488,9 +426,6 @@ export default class FillProperty extends BaseProperty {
 
   [EVENT("changeFillPicker")](data) {
     switch (data.type) {
-      case "color":
-        this.setBackgroundColor(data.color);
-        break;
       case "image":
         this.setImage(data);
         break;

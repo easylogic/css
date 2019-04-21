@@ -46,12 +46,8 @@
           }
         }
 
-        &[data-select-type="color"] .icon {
-          background-color: red;
-        }
-
-        &[data-select-type="static"] .icon {
-          background-image: linear-gradient(to right, #333, #333);
+        &[data-select-type="static-gradient"] .icon {
+          background-image: linear-gradient(to right, red, red);
         }
 
         &[data-select-type="linear-gradient"] .icon {

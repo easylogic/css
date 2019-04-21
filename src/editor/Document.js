@@ -20,6 +20,7 @@ import { RepeatingConicGradient } from "./image-resource/RepeatingConicGradient"
 import { Rect } from "./shape/Rect";
 import { Circle } from "./shape/Circle";
 import { Shape } from "./shape/Shape";
+import { StaticGradient } from "./image-resource/StaticGradient";
 
 
 const ClassList = {
@@ -46,6 +47,7 @@ const LayerClassList = {
 
 
 const ImageResourceClassList = {
+    'static-gradient': StaticGradient,
     'linear-gradient': LinearGradient,
     'repeating-linear-gradient': RepeatingLinearGradient,
     'radial-gradient': RadialGradient,

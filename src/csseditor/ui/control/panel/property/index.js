@@ -21,8 +21,11 @@
 import BoundProperty from "./BoundProperty";
 import LayoutProperty from "./LayoutProperty";
 import FillProperty from "./FillProperty";
+import BackgroundColorProperty from "./BackgroundColorProperty";
+
 
 export default {
+  BackgroundColorProperty,
   FillProperty,
   LayoutProperty,
   BoundProperty

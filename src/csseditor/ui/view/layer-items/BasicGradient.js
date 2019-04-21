@@ -9,8 +9,10 @@ import { RadialGradient } from "../../../../editor/image-resource/RadialGradient
 import { RepeatingRadialGradient } from "../../../../editor/image-resource/RepeatingRadialGradient";
 import { ConicGradient } from "../../../../editor/image-resource/ConicGradient";
 import { RepeatingConicGradient } from "../../../../editor/image-resource/RepeatingConicGradient";
+import { StaticGradient } from "../../../../editor/image-resource/StaticGradient";
 
 const GradientClassList = {
+    'static': StaticGradient,
     'linear': LinearGradient,
     'repeating-linear': RepeatingLinearGradient,
     'radial': RadialGradient,

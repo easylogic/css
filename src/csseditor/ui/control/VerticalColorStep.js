@@ -26,6 +26,7 @@ import GradientAngle from "./shape/GradientAngle";
 import PredefinedRadialGradientPosition from "./shape/PredefinedRadialGradientPosition";
 import GradientPosition from "./shape/GradientPosition";
 
+const staticGradientString = 'static-gradient'
 /**
  * Gradient Editor 를 구현한다.
  * Gradient Editor 는 외부의 어떠한 데이타와도 연결 되지 않는다.
@@ -127,15 +128,38 @@ export default class VerticalColorStep extends UIElement {
    */
   [EVENT("showGradientEditor")](opt, isUpdate) {
     this.$el.show();
-    if (opt.colorsteps) {
+
+    // static 에서 다른 gradient 로 넘어갈 때 
+    // colorsteps 이 최소 2개가 되어야 하기에  (이것 조차도 예외가 발생 할 수 있지만 )
+    // 일단 기존의 gradientType 이 static 인데 다른걸로 바뀌는거랑 
+    // static 이 아닌데 static 의 바뀌는건 예외 처리를 해야할 듯 하다. 
+    // 예르 들어서 아래와 같이 처리할 수도 있다. 
+
+    if (this.gradientType === staticGradientString && opt.type !== staticGradientString) {
+      // 이전이 static 이고 이후가 static 아닐 때 
+      this.setColorSteps([
+        new ColorStep({ color: 'yellow', percent: 0, index: 0, selected: true}),
+        new ColorStep({ color: 'red', percent: 100, index: 1})
+      ])
+    } else if (this.gradientType !== staticGradientString && opt.type == staticGradientString) {
+      // 이전이 static 이 아니고 이후가 static 일 때는 
+      this.setColorSteps([
+        new ColorStep({ color: 'red', percent: 0, index: 0, selected: true})
+      ])
+    }
+
+    if (!this.colorsteps && opt.colorsteps) {
+      // 여기는 나머지 조건에 들지 않지만 초기 colorsteps 가 있는 경우 
+      // 최초 이미지를 선택 했을 때를 위한 조건 
       this.setColorSteps(opt.colorsteps);
     }
 
-    if (opt.selectColorStepId) {
-      ColorStep.select(this.colorsteps, opt.selectColorStepId);
-      this.currentColorStep = this.colorsteps.filter(step => step.selected)[0];
-      this.emit("selectColorStep", this.currentColorStep.color);
-    }
+    // 여기는 들어온 colorsteps 중에 최소 한개는 선택 해야하는 과정 
+    // 흠 코드를 좀 아름답게 짜고 싶다. 
+    // 반복 패턴을 어떻게 하면 filter 같은걸 안쓰고 한번에 처리 할 수 있을까? 
+    ColorStep.select(this.colorsteps, opt.selectColorStepId);
+    this.currentColorStep = this.colorsteps.filter(step => step.selected)[0];
+    this.emit("selectColorStep", this.currentColorStep.color);
 
     this.gradientType = opt.type;
     if (typeof opt.angle !== "undefined") {
@@ -151,6 +175,7 @@ export default class VerticalColorStep extends UIElement {
       case "linear-gradient":
       case "repeating-linear":
       case "repeating-linear-gradient":
+        this.$el.show();      
         this.refs.$angleEditor.show("inline-block");
         this.refs.$positionEditor.hide();
         this.refs.$radialGradientTool.hide();
@@ -161,6 +186,7 @@ export default class VerticalColorStep extends UIElement {
       case "radial-gradient":
       case "repeating-radial":
       case "repeating-radial-gradient":
+        this.$el.show();            
         this.refs.$angleEditor.hide();
         this.refs.$positionEditor.show("inline-block");
         this.updateRadialShape(opt.radialType || "ellipse");
@@ -175,6 +201,7 @@ export default class VerticalColorStep extends UIElement {
       case "conic-gradient":
       case "repeating-conic":
       case "repeating-conic-gradient":
+        this.$el.show();            
         this.refs.$angleEditor.show("inline-block");
         this.refs.$positionEditor.show("inline-block");
         this.refs.$radialGradientTool.hide();
@@ -185,6 +212,7 @@ export default class VerticalColorStep extends UIElement {
         );
         break;
       default:
+        this.$el.hide();              
         this.refs.$angleEditor.hide();
         this.refs.$positionEditor.hide();
         this.refs.$radialGradientTool.hide();
@@ -252,6 +280,7 @@ export default class VerticalColorStep extends UIElement {
     return this.colorsteps.map((step, index) => {
       var cut = step.cut ? "cut" : EMPTY_STRING;
       var unitValue = step.getUnitValue(this.getMaxValue());
+
       return `
             <div 
                 class='drag-bar ${step.selected ? "selected" : EMPTY_STRING}' 

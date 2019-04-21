@@ -15977,10 +15977,25 @@ var ColorStep = function (_Item) {
     }
   }, {
     key: "select",
-    value: function select(colorsteps, selectedId) {
-      colorsteps.forEach(function (step) {
-        step.selected = step.id === selectedId;
+    value: function select(colorsteps) {
+      var selectedId = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : undefined;
+
+
+      if (selectedId) {
+        colorsteps.forEach(function (step) {
+          step.selected = step.id === selectedId;
+        });
+      }
+
+      var selected = colorsteps.filter(function (step) {
+        return step.selected;
       });
+
+      if (!selected.length) {
+        if (colorsteps[0]) {
+          colorsteps[0].selected = true;
+        }
+      }
     }
   }]);
   return ColorStep;
@@ -16220,6 +16235,38 @@ var Gradient = function (_ImageResource) {
   return Gradient;
 }(ImageResource);
 
+var StaticGradient = function (_Gradient) {
+    inherits(StaticGradient, _Gradient);
+
+    function StaticGradient() {
+        classCallCheck(this, StaticGradient);
+        return possibleConstructorReturn(this, (StaticGradient.__proto__ || Object.getPrototypeOf(StaticGradient)).apply(this, arguments));
+    }
+
+    createClass(StaticGradient, [{
+        key: "getDefaultObject",
+        value: function getDefaultObject() {
+            return get$1(StaticGradient.prototype.__proto__ || Object.getPrototypeOf(StaticGradient.prototype), "getDefaultObject", this).call(this, {
+                type: 'static-gradient',
+                static: true,
+                colorsteps: [new ColorStep({ color: 'red', percent: 0, index: 0 })]
+            });
+        }
+    }, {
+        key: "toString",
+        value: function toString() {
+            var color = this.json.colorsteps[0].color;
+            return "linear-gradient(to right, " + color + ", " + color + ")";
+        }
+    }, {
+        key: "isStatic",
+        value: function isStatic() {
+            return true;
+        }
+    }]);
+    return StaticGradient;
+}(Gradient);
+
 var RepeatList = ["repeat", "no-repeat", "repeat-x", "repeat-y"];
 
 var BackgroundImage = function (_Property) {
@@ -16246,10 +16293,7 @@ var BackgroundImage = function (_Property) {
     value: function getDefaultObject() {
       return get$1(BackgroundImage.prototype.__proto__ || Object.getPrototypeOf(BackgroundImage.prototype), "getDefaultObject", this).call(this, {
         itemType: "background-image",
-        type: "color",
-        color: "#FFFFFF",
         checked: false,
-        opacity: 1,
         blendMode: "normal",
         size: "auto",
         repeat: "repeat",
@@ -16257,7 +16301,7 @@ var BackgroundImage = function (_Property) {
         height: Length$1.percent(100),
         x: Length$1.percent(0),
         y: Length$1.percent(0),
-        image: new ImageResource()
+        image: new StaticGradient()
       });
     }
   }, {
@@ -17059,6 +17103,7 @@ var GradientPosition = function (_UIElement) {
   return GradientPosition;
 }(UIElement);
 
+var staticGradientString = 'static-gradient';
 /**
  * Gradient Editor 를 구현한다.
  * Gradient Editor 는 외부의 어떠한 데이타와도 연결 되지 않는다.
@@ -17146,17 +17191,35 @@ var VerticalColorStep = function (_UIElement) {
     key: EVENT("showGradientEditor"),
     value: function value$$1(opt, isUpdate) {
       this.$el.show();
-      if (opt.colorsteps) {
+
+      // static 에서 다른 gradient 로 넘어갈 때 
+      // colorsteps 이 최소 2개가 되어야 하기에  (이것 조차도 예외가 발생 할 수 있지만 )
+      // 일단 기존의 gradientType 이 static 인데 다른걸로 바뀌는거랑 
+      // static 이 아닌데 static 의 바뀌는건 예외 처리를 해야할 듯 하다. 
+      // 예르 들어서 아래와 같이 처리할 수도 있다. 
+
+      if (this.gradientType === staticGradientString && opt.type !== staticGradientString) {
+        // 이전이 static 이고 이후가 static 아닐 때 
+        this.setColorSteps([new ColorStep({ color: 'yellow', percent: 0, index: 0, selected: true }), new ColorStep({ color: 'red', percent: 100, index: 1 })]);
+      } else if (this.gradientType !== staticGradientString && opt.type == staticGradientString) {
+        // 이전이 static 이 아니고 이후가 static 일 때는 
+        this.setColorSteps([new ColorStep({ color: 'red', percent: 0, index: 0, selected: true })]);
+      }
+
+      if (!this.colorsteps && opt.colorsteps) {
+        // 여기는 나머지 조건에 들지 않지만 초기 colorsteps 가 있는 경우 
+        // 최초 이미지를 선택 했을 때를 위한 조건 
         this.setColorSteps(opt.colorsteps);
       }
 
-      if (opt.selectColorStepId) {
-        ColorStep.select(this.colorsteps, opt.selectColorStepId);
-        this.currentColorStep = this.colorsteps.filter(function (step) {
-          return step.selected;
-        })[0];
-        this.emit("selectColorStep", this.currentColorStep.color);
-      }
+      // 여기는 들어온 colorsteps 중에 최소 한개는 선택 해야하는 과정 
+      // 흠 코드를 좀 아름답게 짜고 싶다. 
+      // 반복 패턴을 어떻게 하면 filter 같은걸 안쓰고 한번에 처리 할 수 있을까? 
+      ColorStep.select(this.colorsteps, opt.selectColorStepId);
+      this.currentColorStep = this.colorsteps.filter(function (step) {
+        return step.selected;
+      })[0];
+      this.emit("selectColorStep", this.currentColorStep.color);
 
       this.gradientType = opt.type;
       if (typeof opt.angle !== "undefined") {
@@ -17172,6 +17235,7 @@ var VerticalColorStep = function (_UIElement) {
         case "linear-gradient":
         case "repeating-linear":
         case "repeating-linear-gradient":
+          this.$el.show();
           this.refs.$angleEditor.show("inline-block");
           this.refs.$positionEditor.hide();
           this.refs.$radialGradientTool.hide();
@@ -17182,6 +17246,7 @@ var VerticalColorStep = function (_UIElement) {
         case "radial-gradient":
         case "repeating-radial":
         case "repeating-radial-gradient":
+          this.$el.show();
           this.refs.$angleEditor.hide();
           this.refs.$positionEditor.show("inline-block");
           this.updateRadialShape(opt.radialType || "ellipse");
@@ -17193,6 +17258,7 @@ var VerticalColorStep = function (_UIElement) {
         case "conic-gradient":
         case "repeating-conic":
         case "repeating-conic-gradient":
+          this.$el.show();
           this.refs.$angleEditor.show("inline-block");
           this.refs.$positionEditor.show("inline-block");
           this.refs.$radialGradientTool.hide();
@@ -17200,6 +17266,7 @@ var VerticalColorStep = function (_UIElement) {
           this.emit("showGradientPosition", opt.radialPosition || this.radialPosition || Position.CENTER);
           break;
         default:
+          this.$el.hide();
           this.refs.$angleEditor.hide();
           this.refs.$positionEditor.hide();
           this.refs.$radialGradientTool.hide();
@@ -17272,6 +17339,7 @@ var VerticalColorStep = function (_UIElement) {
       return this.colorsteps.map(function (step, index) {
         var cut = step.cut ? "cut" : EMPTY_STRING;
         var unitValue$$1 = step.getUnitValue(_this2.getMaxValue());
+
         return "\n            <div \n                class='drag-bar " + (step.selected ? "selected" : EMPTY_STRING) + "' \n                id=\"" + step.id + "\"\n                style=\"left: " + _this2.getStepPosition(step) + "px;\"\n            >   \n                <div \n                    class=\"guide-step step\" \n                    data-index=\"" + index + "\" \n                    style=\" border-color: " + step.color + ";background-color: " + step.color + ";\"\n                ></div>\n                <div class='guide-line' \n                    style=\"background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0) 10%, " + step.color + " 100%) ;\"></div>\n                <div class=\"guide-change " + cut + "\" data-index=\"" + index + "\"></div>\n                <div class=\"guide-unit " + step.getUnit() + "\">\n                    <input type=\"number\" class=\"percent\" min=\"-100\" max=\"100\" step=\"0.1\"  value=\"" + unitValue$$1.percent + "\" data-index=\"" + index + "\"  />\n                    <input type=\"number\" class=\"px\" min=\"-100\" max=\"1000\" step=\"1\"  value=\"" + unitValue$$1.px + "\" data-index=\"" + index + "\"  />\n                    <input type=\"number\" class=\"em\" min=\"-100\" max=\"500\" step=\"0.1\"  value=\"" + unitValue$$1.em + "\" data-index=\"" + index + "\"  />\n                    " + _this2.getUnitSelect(step) + "\n                </div>       \n            </div>\n        ";
       });
     }
@@ -23584,6 +23652,7 @@ var RepeatingConicGradient = function (_ConicGradient) {
 }(ConicGradient);
 
 var GradientClassList = {
+    'static': StaticGradient,
     'linear': LinearGradient,
     'repeating-linear': RepeatingLinearGradient,
     'radial': RadialGradient,
@@ -29480,8 +29549,9 @@ var LayoutProperty = function (_BaseProperty) {
 }(BaseProperty);
 
 var names = {
-  color: "Color",
   image: "Image",
+  'static': "Static",
+  'static-gradient': "Static",
   linear: "Linear",
   "repeating-linear": icon.repeat + " Linear",
   radial: "Radial",
@@ -29497,8 +29567,9 @@ var names = {
 };
 
 var types = {
-  color: "color",
   image: "image",
+  'static': "gradient",
+  'static-gradient': "gradient",
   linear: "gradient",
   "repeating-linear": "gradient",
   radial: "gradient",
@@ -29524,7 +29595,7 @@ var FillProperty = function (_BaseProperty) {
   createClass(FillProperty, [{
     key: "getTitle",
     value: function getTitle() {
-      return "Background";
+      return "Background Image";
     }
   }, {
     key: "getBody",
@@ -29538,15 +29609,16 @@ var FillProperty = function (_BaseProperty) {
     }
   }, {
     key: "getColorStepList",
-    value: function getColorStepList(backgroundImage) {
-      switch (backgroundImage.image.type) {
+    value: function getColorStepList(image) {
+      switch (image.type) {
+        case "static-gradient":
         case "linear-gradient":
         case "repeating-linear-gradient":
         case "radial-gradient":
         case "repeating-radial-gradient":
         case "conic-gradient":
         case "repeating-conic-gradient":
-          return this.getColorStepString(backgroundImage.image.colorsteps);
+          return this.getColorStepString(image.colorsteps);
       }
 
       return EMPTY_STRING;
@@ -29568,18 +29640,13 @@ var FillProperty = function (_BaseProperty) {
       if (!current) return EMPTY_STRING;
 
       return current.backgroundImages.map(function (it, index) {
-        var backgroundType = types[it.type];
-        var backgroundTypeName = names[it.type];
+        var image = it.image;
+        var backgroundType = types[image.type];
+        var backgroundTypeName = names[image.type];
 
-        var imageCSS = {};
+        var imageCSS = "background-image: " + image.toString() + "; background-size: cover;";
 
-        if (it.type === "color") {
-          imageCSS = "background-color: " + it.color;
-        } else {
-          imageCSS = "background-image: " + (it.image ? it.image.toString() : "none") + "; background-size: cover;";
-        }
-
-        return "\n            <div class='fill-item' data-index='" + index + "' ref=\"fillIndex" + index + "\" draggable='true' data-fill-type=\"" + backgroundType + "\" >\n                <div class='check'><input type='checkbox' checked='" + (it.check ? "true" : "false") + "'/></div>\n                <div class='preview' data-index=\"" + index + "\">\n                    <div class='mini-view' style=\"" + imageCSS + "\" ref=\"miniView" + index + "\"></div>\n                </div>\n                <div class='fill-title' ref=\"fillTitle" + index + "\">" + backgroundTypeName + "</div>\n                <div class='colorcode'>\n                    <input type='text' placeholder='#999999'  ref=\"colorText" + index + "\"/>\n                </div>\n                <div class='colorsteps' ref=\"colorsteps" + index + "\">\n                  " + _this2.getColorStepList(it) + "\n                </div>\n                <div class='tools'>\n                  <button type=\"button\" class='setting' data-index='" + index + "'>" + icon.setting + "</button>\n                  <button type=\"button\" class='remove' data-index='" + index + "'>" + icon.remove2 + "</button>\n                </div>\n            </div>\n        ";
+        return "\n            <div class='fill-item' data-index='" + index + "' ref=\"fillIndex" + index + "\" draggable='true' data-fill-type=\"" + backgroundType + "\" >\n                <div class='check'><input type='checkbox' checked='" + (it.check ? "true" : "false") + "'/></div>\n                <div class='preview' data-index=\"" + index + "\">\n                    <div class='mini-view' style=\"" + imageCSS + "\" ref=\"miniView" + index + "\"></div>\n                </div>\n                <div class='fill-title' ref=\"fillTitle" + index + "\">" + backgroundTypeName + "</div>\n                <div class='colorsteps' ref=\"colorsteps" + index + "\">\n                  " + _this2.getColorStepList(image) + "\n                </div>\n                <div class='tools'>\n                  <button type=\"button\" class='remove' data-index='" + index + "'>" + icon.remove2 + "</button>\n                </div>\n            </div>\n        ";
       });
     }
   }, {
@@ -29600,30 +29667,14 @@ var FillProperty = function (_BaseProperty) {
       var current = editor$1.selection.current;
 
       if (current) {
-        var backgroundColor = current.backgroundImages.filter(function (img) {
-          return img.type === "color";
-        });
-
-        if (backgroundColor.length) {
-          var image = new BackgroundImage({
-            type: "linear",
-            checked: true,
-            image: new LinearGradient({
-              colorsteps: [new ColorStep({ color: "yellow", percent: 0, index: 0 }), new ColorStep({ color: "red", percent: 100, index: 100 })]
-            })
-          });
-
-          current.addBackgroundImage(image);
-        } else {
-          current.addBackgroundImage(new BackgroundImage({
-            checked: true
-          }));
-        }
-
-        this.refresh();
-
-        this.emit(CHANGE_INSPECTOR);
+        current.addBackgroundImage(new BackgroundImage({
+          checked: true
+        }));
       }
+
+      this.refresh();
+
+      this.emit(CHANGE_INSPECTOR);
     }
   }, {
     key: "getFillData",
@@ -29633,9 +29684,6 @@ var FillProperty = function (_BaseProperty) {
       };
 
       switch (data.type) {
-        case "color":
-          data.color = backgroundImage.color;
-          break;
         case "image":
           data.url = backgroundImage.image ? backgroundImage.image.url : '';
           break;
@@ -29700,10 +29748,7 @@ var FillProperty = function (_BaseProperty) {
     }
   }, {
     key: "viewBackgroundPropertyPopup",
-    value: function viewBackgroundPropertyPopup($setting) {
-      if ($setting) {
-        this.selectedIndex = +$setting.attr("data-index");
-      }
+    value: function viewBackgroundPropertyPopup() {
 
       this.current = editor$1.selection.current;
 
@@ -29732,47 +29777,6 @@ var FillProperty = function (_BaseProperty) {
     key: CLICK("$fillList .preview"),
     value: function value$$1(e) {
       this.viewFillPicker(e.$delegateTarget);
-    }
-  }, {
-    key: CLICK("$fillList .setting"),
-    value: function value$$1(e) {
-      this.viewBackgroundPropertyPopup(e.$delegateTarget);
-    }
-  }, {
-    key: "viewChangeColor",
-    value: function viewChangeColor(data) {
-      var backgroundImage = this.currentBackgroundImage;
-      if (!backgroundImage) return;
-      var $el = this.refs["miniView" + this.selectedIndex];
-      if ($el) {
-        $el.cssText(backgroundImage.toString());
-      }
-
-      var $el = this.refs["fillTitle" + this.selectedIndex];
-      if ($el) {
-        $el.html(names["color"]);
-      }
-
-      var $el = this.refs["colorText" + this.selectedIndex];
-      if ($el) {
-        $el.val(data.color);
-      }
-    }
-  }, {
-    key: "setBackgroundColor",
-    value: function setBackgroundColor(color$$1) {
-      if (this.currentBackgroundImage) {
-        this.currentBackgroundImage.reset({
-          type: "color",
-          color: color$$1
-        });
-
-        this.viewChangeColor({ color: color$$1 });
-
-        if (this.current) {
-          this.emit("refreshItem", this.current);
-        }
-      }
     }
   }, {
     key: "viewChangeImage",
@@ -29828,6 +29832,12 @@ var FillProperty = function (_BaseProperty) {
       delete json.type;
 
       switch (data.type) {
+
+        case 'static-gradient':
+          return new StaticGradient(_extends({}, json, {
+            colorsteps: colorsteps
+          }));
+          break;
         case "linear-gradient":
           return new LinearGradient(_extends({}, json, {
             colorsteps: colorsteps,
@@ -29930,9 +29940,6 @@ var FillProperty = function (_BaseProperty) {
     key: EVENT("changeFillPicker"),
     value: function value$$1(data) {
       switch (data.type) {
-        case "color":
-          this.setBackgroundColor(data.color);
-          break;
         case "image":
           this.setImage(data);
           break;
@@ -29956,6 +29963,28 @@ var FillProperty = function (_BaseProperty) {
   return FillProperty;
 }(BaseProperty);
 
+var BackgroundColorProperty = function (_BaseProperty) {
+    inherits(BackgroundColorProperty, _BaseProperty);
+
+    function BackgroundColorProperty() {
+        classCallCheck(this, BackgroundColorProperty);
+        return possibleConstructorReturn(this, (BackgroundColorProperty.__proto__ || Object.getPrototypeOf(BackgroundColorProperty)).apply(this, arguments));
+    }
+
+    createClass(BackgroundColorProperty, [{
+        key: "isHideHeader",
+        value: function isHideHeader() {
+            return true;
+        }
+    }, {
+        key: "getBody",
+        value: function getBody() {
+            return "\n            <div class='property-item background-color'>\n            <label class='property-item-label'>\n                Background Color\n            </label>\n            <div class='property-item-input-field grid-1-3' >\n                <div class='preview' ref='$preview'>\n                    <div class='mini-view' ref='$miniView'></div>\n                </div>\n                <div class='color-input'>\n                    <input type='text' ref='$colorCode' />\n                </div>\n            </div>\n            </div>\n        ";
+        }
+    }]);
+    return BackgroundColorProperty;
+}(BaseProperty);
+
 // import ArtboardProperty from "./ArtboardProperty";
 // import LayerProperty from "./LayerProperty";
 // import LayerFontProperty from "./LayerFontProperty";
@@ -29977,6 +30006,7 @@ var FillProperty = function (_BaseProperty) {
 // import BackgroundPositionProperty from "./BackgroundPositionProperty";
 // import LayerBorderRadiusProperty from "./LayerBorderRadiusProperty";
 var property = {
+  BackgroundColorProperty: BackgroundColorProperty,
   FillProperty: FillProperty,
   LayoutProperty: LayoutProperty,
   BoundProperty: BoundProperty
@@ -30188,7 +30218,7 @@ var HotKey = function (_UIElement) {
 
 var LOAD_START = 'load/start';
 
-var _templateObject$21 = taggedTemplateLiteral(["\n      <div class=\"feature-control\">\n        <BoundProperty />\n        <LayoutProperty />\n        <FillProperty />\n      </div>\n    "], ["\n      <div class=\"feature-control\">\n        <BoundProperty />\n        <LayoutProperty />\n        <FillProperty />\n      </div>\n    "]);
+var _templateObject$21 = taggedTemplateLiteral(["\n      <div class=\"feature-control\">\n        <BoundProperty />\n        <LayoutProperty />\n        <BackgroundColorProperty />\n        <FillProperty />\n      </div>\n    "], ["\n      <div class=\"feature-control\">\n        <BoundProperty />\n        <LayoutProperty />\n        <BackgroundColorProperty />\n        <FillProperty />\n      </div>\n    "]);
 
 var Inspector = function (_UIElement) {
   inherits(Inspector, _UIElement);
@@ -30217,9 +30247,9 @@ var Inspector = function (_UIElement) {
   return Inspector;
 }(UIElement);
 
-var _templateObject$22 = taggedTemplateLiteral(["\n      <div class=\"fill-picker\">\n        <div class=\"picker-tab\">\n          <div class=\"picker-tab-list\" ref=\"$tab\">\n            ", "\n          </div>\n        </div>\n        <div class=\"picker-tab-container\" ref=\"$tabContainer\">\n          <div\n            class=\"picker-tab-content selected\"\n            data-content-type=\"color\"\n            ref=\"$color\"\n          ></div>\n          <div class=\"picker-tab-content\" data-content-type=\"image\" ref=\"$image\">\n            <div class='image-preview'>\n              <figure>\n                <img src='' ref='$imagePreview' />\n                <div class='select-text'>Select a image</div>                \n              </figure>\n              <input type=\"file\" ref='$imageFile' accept=\"image/*\" />\n            </div>\n          </div>\n        </div>\n      </div>\n    "], ["\n      <div class=\"fill-picker\">\n        <div class=\"picker-tab\">\n          <div class=\"picker-tab-list\" ref=\"$tab\">\n            ", "\n          </div>\n        </div>\n        <div class=\"picker-tab-container\" ref=\"$tabContainer\">\n          <div\n            class=\"picker-tab-content selected\"\n            data-content-type=\"color\"\n            ref=\"$color\"\n          ></div>\n          <div class=\"picker-tab-content\" data-content-type=\"image\" ref=\"$image\">\n            <div class='image-preview'>\n              <figure>\n                <img src='' ref='$imagePreview' />\n                <div class='select-text'>Select a image</div>                \n              </figure>\n              <input type=\"file\" ref='$imageFile' accept=\"image/*\" />\n            </div>\n          </div>\n        </div>\n      </div>\n    "]);
+var _templateObject$22 = taggedTemplateLiteral(["\n      <div class=\"fill-picker\">\n        <div class=\"picker-tab\">\n          <div class=\"picker-tab-list\" ref=\"$tab\" data-value='static-gradient'>\n            ", "\n          </div>\n        </div>\n        <div class=\"picker-tab-container\" ref=\"$tabContainer\">\n          <div\n            class=\"picker-tab-content selected\"\n            data-content-type=\"color\"\n            ref=\"$color\"\n          ></div>\n          <div class=\"picker-tab-content\" data-content-type=\"image\" ref=\"$image\">\n            <div class='image-preview'>\n              <figure>\n                <img src='' ref='$imagePreview' />\n                <div class='select-text'>Select a image</div>                \n              </figure>\n              <input type=\"file\" ref='$imageFile' accept=\"image/*\" />\n            </div>\n          </div>\n        </div>\n      </div>\n    "], ["\n      <div class=\"fill-picker\">\n        <div class=\"picker-tab\">\n          <div class=\"picker-tab-list\" ref=\"$tab\" data-value='static-gradient'>\n            ", "\n          </div>\n        </div>\n        <div class=\"picker-tab-container\" ref=\"$tabContainer\">\n          <div\n            class=\"picker-tab-content selected\"\n            data-content-type=\"color\"\n            ref=\"$color\"\n          ></div>\n          <div class=\"picker-tab-content\" data-content-type=\"image\" ref=\"$image\">\n            <div class='image-preview'>\n              <figure>\n                <img src='' ref='$imagePreview' />\n                <div class='select-text'>Select a image</div>                \n              </figure>\n              <input type=\"file\" ref='$imageFile' accept=\"image/*\" />\n            </div>\n          </div>\n        </div>\n      </div>\n    "]);
 
-var tabs = [{ type: "color", title: "Color", selected: true }, { type: "linear-gradient", title: "Linear Gradient" }, { type: "repeating-linear-gradient", title: "Repeating Linear Gradient" }, { type: "radial-gradient", title: "Radial Gradient" }, { type: "repeating-radial-gradient", title: "Repeating Radial Gradient" }, { type: "conic-gradient", title: "Conic Gradient" }, { type: "repeating-conic-gradient", title: "Repeating Conic Gradient" }, { type: "image", title: "Image", icon: icon.image }];
+var tabs = [{ type: "static-gradient", title: "Static Gradient" }, { type: "linear-gradient", title: "Linear Gradient" }, { type: "repeating-linear-gradient", title: "Repeating Linear Gradient" }, { type: "radial-gradient", title: "Radial Gradient" }, { type: "repeating-radial-gradient", title: "Repeating Radial Gradient" }, { type: "conic-gradient", title: "Conic Gradient" }, { type: "repeating-conic-gradient", title: "Repeating Conic Gradient" }, { type: "image", title: "Image", icon: icon.image }];
 
 var FillPicker = function (_UIElement) {
   inherits(FillPicker, _UIElement);
@@ -30305,27 +30335,17 @@ var FillPicker = function (_UIElement) {
       var data = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
       this.selectedTab = type;
+      this.refs.$tab.attr('data-value', type);
       switch (type) {
         case "image":
+          // image 
           this.refs.$imagePreview.attr('src', data.url);
-          this.refs.$image.onlyOneClass("selected");
-          this.emit("hideGradientEditor");
-          break;
-        case "color":
-          this.refs.$color.onlyOneClass("selected");
-
-          if (data.color) {
-            this.colorPicker.initColorWithoutChangeEvent(data.color);
-          }
-
           this.emit("hideGradientEditor");
           break;
         default:
-          // gradient
-          this.refs.$color.onlyOneClass("selected");
-
+          // gradient 
           var sample = {
-            type: data.type || "linear-gradient",
+            type: data.type || "static-gradient",
             selectColorStepId: data.selectColorStepId,
             angle: data.angle || 0,
             radialType: data.radialType,
@@ -30342,11 +30362,7 @@ var FillPicker = function (_UIElement) {
   }, {
     key: "changeColor",
     value: function changeColor(color$$1) {
-      if (this.selectedTab == "color") {
-        this.emit("changeFillPicker", { type: "color", color: color$$1 });
-      } else {
-        this.emit("changeColorPicker", color$$1);
-      }
+      this.emit("changeColorPicker", color$$1);
     }
   }, {
     key: EVENT("showFillPicker"),
@@ -30359,18 +30375,11 @@ var FillPicker = function (_UIElement) {
       this.selectTabContent(data.type, data);
     }
   }, {
-    key: EVENT("hideFillPicker"),
+    key: EVENT("hideFillPicker", 'hidePropertyPopup'),
     value: function value$$1() {
       this.$el.hide();
 
       this.emit("hideGradientEditor");
-    }
-  }, {
-    key: EVENT('hidePropertyPopup'),
-    value: function value$$1() {
-      this.$el.hide();
-
-      this.emit('hideGradientEditor');
     }
   }, {
     key: EVENT("selectColorStep"),

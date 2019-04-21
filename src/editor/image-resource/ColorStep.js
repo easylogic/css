@@ -191,9 +191,20 @@ export class ColorStep extends Item {
     });
   }
 
-  static select(colorsteps, selectedId) {
-    colorsteps.forEach(step => {
-      step.selected = step.id === selectedId;
-    });
+  static select(colorsteps, selectedId = undefined) {
+
+    if (selectedId) {
+      colorsteps.forEach(step => {
+        step.selected = step.id === selectedId;
+      });
+    } 
+    
+    const selected = colorsteps.filter(step => step.selected);
+
+    if (!selected.length) {
+      if (colorsteps[0]) {
+        colorsteps[0].selected = true;
+      }
+    }
   }
 }

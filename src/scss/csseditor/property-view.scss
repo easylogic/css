@@ -84,6 +84,11 @@
             height: 16px;
           }
         }
+
+        &.grid-1-3 {
+          display: grid;
+          grid-template-columns: 1fr 3fr;
+        }
         
       }
 
@@ -111,7 +116,9 @@
         }
       }
 
+      @import "./property-items/background-color.scss";
       @import "./property-items/fill.scss";
+      @import "./property-items/display-manager.scss";      
       @import "./property-items/gradient-steps.scss";
       @import "./property-items/gradient-sample-list.scss";
       @import "./property-items/gradient-steps-info.scss";
@@ -134,7 +141,7 @@
       @import "./property-items/background-code.scss";
       @import "./property-items/text.scss";
       @import "./property-items/image-sorting.scss";
-      @import "./property-items/display-manager.scss";
+
     }
   }
 }

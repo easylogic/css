@@ -4912,6 +4912,10 @@ html, body {
             .csseditor .property > .property-body .property-item .property-item-input-field button svg {
               width: 16px;
               height: 16px; }
+          .csseditor .property > .property-body .property-item .property-item-label.grid-1-3,
+          .csseditor .property > .property-body .property-item .property-item-input-field.grid-1-3 {
+            display: grid;
+            grid-template-columns: 1fr 3fr; }
         .csseditor .property > .property-body .property-item .property-item-label {
           -webkit-box-sizing: border-box;
                   box-sizing: border-box;
@@ -4924,13 +4928,25 @@ html, body {
           grid-template-columns: 1fr 1fr 1fr 1fr; }
           .csseditor .property > .property-body .property-item.grid-4 .property-item-input-field input {
             width: 40px; }
+        .csseditor .property > .property-body .property-item.background-color .preview {
+          display: inline-block;
+          width: 50px;
+          height: 24px;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box;
+          border: 1px solid #cccccc;
+          border-radius: 3px;
+          margin-top: 3px; }
+          .csseditor .property > .property-body .property-item.background-color .preview .mini-view {
+            width: 100%;
+            height: 100%; }
         .csseditor .property > .property-body .property-item.fill-list {
           display: grid;
           grid-template-columns: 1fr; }
           .csseditor .property > .property-body .property-item.fill-list .fill-item {
             display: grid;
             height: 24px;
-            grid-template-columns: 20px 24px 1fr 2fr 40px;
+            grid-template-columns: 20px 30px 1fr 3fr 40px;
             grid-column-gap: 5px;
             margin-bottom: 5px;
             text-align: center; }
@@ -4996,6 +5012,74 @@ html, body {
                 .csseditor .property > .property-body .property-item.fill-list .fill-item .tools button svg {
                   width: 100%;
                   height: 100%; }
+        .csseditor .property > .property-body .property-item.display-manager .display {
+          display: block;
+          -webkit-box-flex: 1;
+              -ms-flex: 1 1 auto;
+                  flex: 1 1 auto;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box;
+          padding: 5px;
+          text-align: center;
+          cursor: pointer; }
+        .csseditor .property > .property-body .property-item.display-manager .property-item-label button {
+          display: none; }
+        .csseditor .property > .property-body .property-item.display-manager .property-item-label[data-display='grid'] button {
+          display: inline-block; }
+        .csseditor .property > .property-body .property-item.display-manager .display-list {
+          display: grid;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box;
+          grid-template-columns: repeat(5, 20%); }
+          .csseditor .property > .property-body .property-item.display-manager .display-list[selected-type="inline"] .display[display-type="inline"] {
+            background-color: #ececec; }
+          .csseditor .property > .property-body .property-item.display-manager .display-list[selected-type="inline-block"] .display[display-type="inline-block"] {
+            background-color: #ececec; }
+          .csseditor .property > .property-body .property-item.display-manager .display-list[selected-type="block"] .display[display-type="block"] {
+            background-color: #ececec; }
+          .csseditor .property > .property-body .property-item.display-manager .display-list[selected-type="flex"] .display[display-type="flex"] {
+            background-color: #ececec; }
+          .csseditor .property > .property-body .property-item.display-manager .display-list[selected-type="grid"] .display[display-type="grid"] {
+            background-color: #ececec; }
+        .csseditor .property > .property-body .property-item.display-manager .flex-direction {
+          display: grid;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box;
+          grid-template-columns: repeat(5, 20%); }
+          .csseditor .property > .property-body .property-item.display-manager .flex-direction[selected-type="row"] .display[display-type="row"] {
+            background-color: #ececec; }
+          .csseditor .property > .property-body .property-item.display-manager .flex-direction[selected-type="row-reverse"] .display[display-type="row-reverse"] {
+            background-color: #ececec; }
+          .csseditor .property > .property-body .property-item.display-manager .flex-direction[selected-type="column"] .display[display-type="column"] {
+            background-color: #ececec; }
+          .csseditor .property > .property-body .property-item.display-manager .flex-direction[selected-type="column-reverse"] .display[display-type="column-reverse"] {
+            background-color: #ececec; }
+        .csseditor .property > .property-body .property-item.display-manager .flex-wrap {
+          display: grid;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box;
+          grid-template-columns: repeat(5, 20%); }
+          .csseditor .property > .property-body .property-item.display-manager .flex-wrap[selected-type="nowrap"] .display[display-type="nowrap"] {
+            background-color: #ececec; }
+          .csseditor .property > .property-body .property-item.display-manager .flex-wrap[selected-type="wrap"] .display[display-type="wrap"] {
+            background-color: #ececec; }
+          .csseditor .property > .property-body .property-item.display-manager .flex-wrap[selected-type="wrap-reverse"] .display[display-type="wrap-reverse"] {
+            background-color: #ececec; }
+        .csseditor .property > .property-body .property-item.display-manager .justify-content {
+          display: grid;
+          -webkit-box-sizing: border-box;
+                  box-sizing: border-box;
+          grid-template-columns: repeat(5, 20%); }
+          .csseditor .property > .property-body .property-item.display-manager .justify-content[selected-type="flex-start"] .display[display-type="flex-start"] {
+            background-color: #ececec; }
+          .csseditor .property > .property-body .property-item.display-manager .justify-content[selected-type="flex-end"] .display[display-type="flex-end"] {
+            background-color: #ececec; }
+          .csseditor .property > .property-body .property-item.display-manager .justify-content[selected-type="center"] .display[display-type="center"] {
+            background-color: #ececec; }
+          .csseditor .property > .property-body .property-item.display-manager .justify-content[selected-type="space-between"] .display[display-type="space-between"] {
+            background-color: #ececec; }
+          .csseditor .property > .property-body .property-item.display-manager .justify-content[selected-type="space-around"] .display[display-type="space-around"] {
+            background-color: #ececec; }
         .csseditor .property > .property-body .property-item.gradient-steps {
           height: 90px;
           padding: 0px; }
@@ -5804,74 +5888,6 @@ html, body {
         .csseditor .property > .property-body .property-item.image-sorting .step-align {
           display: inline-block;
           vertical-align: middle; }
-        .csseditor .property > .property-body .property-item.display-manager .display {
-          display: block;
-          -webkit-box-flex: 1;
-              -ms-flex: 1 1 auto;
-                  flex: 1 1 auto;
-          -webkit-box-sizing: border-box;
-                  box-sizing: border-box;
-          padding: 5px;
-          text-align: center;
-          cursor: pointer; }
-        .csseditor .property > .property-body .property-item.display-manager .property-item-label button {
-          display: none; }
-        .csseditor .property > .property-body .property-item.display-manager .property-item-label[data-display='grid'] button {
-          display: inline-block; }
-        .csseditor .property > .property-body .property-item.display-manager .display-list {
-          display: grid;
-          -webkit-box-sizing: border-box;
-                  box-sizing: border-box;
-          grid-template-columns: repeat(5, 20%); }
-          .csseditor .property > .property-body .property-item.display-manager .display-list[selected-type="inline"] .display[display-type="inline"] {
-            background-color: #ececec; }
-          .csseditor .property > .property-body .property-item.display-manager .display-list[selected-type="inline-block"] .display[display-type="inline-block"] {
-            background-color: #ececec; }
-          .csseditor .property > .property-body .property-item.display-manager .display-list[selected-type="block"] .display[display-type="block"] {
-            background-color: #ececec; }
-          .csseditor .property > .property-body .property-item.display-manager .display-list[selected-type="flex"] .display[display-type="flex"] {
-            background-color: #ececec; }
-          .csseditor .property > .property-body .property-item.display-manager .display-list[selected-type="grid"] .display[display-type="grid"] {
-            background-color: #ececec; }
-        .csseditor .property > .property-body .property-item.display-manager .flex-direction {
-          display: grid;
-          -webkit-box-sizing: border-box;
-                  box-sizing: border-box;
-          grid-template-columns: repeat(5, 20%); }
-          .csseditor .property > .property-body .property-item.display-manager .flex-direction[selected-type="row"] .display[display-type="row"] {
-            background-color: #ececec; }
-          .csseditor .property > .property-body .property-item.display-manager .flex-direction[selected-type="row-reverse"] .display[display-type="row-reverse"] {
-            background-color: #ececec; }
-          .csseditor .property > .property-body .property-item.display-manager .flex-direction[selected-type="column"] .display[display-type="column"] {
-            background-color: #ececec; }
-          .csseditor .property > .property-body .property-item.display-manager .flex-direction[selected-type="column-reverse"] .display[display-type="column-reverse"] {
-            background-color: #ececec; }
-        .csseditor .property > .property-body .property-item.display-manager .flex-wrap {
-          display: grid;
-          -webkit-box-sizing: border-box;
-                  box-sizing: border-box;
-          grid-template-columns: repeat(5, 20%); }
-          .csseditor .property > .property-body .property-item.display-manager .flex-wrap[selected-type="nowrap"] .display[display-type="nowrap"] {
-            background-color: #ececec; }
-          .csseditor .property > .property-body .property-item.display-manager .flex-wrap[selected-type="wrap"] .display[display-type="wrap"] {
-            background-color: #ececec; }
-          .csseditor .property > .property-body .property-item.display-manager .flex-wrap[selected-type="wrap-reverse"] .display[display-type="wrap-reverse"] {
-            background-color: #ececec; }
-        .csseditor .property > .property-body .property-item.display-manager .justify-content {
-          display: grid;
-          -webkit-box-sizing: border-box;
-                  box-sizing: border-box;
-          grid-template-columns: repeat(5, 20%); }
-          .csseditor .property > .property-body .property-item.display-manager .justify-content[selected-type="flex-start"] .display[display-type="flex-start"] {
-            background-color: #ececec; }
-          .csseditor .property > .property-body .property-item.display-manager .justify-content[selected-type="flex-end"] .display[display-type="flex-end"] {
-            background-color: #ececec; }
-          .csseditor .property > .property-body .property-item.display-manager .justify-content[selected-type="center"] .display[display-type="center"] {
-            background-color: #ececec; }
-          .csseditor .property > .property-body .property-item.display-manager .justify-content[selected-type="space-between"] .display[display-type="space-between"] {
-            background-color: #ececec; }
-          .csseditor .property > .property-body .property-item.display-manager .justify-content[selected-type="space-around"] .display[display-type="space-around"] {
-            background-color: #ececec; }
   .csseditor .filter-list {
     display: -webkit-box !important;
     display: -ms-flexbox !important;
@@ -6133,11 +6149,9 @@ html, body {
           background-color: blue; }
           .csseditor .fill-picker .picker-tab .picker-tab-list .picker-tab-item.selected .icon svg path {
             fill: white; }
-        .csseditor .fill-picker .picker-tab .picker-tab-list .picker-tab-item[data-select-type="color"] .icon {
-          background-color: red; }
-        .csseditor .fill-picker .picker-tab .picker-tab-list .picker-tab-item[data-select-type="static"] .icon {
-          background-image: -webkit-gradient(linear, left top, right top, from(#333), to(#333));
-          background-image: linear-gradient(to right, #333, #333); }
+        .csseditor .fill-picker .picker-tab .picker-tab-list .picker-tab-item[data-select-type="static-gradient"] .icon {
+          background-image: -webkit-gradient(linear, left top, right top, from(red), to(red));
+          background-image: linear-gradient(to right, red, red); }
         .csseditor .fill-picker .picker-tab .picker-tab-list .picker-tab-item[data-select-type="linear-gradient"] .icon {
           background-image: -webkit-gradient(linear, left top, right top, from(black), to(gray));
           background-image: linear-gradient(to right, black, gray); }

@@ -8,7 +8,7 @@ import { Length, Position } from "../../../editor/unit/Length";
 import { editor } from "../../../editor/editor";
 
 const tabs = [
-  { type: "color", title: "Color", selected: true },
+  { type: "static-gradient", title: "Static Gradient"},
   { type: "linear-gradient", title: "Linear Gradient" },
   { type: "repeating-linear-gradient", title: "Repeating Linear Gradient" },
   { type: "radial-gradient", title: "Radial Gradient" },
@@ -49,7 +49,7 @@ export default class FillPicker extends UIElement {
     return html`
       <div class="fill-picker">
         <div class="picker-tab">
-          <div class="picker-tab-list" ref="$tab">
+          <div class="picker-tab-list" ref="$tab" data-value='static-gradient'>
             ${tabs.map(it => {
               return `
                 <span 
@@ -119,27 +119,15 @@ export default class FillPicker extends UIElement {
 
   selectTabContent(type, data = {}) {
     this.selectedTab = type;
+    this.refs.$tab.attr('data-value', type);
     switch (type) {
-      case "image":
+      case "image": // image 
         this.refs.$imagePreview.attr('src', data.url);      
-        this.refs.$image.onlyOneClass("selected");
         this.emit("hideGradientEditor");
         break;
-      case "color":
-        this.refs.$color.onlyOneClass("selected");
-
-        if (data.color) {
-          this.colorPicker.initColorWithoutChangeEvent(data.color);
-        }
-
-        this.emit("hideGradientEditor");
-        break;
-      default:
-        // gradient
-        this.refs.$color.onlyOneClass("selected");
-
+      default:    // gradient 
         let sample = {
-          type: data.type || "linear-gradient",
+          type: data.type || "static-gradient",
           selectColorStepId: data.selectColorStepId,
           angle: data.angle || 0,
           radialType: data.radialType,
@@ -155,11 +143,7 @@ export default class FillPicker extends UIElement {
   }
 
   changeColor(color) {
-    if (this.selectedTab == "color") {
-      this.emit("changeFillPicker", { type: "color", color });
-    } else {
-      this.emit("changeColorPicker", color);
-    }
+    this.emit("changeColorPicker", color);
   }
 
   [EVENT("showFillPicker")](data) {
@@ -167,22 +151,18 @@ export default class FillPicker extends UIElement {
       .css({
         top: Length.px(data.top),
         right: Length.px(320)
-      })
-      .show();
-
+      }).show();
+      
     this.selectTabContent(data.type, data);
   }
 
-  [EVENT("hideFillPicker")]() {
+  [EVENT(
+    "hideFillPicker",
+    'hidePropertyPopup'
+  )]() {
     this.$el.hide();
 
     this.emit("hideGradientEditor");
-  }
-
-  [EVENT('hidePropertyPopup')] () {
-    this.$el.hide();
-
-    this.emit('hideGradientEditor')
   }
 
   [EVENT("selectColorStep")](color) {
