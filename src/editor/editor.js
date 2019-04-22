@@ -41,10 +41,6 @@ export const editor = new class {
     this.selection = new Selection(this);
   }
 
-  initPicker(picker) {
-    this.picker = picker;
-  }
-
   setStore($store) {
     this.$store = $store;
   }

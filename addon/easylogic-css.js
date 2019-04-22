@@ -8452,16 +8452,16 @@ var EventMachine = function () {
           }
 
           // LOAD 로 생성한 html 문자열에 변화가 없으면 업데이트 하지 않는다.
-          if (oldTemplate != newTemplate) {
-            _this3[callbackName].t = newTemplate;
-            var fragment = _this3.parseTemplate(newTemplate, true);
+          // if (oldTemplate != newTemplate) { 
+          // this[callbackName].t = newTemplate;
+          var fragment = _this3.parseTemplate(newTemplate, true);
 
-            // fragment 와 이전 el children 을 비교해서 필요한 것만 갱신한다.
-            // 이건 비교 알고리즘을 넣어도 괜찮을 듯
-            _this3.refs[elName].html(fragment);
+          // fragment 와 이전 el children 을 비교해서 필요한 것만 갱신한다.
+          // 이건 비교 알고리즘을 넣어도 괜찮을 듯
+          _this3.refs[elName].html(fragment);
 
-            // ref 를 중복해서 로드 하게 되면 이전 객체가 그대로 살아 있을 확률이 커지기 때문에 정상적으로 싱크가 맞지 않음
-          }
+          // ref 를 중복해서 로드 하게 되면 이전 객체가 그대로 살아 있을 확률이 커지기 때문에 정상적으로 싱크가 맞지 않음
+          // }
         }
       });
 
@@ -9998,11 +9998,6 @@ var editor$1 = new (function () {
   }
 
   createClass(_class, [{
-    key: "initPicker",
-    value: function initPicker(picker) {
-      this.picker = picker;
-    }
-  }, {
     key: "setStore",
     value: function setStore($store) {
       this.$store = $store;
@@ -12191,6 +12186,7 @@ var CurrentColorSets = function (_UIElement) {
     }, {
         key: 'refresh',
         value: function refresh() {
+            console.log('load');
             this.load();
         }
     }, {
@@ -12201,6 +12197,11 @@ var CurrentColorSets = function (_UIElement) {
         }
     }, {
         key: EVENT('changeCurrentColorSets'),
+        value: function value$$1() {
+            this.refresh();
+        }
+    }, {
+        key: EVENT('initColor'),
         value: function value$$1() {
             this.refresh();
         }
@@ -12973,7 +12974,7 @@ var XDTabColorPicker = function (_BaseColorPicker) {
     return XDTabColorPicker;
 }(BaseColorPicker);
 
-var ColorPicker = {
+var ColorPickerUI = {
   create: function create(opts) {
     switch (opts.type) {
       case "macos":
@@ -13224,7 +13225,7 @@ var ColorView$2 = function () {
         if (this.opt.colorpicker) {
             this.colorpicker = this.opt.colorpicker(this.opt);
         } else {
-            this.colorpicker = ColorPicker.create(this.opt);
+            this.colorpicker = ColorPickerUI.create(this.opt);
         }
 
         this.init_event();
@@ -15355,7 +15356,7 @@ var Timeline = function (_UIElement) {
     createClass(Timeline, [{
         key: "afterRender",
         value: function afterRender() {
-            this.colorPicker = ColorPicker.create({
+            this.colorPicker = ColorPickerUI.create({
                 type: 'xd-tab',
                 tabTitle: '',
                 autoHide: false,
@@ -16220,23 +16221,8 @@ var BackgroundImage = function (_Property) {
       };
     }
   }, {
-    key: "toBackgroundColorCSS",
-    value: function toBackgroundColorCSS() {
-      var json = this.json;
-
-      return {
-        "background-color": json.color
-      };
-    }
-  }, {
     key: "toCSS",
     value: function toCSS() {
-      var json = this.json;
-
-      if (json.type == "color") {
-        return _extends({}, this.toBackgroundColorCSS());
-      }
-
       var results = _extends({}, this.toBackgroundImageCSS(), this.toBackgroundPositionCSS(), this.toBackgroundSizeCSS(), this.toBackgroundRepeatCSS(), this.toBackgroundBlendCSS());
 
       return results;
@@ -21065,6 +21051,7 @@ var ItemManager = function (_UIElement) {
   }, {
     key: EVENT("refreshItem"),
     value: function value$$1(item) {
+      item = item || editor$1.selection.current;
       if (item.itemType == "artboard") {
         this.refreshArtBoard([item]);
       } else if (item.itemType == "layer") {
@@ -27333,7 +27320,7 @@ var FillColorPicker = function (_UIElement) {
 
             var defaultColor = 'rgba(0, 0, 0, 0)';
 
-            this.colorPicker = ColorPicker.create({
+            this.colorPicker = ColorPickerUI.create({
                 type: 'xd-tab',
                 tabTitle: 'Fill',
                 position: 'inline',
@@ -27765,7 +27752,7 @@ var TextFillColorPicker = function (_UIElement) {
 
             var defaultColor = 'rgba(0, 0, 0, 0)';
 
-            this.colorPicker = ColorPicker.create({
+            this.colorPicker = ColorPickerUI.create({
                 type: 'xd-tab',
                 tabTitle: 'Text',
                 position: 'inline',
@@ -27868,7 +27855,7 @@ var InfoFillColorPicker = function (_UIElement) {
 
             var defaultColor = 'rgba(0, 0, 0, 0)';
 
-            this.colorPicker = ColorPicker.create({
+            this.colorPicker = ColorPickerUI.create({
                 type: 'xd-tab',
                 tabTitle: 'Background',
                 position: 'inline',
@@ -27961,7 +27948,7 @@ var BorderFillColorPicker = function (_UIElement) {
 
             var defaultColor = 'rgba(0, 0, 0, 0)';
 
-            this.colorPicker = ColorPicker.create({
+            this.colorPicker = ColorPickerUI.create({
                 type: 'xd-tab',
                 tabTitle: 'Border',
                 position: 'inline',
@@ -29811,14 +29798,70 @@ var BackgroundColorProperty = function (_BaseProperty) {
     }
 
     createClass(BackgroundColorProperty, [{
-        key: "isHideHeader",
-        value: function isHideHeader() {
-            return true;
+        key: "getTitle",
+        value: function getTitle() {
+            return "Background Color";
         }
     }, {
         key: "getBody",
         value: function getBody() {
-            return "\n            <div class='property-item background-color'>\n            <label class='property-item-label'>\n                Background Color\n            </label>\n            <div class='property-item-input-field grid-1-3' >\n                <div class='preview' ref='$preview'>\n                    <div class='mini-view' ref='$miniView'></div>\n                </div>\n                <div class='color-input'>\n                    <input type='text' ref='$colorCode' />\n                </div>\n            </div>\n            </div>\n        ";
+            return "\n            <div class='property-item background-color' ref='$backgroundColor'></div>\n        ";
+        }
+    }, {
+        key: LOAD('$backgroundColor'),
+        value: function value$$1() {
+
+            var current = editor$1.selection.current;
+
+            if (!current) return EMPTY_STRING;
+
+            var it = current;
+            var imageCSS = "background-color: " + it.backgroundColor;
+            return "\n            <div class='fill-item'>\n                <div class='check'><input type='checkbox' checked='" + (it.checkBackgroundColor ? "true" : "false") + "'/></div>\n                <div class='preview'>\n                    <div class='mini-view' style=\"" + imageCSS + "\" ref='$miniView'></div>\n                </div>\n                <div class='color-code'>\n                    <input type=\"text\" ref=\"$colorCode\" />\n                </div>\n            \n                <div class='opacity-code'>\n                    <label>opacity</label><input type='range' ref='$opacityCode' />\n                </div>\n            </div>\n        ";
+        }
+    }, {
+        key: CLICK("$el .preview"),
+        value: function value$$1(e) {
+            this.viewColorPicker(e.$delegateTarget);
+        }
+    }, {
+        key: "viewColorPicker",
+        value: function viewColorPicker($preview) {
+
+            var current = editor$1.selection.current;
+
+            if (!current) return;
+
+            var rect = $preview.rect();
+
+            this.emit("showColorPicker", {
+                changeEvent: 'changeBackgroundColor',
+                color: current.backgroundColor,
+                left: rect.left + 90,
+                top: rect.top
+            });
+        }
+    }, {
+        key: EVENT('changeBackgroundColor'),
+        value: function value$$1(color$$1) {
+            this.refs.$miniView.cssText("background-color: " + color$$1);
+            this.refs.$colorCode.val(color$$1);
+
+            var current = editor$1.selection.current;
+            if (current) {
+                current.backgroundColor = color$$1;
+                this.emit("refreshItem", current);
+            }
+        }
+    }, {
+        key: EVENT(CHANGE_EDITOR, CHANGE_LAYER, CHANGE_ARTBOARD, CHANGE_SELECTION),
+        value: function value$$1() {
+            this.refresh();
+        }
+    }, {
+        key: "refresh",
+        value: function refresh() {
+            this.load();
         }
     }]);
     return BackgroundColorProperty;
@@ -30105,7 +30148,7 @@ var FillPicker = function (_UIElement) {
 
       var defaultColor = "rgba(0, 0, 0, 0)";
 
-      this.colorPicker = ColorPicker.create({
+      this.colorPicker = ColorPickerUI.create({
         type: "sketch",
         position: "inline",
         container: this.refs.$color.el,
@@ -30511,6 +30554,69 @@ var DisplayPropertyPopup = function (_UIElement) {
   return DisplayPropertyPopup;
 }(UIElement);
 
+var _templateObject$24 = taggedTemplateLiteral(["\n      <div class=\"fill-picker\">\n        <div class=\"picker-tab-container\" ref=\"$tabContainer\">\n          <div\n            class=\"picker-tab-content selected\"\n            data-content-type=\"color\"\n            ref=\"$color\"\n          ></div>\n        </div>\n      </div>\n    "], ["\n      <div class=\"fill-picker\">\n        <div class=\"picker-tab-container\" ref=\"$tabContainer\">\n          <div\n            class=\"picker-tab-content selected\"\n            data-content-type=\"color\"\n            ref=\"$color\"\n          ></div>\n        </div>\n      </div>\n    "]);
+
+var ColorPicker = function (_UIElement) {
+  inherits(ColorPicker, _UIElement);
+
+  function ColorPicker() {
+    classCallCheck(this, ColorPicker);
+    return possibleConstructorReturn(this, (ColorPicker.__proto__ || Object.getPrototypeOf(ColorPicker)).apply(this, arguments));
+  }
+
+  createClass(ColorPicker, [{
+    key: "afterRender",
+    value: function afterRender() {
+      var _this2 = this;
+
+      // this.$el.hide();
+
+      var defaultColor = "rgba(0, 0, 0, 0)";
+
+      this.colorPicker = ColorPickerUI.create({
+        type: "sketch",
+        position: "inline",
+        container: this.refs.$color.el,
+        color: defaultColor,
+        onChange: function onChange(c) {
+          _this2.changeColor(c);
+        }
+      });
+
+      setTimeout(function () {
+        _this2.colorPicker.dispatch("initColor", defaultColor);
+      }, 100);
+    }
+  }, {
+    key: "template",
+    value: function template() {
+      return html(_templateObject$24);
+    }
+  }, {
+    key: "changeColor",
+    value: function changeColor(color) {
+      this.emit(this.changeEvent, color);
+    }
+  }, {
+    key: EVENT("showColorPicker"),
+    value: function value(data) {
+      this.$el.css({
+        top: Length$1.px(data.top),
+        right: Length$1.px(320)
+      }).show();
+
+      this.changeEvent = data.changeEvent;
+      this.colorPicker.initColorWithoutChangeEvent(data.color);
+    }
+  }, {
+    key: EVENT("hideColorPicker", 'hidePropertyPopup', CHANGE_EDITOR, CHANGE_SELECTION),
+    value: function value() {
+      this.$el.hide();
+    }
+  }]);
+  return ColorPicker;
+}(UIElement);
+
 var CSSEditor$1 = function (_UIElement) {
     inherits(CSSEditor, _UIElement);
 
@@ -30524,8 +30630,6 @@ var CSSEditor$1 = function (_UIElement) {
         value: function afterRender() {
             var _this2 = this;
 
-            editor$1.initPicker(this.children.$picker);
-
             setTimeout(function () {
                 _this2.emit(RESIZE_WINDOW);
                 _this2.emit(CHANGE_EDITOR);
@@ -30534,7 +30638,7 @@ var CSSEditor$1 = function (_UIElement) {
     }, {
         key: "template",
         value: function template() {
-            return "\n            <div class=\"layout-main -show-timeline\" ref=\"$layoutMain\">\n                <div class=\"layout-header\">\n                    <div class=\"page-tab-menu\"><ToolMenu /></div>\n                </div>\n                <div class=\"layout-middle\">\n                    <div class=\"layout-left\">      \n                        <SelectLayerView/>\n                    </div>\n                    <div class=\"layout-body\">\n                        <LayerToolbar />\n                        <CanvasView />\n                        <VerticalColorStep />                        \n                    </div>                \n                    <div class=\"layout-right\">\n                        <Alignment />\n                        <Inspector />\n                    </div>\n                </div>\n                <div class=\"layout-footer\" ref=\"$footer\">\n                    <!-- TimelineSplitter /-->\n                    <!-- Timeline /-->\n                </div>\n                <ExportWindow />\n                <DropView />\n                <HotKey />       \n                <FillPicker ref=\"$picker\" />\n                <BackgroundPropertyPopup />\n                <DisplayPropertyPopup />\n            </div>\n  \n        ";
+            return "\n            <div class=\"layout-main -show-timeline\" ref=\"$layoutMain\">\n                <div class=\"layout-header\">\n                    <div class=\"page-tab-menu\"><ToolMenu /></div>\n                </div>\n                <div class=\"layout-middle\">\n                    <div class=\"layout-left\">      \n                        <SelectLayerView/>\n                    </div>\n                    <div class=\"layout-body\">\n                        <LayerToolbar />\n                        <CanvasView />\n                        <VerticalColorStep />                        \n                    </div>                \n                    <div class=\"layout-right\">\n                        <Alignment />\n                        <Inspector />\n                    </div>\n                </div>\n                <div class=\"layout-footer\" ref=\"$footer\">\n                    <!-- TimelineSplitter /-->\n                    <!-- Timeline /-->\n                </div>\n                <ExportWindow />\n                <DropView />\n                <HotKey />       \n                <FillPicker />\n                <ColorPicker  />\n                <BackgroundPropertyPopup />\n                <DisplayPropertyPopup />\n            </div>\n  \n        ";
         }
     }, {
         key: "components",
@@ -30543,6 +30647,7 @@ var CSSEditor$1 = function (_UIElement) {
                 DisplayPropertyPopup: DisplayPropertyPopup,
                 BackgroundPropertyPopup: BackgroundPropertyPopup,
                 FillPicker: FillPicker,
+                ColorPicker: ColorPicker,
                 HotKey: HotKey,
                 Alignment: Alignment,
                 Inspector: Inspector,
@@ -30644,7 +30749,7 @@ var CSSEditor = {
   CSSEditor: CSSEditor$1
 };
 
-var index = _extends({}, Util, ColorPicker, CSSEditor);
+var index = _extends({}, Util, ColorPickerUI, CSSEditor);
 
 return index;
 

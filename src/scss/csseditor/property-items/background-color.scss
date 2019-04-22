@@ -1,16 +1,43 @@
 &.background-color {
-  .preview {
-    display: inline-block;
-    width: 50px;
-    height: 24px;
-    box-sizing: border-box;
-    border: 1px solid $border-color;
-    border-radius: 3px;
-    margin-top: 3px;
 
-    .mini-view {
-      width: 100%;
+
+  .fill-item {
+    display: grid;
+    height: 24px;
+    grid-template-columns: 20px 30px 100px 220px;
+    grid-column-gap: 5px;
+    margin-bottom: 5px;
+    text-align: center;
+
+
+
+    .preview {
+      display: inline-block;
       height: 100%;
+      box-sizing: border-box;
+      border: 1px solid $border-color;
+
+      .mini-view {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    .color-code {
+      input {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    .opacity-code {
+      display: grid;
+      grid-template-columns: 1fr 3fr;
+
+      input {
+        width: 100%;
+      }
     }
   }
+
 }

@@ -109,23 +109,7 @@ export class BackgroundImage extends Property {
     };
   }
 
-  toBackgroundColorCSS() {
-    var json = this.json;
-
-    return {
-      "background-color": json.color
-    };
-  }
-
   toCSS() {
-    var json = this.json;
-
-    if (json.type == "color") {
-      return {
-        ...this.toBackgroundColorCSS()
-      };
-    }
-
     var results = {
       ...this.toBackgroundImageCSS(),
       ...this.toBackgroundPositionCSS(),

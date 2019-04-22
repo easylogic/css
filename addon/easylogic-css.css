@@ -396,7 +396,7 @@
     .codemirror-colorpicker .colorpicker-body .colorsets > .color-list {
       margin-right: 30px;
       display: block;
-      padding: 12px 0px 0px 12px;
+      padding: 10px 0px 0px 10px;
       -webkit-box-sizing: border-box;
               box-sizing: border-box;
       line-height: 0; }
@@ -4928,18 +4928,30 @@ html, body {
           grid-template-columns: 1fr 1fr 1fr 1fr; }
           .csseditor .property > .property-body .property-item.grid-4 .property-item-input-field input {
             width: 40px; }
-        .csseditor .property > .property-body .property-item.background-color .preview {
-          display: inline-block;
-          width: 50px;
+        .csseditor .property > .property-body .property-item.background-color .fill-item {
+          display: grid;
           height: 24px;
-          -webkit-box-sizing: border-box;
-                  box-sizing: border-box;
-          border: 1px solid #cccccc;
-          border-radius: 3px;
-          margin-top: 3px; }
-          .csseditor .property > .property-body .property-item.background-color .preview .mini-view {
+          grid-template-columns: 20px 30px 100px 220px;
+          grid-column-gap: 5px;
+          margin-bottom: 5px;
+          text-align: center; }
+          .csseditor .property > .property-body .property-item.background-color .fill-item .preview {
+            display: inline-block;
+            height: 100%;
+            -webkit-box-sizing: border-box;
+                    box-sizing: border-box;
+            border: 1px solid #cccccc; }
+            .csseditor .property > .property-body .property-item.background-color .fill-item .preview .mini-view {
+              width: 100%;
+              height: 100%; }
+          .csseditor .property > .property-body .property-item.background-color .fill-item .color-code input {
             width: 100%;
             height: 100%; }
+          .csseditor .property > .property-body .property-item.background-color .fill-item .opacity-code {
+            display: grid;
+            grid-template-columns: 1fr 3fr; }
+            .csseditor .property > .property-body .property-item.background-color .fill-item .opacity-code input {
+              width: 100%; }
         .csseditor .property > .property-body .property-item.fill-list {
           display: grid;
           grid-template-columns: 1fr; }

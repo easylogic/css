@@ -331,6 +331,7 @@ export default class ItemManager extends UIElement {
   }
 
   [EVENT("refreshItem")](item) {
+    item = item || editor.selection.current;
     if (item.itemType == "artboard") {
       this.refreshArtBoard([item]);
     } else if (item.itemType == "layer") {

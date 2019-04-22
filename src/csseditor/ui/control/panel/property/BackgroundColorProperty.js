@@ -1,24 +1,88 @@
 import BaseProperty from "./BaseProperty";
+import { editor } from "../../../../../editor/editor";
+import { EMPTY_STRING } from "../../../../../util/css/types";
+import { LOAD, CLICK } from "../../../../../util/Event";
+import { EVENT } from "../../../../../util/UIElement";
+import { CHANGE_EDITOR, CHANGE_LAYER, CHANGE_SELECTION, CHANGE_ARTBOARD } from "../../../../types/event";
 
 export default class BackgroundColorProperty extends BaseProperty {
-    isHideHeader() {
-        return true;
+    getTitle() {
+        return "Background Color";
     }
     getBody() {
         return `
-            <div class='property-item background-color'>
-            <label class='property-item-label'>
-                Background Color
-            </label>
-            <div class='property-item-input-field grid-1-3' >
-                <div class='preview' ref='$preview'>
-                    <div class='mini-view' ref='$miniView'></div>
+            <div class='property-item background-color' ref='$backgroundColor'></div>
+        `;
+    }
+
+    [LOAD('$backgroundColor')] (){
+
+        var current = editor.selection.current;
+
+        if (!current) return EMPTY_STRING;
+
+        var it = current;
+        var imageCSS = `background-color: ${it.backgroundColor}`
+        return `
+            <div class='fill-item'>
+                <div class='check'><input type='checkbox' checked='${
+                it.checkBackgroundColor ? "true" : "false"
+                }'/></div>
+                <div class='preview'>
+                    <div class='mini-view' style="${imageCSS}" ref='$miniView'></div>
                 </div>
-                <div class='color-input'>
-                    <input type='text' ref='$colorCode' />
+                <div class='color-code'>
+                    <input type="text" ref="$colorCode" />
                 </div>
-            </div>
+            
+                <div class='opacity-code'>
+                    <label>opacity</label><input type='range' ref='$opacityCode' />
+                </div>
             </div>
         `;
+    }
+
+    [CLICK("$el .preview")](e) {
+        this.viewColorPicker(e.$delegateTarget);
+    }
+
+    viewColorPicker($preview) {
+
+        var current = editor.selection.current;
+    
+        if (!current) return;
+    
+        var rect = $preview.rect();
+    
+        this.emit("showColorPicker", {
+          changeEvent: 'changeBackgroundColor',
+          color: current.backgroundColor,
+          left: rect.left + 90,
+          top: rect.top
+        });
+    }
+
+    [EVENT('changeBackgroundColor')] (color) {
+        this.refs.$miniView.cssText(`background-color: ${color}`)
+        this.refs.$colorCode.val(color);
+
+        var current = editor.selection.current;
+        if (current) {
+            current.backgroundColor = color; 
+            this.emit("refreshItem", current);
+        }
+    }
+
+    [EVENT(
+        CHANGE_EDITOR,
+        CHANGE_LAYER,
+        CHANGE_ARTBOARD,
+        CHANGE_SELECTION
+    )] () {
+        this.refresh();
+    }
+
+    refresh () {
+        this.load();
     }
 }

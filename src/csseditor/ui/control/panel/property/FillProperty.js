@@ -21,9 +21,7 @@ import { ConicGradient } from "../../../../../editor/image-resource/ConicGradien
 import { RepeatingConicGradient } from "../../../../../editor/image-resource/RepeatingConicGradient";
 import { Gradient } from "../../../../../editor/image-resource/Gradient";
 import Dom from "../../../../../util/Dom";
-import { ColorStep } from "../../../../../editor/image-resource/ColorStep";
 import { Position } from "../../../../../editor/unit/Length";
-import { ImageResource } from "../../../../../editor/image-resource/ImageResource";
 import { URLImageResource } from "../../../../../editor/image-resource/URLImageResource";
 import { StaticGradient } from "../../../../../editor/image-resource/StaticGradient";
 

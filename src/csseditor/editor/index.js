@@ -25,12 +25,12 @@ import { editor } from "../../editor/editor";
 import FillPicker from "../ui/control/FillPicker";
 import BackgroundPropertyPopup from "../ui/control/BackgroundPropertyPopup";
 import DisplayPropertyPopup from "../ui/control/DisplayPropertyPopup";
+import ColorPicker from "../ui/control/ColorPicker";
 
 
 
 export default class CSSEditor extends UIElement {
   afterRender() {
-    editor.initPicker(this.children.$picker);
 
     setTimeout(() => {
       this.emit(RESIZE_WINDOW);
@@ -65,7 +65,8 @@ export default class CSSEditor extends UIElement {
                 <ExportWindow />
                 <DropView />
                 <HotKey />       
-                <FillPicker ref="$picker" />
+                <FillPicker />
+                <ColorPicker  />
                 <BackgroundPropertyPopup />
                 <DisplayPropertyPopup />
             </div>
@@ -78,6 +79,7 @@ export default class CSSEditor extends UIElement {
       DisplayPropertyPopup,
       BackgroundPropertyPopup,
       FillPicker,
+      ColorPicker,
       HotKey,
       Alignment,
       Inspector,

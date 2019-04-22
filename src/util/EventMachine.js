@@ -361,8 +361,8 @@ export default class EventMachine {
         }
 
         // LOAD 로 생성한 html 문자열에 변화가 없으면 업데이트 하지 않는다.
-        if (oldTemplate != newTemplate) {
-          this[callbackName].t = newTemplate;
+        // if (oldTemplate != newTemplate) { 
+          // this[callbackName].t = newTemplate;
           const fragment = this.parseTemplate(newTemplate, true);
 
           // fragment 와 이전 el children 을 비교해서 필요한 것만 갱신한다.
@@ -370,7 +370,7 @@ export default class EventMachine {
           this.refs[elName].html(fragment);
 
           // ref 를 중복해서 로드 하게 되면 이전 객체가 그대로 살아 있을 확률이 커지기 때문에 정상적으로 싱크가 맞지 않음
-        }
+        // }
       }
     });
 

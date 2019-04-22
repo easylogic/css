@@ -33,6 +33,7 @@ export default class CurrentColorSets extends UIElement {
     }    
 
     refresh () {
+        console.log('load');
         this.load();
     }
 
@@ -44,6 +45,10 @@ export default class CurrentColorSets extends UIElement {
 
     [EVENT('changeCurrentColorSets')] () {
         this.refresh()
+    }
+
+    [EVENT('initColor')] () {
+        this.refresh();
     }
 
     [CLICK('$colorSetsChooseButton')] (e) {
