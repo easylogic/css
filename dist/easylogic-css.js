@@ -12346,7 +12346,6 @@ var CurrentColorSets = function (_UIElement) {
     }, {
         key: 'refresh',
         value: function refresh() {
-            console.log('load');
             this.load();
         }
     }, {
@@ -22901,6 +22900,9 @@ var ArtBoard = function (_GroupItem) {
                 name: 'New ArtBoard',
                 x: Length$1.px(100),
                 y: Length$1.px(100),
+                filters: [],
+                backdropFilters: [],
+                backgroundImages: [],
                 perspectiveOriginPositionX: Length$1.percent(0),
                 perspectiveOriginPositionY: Length$1.percent(0),
                 display: Display.parse({ display: 'block' })
@@ -22922,6 +22924,15 @@ var ArtBoard = function (_GroupItem) {
             json.y = Length$1.parse(json.y);
             json.perspectiveOriginPositionX = Length$1.parse(json.perspectiveOriginPositionX);
             json.perspectiveOriginPositionY = Length$1.parse(json.perspectiveOriginPositionY);
+            json.filters = json.filters.map(function (f) {
+                return Filter.parse(f);
+            });
+            json.backdropFilters = json.backdropFilters.map(function (f) {
+                return BackdropFilter.parse(f);
+            });
+            json.backgroundImages = json.backgroundImages.map(function (f) {
+                return BackgroundImage.parse(f);
+            });
 
             if (json.display) json.display = Display.parse(json.display);
 
@@ -22931,6 +22942,24 @@ var ArtBoard = function (_GroupItem) {
         key: "getDefaultTitle",
         value: function getDefaultTitle() {
             return 'ArtBoard';
+        }
+    }, {
+        key: "addBackgroundImage",
+        value: function addBackgroundImage(item) {
+            this.json.backgroundImages.push(item);
+            return item;
+        }
+    }, {
+        key: "addFilter",
+        value: function addFilter(item) {
+            this.json.filters.push(item);
+            return item;
+        }
+    }, {
+        key: "addBackdropFilter",
+        value: function addBackdropFilter(item) {
+            this.json.backdropFilters.push(item);
+            return item;
         }
     }, {
         key: "traverse",
@@ -22962,6 +22991,34 @@ var ArtBoard = function (_GroupItem) {
             return results;
         }
     }, {
+        key: "toPropertyCSS",
+        value: function toPropertyCSS(list) {
+            var results = {};
+            list.forEach(function (item) {
+                keyEach(item.toCSS(), function (key, value$$1) {
+                    if (!results[key]) results[key] = [];
+                    results[key].push(value$$1);
+                });
+            });
+
+            return combineKeyArray(results);
+        }
+    }, {
+        key: "toBackgroundImageCSS",
+        value: function toBackgroundImageCSS() {
+            return this.toPropertyCSS(this.backgroundImages);
+        }
+    }, {
+        key: "toFilterCSS",
+        value: function toFilterCSS() {
+            return this.toPropertyCSS(this.filters);
+        }
+    }, {
+        key: "toBackdropFilterCSS",
+        value: function toBackdropFilterCSS() {
+            return this.toPropertyCSS(this.backdropFilters);
+        }
+    }, {
         key: "toString",
         value: function toString() {
             return CSS_TO_STRING(this.toCSS());
@@ -22982,7 +23039,7 @@ var ArtBoard = function (_GroupItem) {
                 'background-color': json.backgroundColor
             };
 
-            return CSS_SORTING(_extends({}, css, this.toBoundCSS(), this.toDisplayCSS(), this.toPerspectiveCSS()));
+            return CSS_SORTING(_extends({}, css, this.toBoundCSS(), this.toDisplayCSS(), this.toPerspectiveCSS(), this.toFilterCSS(), this.toBackdropFilterCSS(), this.toBackgroundImageCSS()));
         }
     }, {
         key: "toBoundString",
@@ -23031,12 +23088,12 @@ var ArtBoard = function (_GroupItem) {
         }
     }, {
         key: "directories",
-        get: function get() {
+        get: function get$$1() {
             return this.search({ itemType: 'directory' });
         }
     }, {
         key: "allDirectories",
-        get: function get() {
+        get: function get$$1() {
             return this.tree().filter(function (it) {
                 return it.itemType == 'directory';
             });
@@ -23048,7 +23105,7 @@ var ArtBoard = function (_GroupItem) {
 
     }, {
         key: "allLayers",
-        get: function get() {
+        get: function get$$1() {
             return this.tree().filter(function (it) {
                 return it.itemType == 'layer';
             });
@@ -23058,10 +23115,25 @@ var ArtBoard = function (_GroupItem) {
 
     }, {
         key: "rootItems",
-        get: function get() {
+        get: function get$$1() {
             return this.tree().filter(function (it) {
                 return it.isRootItem();
             });
+        }
+    }, {
+        key: "filters",
+        get: function get$$1() {
+            return this.json.filters;
+        }
+    }, {
+        key: "backdropFilters",
+        get: function get$$1() {
+            return this.json.backdropFilters;
+        }
+    }, {
+        key: "backgroundImages",
+        get: function get$$1() {
+            return this.json.backgroundImages || [];
         }
     }]);
     return ArtBoard;
@@ -29388,9 +29460,9 @@ var BoundProperty = function (_BaseProperty) {
   }
 
   createClass(BoundProperty, [{
-    key: "isHideHeader",
-    value: function isHideHeader() {
-      return true;
+    key: "getTitle",
+    value: function getTitle() {
+      return 'Bound';
     }
   }, {
     key: "getBody",
@@ -29464,23 +29536,78 @@ var LayoutProperty = function (_BaseProperty) {
   }
 
   createClass(LayoutProperty, [{
-    key: "isHideHeader",
-    value: function isHideHeader() {
-      return true;
+    key: "getTitle",
+    value: function getTitle() {
+      return 'Display';
+    }
+  }, {
+    key: "getTools",
+    value: function getTools() {
+      return "\n      <button type=\"button\" ref='$screen'>" + icon.screen + "</button>\n      <button type=\"button\" ref=\"$setting\">" + icon.setting + "</button>\n    ";
     }
   }, {
     key: "getBody",
     value: function getBody() {
-      return "\n      <div class='property-item display-manager'>\n        <label class='property-item-label' data-display='inline' ref='$label'>\n          Display\n          <button type=\"button\" ref='$screen'>" + icon.screen + "</button>\n        </label>\n        <div class='property-item-input-field display-list' ref=\"$displayList\" selected-type=\"inline\">\n          <div class='display' display-type='inline'>INLINE</div>\n          <div class='display' display-type='block'>BLOCK</div>\n          <div class='display' display-type='flex'>FLEX</div>\n          <div class='display' display-type='grid'>GRID</div>\n          <div class='tools' >\n            <button type=\"button\" ref=\"$setting\">" + icon.setting + "</button>\n          </div>\n        </div>\n      </div>\n    ";
+      return "\n      <div class='property-item display-manager' ref='$displayManager'></div>\n    ";
+    }
+  }, {
+    key: "templateForFlexDirection",
+    value: function templateForFlexDirection() {
+      return "\n      <div class='property-item'>\n        <label>Flex Direction</label>\n        <div class='flex-direction grid-5' ref=\"$flexDirection\" data-value=\"row\">\n            <button type=\"button\" value=\"row\" >row</button>\n            <button type=\"button\" value=\"row-reverse\">row-reverse</button>\n            <button type=\"button\" value=\"column\">column</button>\n            <button type=\"button\" value=\"column-reverse\">column-reverse</button>\n        </div>\n      </div> \n    ";
+    }
+  }, {
+    key: CLICK('$flexDirection button'),
+    value: function value$$1(_ref) {
+      var $t = _ref.$delegateTarget;
+
+      var flexDirection = $t.value;
+      this.refs.$flexDirection.attr('data-value', flexDirection);
+      this.updateData({ flexDirection: flexDirection });
+    }
+  }, {
+    key: "templateForFlexWrap",
+    value: function templateForFlexWrap() {
+      return "\n      <div class='property-item'>\n        <label>Flex Wrap</label>\n        <div class='flex-wrap grid-5' ref=\"$flexWrap\" data-value=\"nowrap\">\n            <button type=\"button\" value=\"nowrap\" >nowrap</button>\n            <button type=\"button\" value=\"wrap\">wrap</button>\n            <button type=\"button\" value=\"wrap-reverse\">wrap-reverse</button>\n        </div>\n      </div> \n    ";
+    }
+  }, {
+    key: CLICK('$flexWrap button'),
+    value: function value$$1(_ref2) {
+      var $t = _ref2.$delegateTarget;
+
+      var flexWrap = $t.value;
+      this.refs.$flexWrap.attr('data-value', flexWrap);
+      this.updateData({ flexWrap: flexWrap });
+    }
+  }, {
+    key: "templateForJustifyContent",
+    value: function templateForJustifyContent() {
+      return "\n      <div class='property-item'>\n        <label>Justify Content</label>\n        <div class='justify-content grid-5' ref=\"$justifyContent\" data-value=\"flex-start\">\n            <button type=\"button\" value=\"flex-start\" >flex-start</button>\n            <button type=\"button\" value=\"flex-end\">flex-end</button>\n            <button type=\"button\" value=\"center\">center</button>\n            <button type=\"button\" value=\"space-between\">space-between</button>\n            <button type=\"button\" value=\"space-around\">space-around</button>\n        </div>\n      </div> \n    ";
+    }
+  }, {
+    key: CLICK('$justifyContent button'),
+    value: function value$$1(_ref3) {
+      var $t = _ref3.$delegateTarget;
+
+      var justifyContent = $t.value;
+      this.refs.$justifyContent.attr('data-value', justifyContent);
+      this.updateData({ justifyContent: justifyContent });
+    }
+  }, {
+    key: LOAD('$displayManager'),
+    value: function value$$1() {
+      var item = editor$1.selection.currentRect;
+      if (!item) return EMPTY_STRING;
+
+      return "\n      <div class='property-item-input-field display-list' ref=\"$displayList\" selected-type=\"inline\">\n        <div class='display' display-type='inline'>INLINE</div>\n        <div class='display' display-type='block'>BLOCK</div>\n        <div class='display' display-type='flex'>FLEX</div>\n        <div class='display' display-type='grid'>GRID</div>\n      </div>\n      " + this.templateForFlexDirection() + "\n      " + this.templateForFlexWrap() + "\n      " + this.templateForJustifyContent() + "\n    ";
     }
   }, {
     key: CLICK('$screen'),
-    value: function value() {
+    value: function value$$1() {
       this.emit('toggleDisplayGridEditor');
     }
   }, {
     key: EVENT(CHANGE_RECT, CHANGE_LAYER, CHANGE_ARTBOARD, CHANGE_EDITOR, CHANGE_SELECTION),
-    value: function value() {
+    value: function value$$1() {
       this.refresh();
     }
   }, {
@@ -29489,20 +29616,20 @@ var LayoutProperty = function (_BaseProperty) {
       var item = editor$1.selection.currentRect;
       if (!item) return;
 
+      this.load();
+
       if (item.display) {
-        this.refs.$label.attr("data-display", item.display.type);
         this.refs.$displayList.attr("selected-type", item.display.type);
       }
     }
   }, {
-    key: CLICK("$displayList .display"),
-    value: function value(e) {
+    key: CLICK("$displayManager .display"),
+    value: function value$$1(e) {
       var display = e.$delegateTarget.attr("display-type");
       var current = editor$1.selection.current;
 
       if (current) {
         this.refs.$displayList.attr("selected-type", display);
-        this.refs.$label.attr('data-display', display);
         current.changeDisplay(display);
 
         this.emit(CHANGE_INSPECTOR);
@@ -29524,7 +29651,7 @@ var LayoutProperty = function (_BaseProperty) {
     }
   }, {
     key: CLICK('$setting'),
-    value: function value(e) {
+    value: function value$$1(e) {
 
       var rect = this.refs.$setting.rect();
       this.emit('showDisplayPropertyPopup', _extends({}, this.getDisplayPropertyData(), {
@@ -29978,7 +30105,7 @@ var BackgroundColorProperty = function (_BaseProperty) {
 
             var it = current;
             var imageCSS = "background-color: " + it.backgroundColor;
-            return "\n            <div class='fill-item'>\n                <div class='check'><input type='checkbox' checked='" + (it.checkBackgroundColor ? "true" : "false") + "'/></div>\n                <div class='preview'>\n                    <div class='mini-view' style=\"" + imageCSS + "\" ref='$miniView'></div>\n                </div>\n                <div class='color-code'>\n                    <input type=\"text\" ref=\"$colorCode\" />\n                </div>\n            \n                <div class='opacity-code'>\n                    <label>opacity</label><input type='range' ref='$opacityCode' />\n                </div>\n            </div>\n        ";
+            return "\n            <div class='fill-item'>\n                <div class='check'><input type='checkbox' checked='" + (it.checkBackgroundColor ? "true" : "false") + "'/></div>\n                <div class='preview'>\n                    <div class='mini-view' style=\"" + imageCSS + "\" ref='$miniView'></div>\n                </div>\n                <div class='color-code'>\n                    <input type=\"text\" ref='$colorCode' />\n                </div>\n            </div>\n        ";
         }
     }, {
         key: CLICK("$el .preview"),
@@ -30001,6 +30128,18 @@ var BackgroundColorProperty = function (_BaseProperty) {
                 left: rect.left + 90,
                 top: rect.top
             });
+        }
+    }, {
+        key: INPUT('$backgroundColor .color-code input'),
+        value: function value$$1(e) {
+            var color$$1 = e.$delegateTarget.value;
+            this.refs.$miniView.cssText("background-color: " + color$$1);
+
+            var current = editor$1.selection.current;
+            if (current) {
+                current.backgroundColor = color$$1;
+                this.emit("refreshItem", current);
+            }
         }
     }, {
         key: EVENT('changeBackgroundColor'),
@@ -30416,9 +30555,11 @@ var FillPicker = function (_UIElement) {
       }).show();
 
       this.selectTabContent(data.type, data);
+      // this.emit('hidePropertyPopup')
+      this.emit('hidePicker');
     }
   }, {
-    key: EVENT("hideFillPicker", 'hidePropertyPopup'),
+    key: EVENT("hideFillPicker", 'hidePicker', 'hidePropertyPopup'),
     value: function value$$1() {
       this.$el.hide();
 
@@ -30770,9 +30911,12 @@ var ColorPicker = function (_UIElement) {
 
       this.changeEvent = data.changeEvent;
       this.colorPicker.initColorWithoutChangeEvent(data.color);
+
+      this.emit('hidePropertyPopup');
+      this.emit('hidePicker');
     }
   }, {
-    key: EVENT("hideColorPicker", 'hidePropertyPopup', CHANGE_EDITOR, CHANGE_SELECTION),
+    key: EVENT('hidePicker', "hideColorPicker", 'hidePropertyPopup', CHANGE_EDITOR, CHANGE_SELECTION),
     value: function value() {
       this.$el.hide();
     }

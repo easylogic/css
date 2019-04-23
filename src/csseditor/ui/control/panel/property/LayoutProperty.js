@@ -8,32 +8,105 @@ import {
   CHANGE_ARTBOARD,
   CHANGE_INSPECTOR
 } from "../../../../types/event";
-import { CLICK } from "../../../../../util/Event";
+import { CLICK, LOAD } from "../../../../../util/Event";
 import { editor } from "../../../../../editor/editor";
 import icon from "../../../icon/icon";
+import { EMPTY_STRING } from "../../../../../util/css/types";
 
 export default class LayoutProperty extends BaseProperty {
-  isHideHeader() {
-    return true;
+  getTitle() {
+    return 'Display'
+  }
+
+  getTools() {
+    return `
+      <button type="button" ref='$screen'>${icon.screen}</button>
+      <button type="button" ref="$setting">${icon.setting}</button>
+    `
   }
   getBody() {
     return `
-      <div class='property-item display-manager'>
-        <label class='property-item-label' data-display='inline' ref='$label'>
-          Display
-          <button type="button" ref='$screen'>${icon.screen}</button>
-        </label>
-        <div class='property-item-input-field display-list' ref="$displayList" selected-type="inline">
-          <div class='display' display-type='inline'>INLINE</div>
-          <div class='display' display-type='block'>BLOCK</div>
-          <div class='display' display-type='flex'>FLEX</div>
-          <div class='display' display-type='grid'>GRID</div>
-          <div class='tools' >
-            <button type="button" ref="$setting">${icon.setting}</button>
-          </div>
-        </div>
-      </div>
+      <div class='property-item display-manager' ref='$displayManager'></div>
     `;
+  }
+
+
+  templateForFlexDirection() {
+    return `
+      <div class='property-item'>
+        <label>Flex Direction</label>
+        <div class='flex-direction grid-5' ref="$flexDirection" data-value="row">
+            <button type="button" value="row" >row</button>
+            <button type="button" value="row-reverse">row-reverse</button>
+            <button type="button" value="column">column</button>
+            <button type="button" value="column-reverse">column-reverse</button>
+        </div>
+      </div> 
+    `;
+  }
+
+  [CLICK('$flexDirection button')] ({$delegateTarget: $t}) {
+    var flexDirection = $t.value; 
+    this.refs.$flexDirection.attr('data-value', flexDirection)
+    this.updateData({flexDirection})
+  }
+
+  templateForFlexWrap() {
+    return `
+      <div class='property-item'>
+        <label>Flex Wrap</label>
+        <div class='flex-wrap grid-5' ref="$flexWrap" data-value="nowrap">
+            <button type="button" value="nowrap" >nowrap</button>
+            <button type="button" value="wrap">wrap</button>
+            <button type="button" value="wrap-reverse">wrap-reverse</button>
+        </div>
+      </div> 
+    `;
+  }
+
+  [CLICK('$flexWrap button')] ({$delegateTarget: $t}) {
+    var flexWrap = $t.value; 
+    this.refs.$flexWrap.attr('data-value', flexWrap)
+    this.updateData({flexWrap})
+  }
+
+  
+  templateForJustifyContent() {
+    return `
+      <div class='property-item'>
+        <label>Justify Content</label>
+        <div class='justify-content grid-5' ref="$justifyContent" data-value="flex-start">
+            <button type="button" value="flex-start" >flex-start</button>
+            <button type="button" value="flex-end">flex-end</button>
+            <button type="button" value="center">center</button>
+            <button type="button" value="space-between">space-between</button>
+            <button type="button" value="space-around">space-around</button>
+        </div>
+      </div> 
+    `;
+  }  
+  [CLICK('$justifyContent button')] ({$delegateTarget: $t}) {
+    var justifyContent = $t.value; 
+    this.refs.$justifyContent.attr('data-value', justifyContent)
+    this.updateData({justifyContent})
+  }
+
+
+  [LOAD('$displayManager')] () {
+    var item = editor.selection.currentRect;
+    if (!item) return EMPTY_STRING;
+
+    return `
+      <div class='property-item-input-field display-list' ref="$displayList" selected-type="inline">
+        <div class='display' display-type='inline'>INLINE</div>
+        <div class='display' display-type='block'>BLOCK</div>
+        <div class='display' display-type='flex'>FLEX</div>
+        <div class='display' display-type='grid'>GRID</div>
+      </div>
+      ${this.templateForFlexDirection()}
+      ${this.templateForFlexWrap()}
+      ${this.templateForJustifyContent()}
+    `
   }
 
   [CLICK('$screen')] () {
@@ -54,19 +127,19 @@ export default class LayoutProperty extends BaseProperty {
     var item = editor.selection.currentRect;
     if (!item) return;
 
+    this.load();    
+
     if (item.display) {
-      this.refs.$label.attr("data-display", item.display.type);
       this.refs.$displayList.attr("selected-type", item.display.type);
     }
   }
 
-  [CLICK("$displayList .display")](e) {
+  [CLICK("$displayManager .display")](e) {
     var display = e.$delegateTarget.attr("display-type");
     var current = editor.selection.current;
 
     if (current) {
       this.refs.$displayList.attr("selected-type", display);
-      this.refs.$label.attr('data-display', display);
       current.changeDisplay(display);
 
       this.emit(CHANGE_INSPECTOR);

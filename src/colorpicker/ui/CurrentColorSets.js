@@ -33,7 +33,6 @@ export default class CurrentColorSets extends UIElement {
     }    
 
     refresh () {
-        console.log('load');
         this.load();
     }
 

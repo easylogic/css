@@ -3,6 +3,10 @@ import { CSS_TO_STRING, CSS_SORTING } from "../../util/css/make";
 import { Length } from "../unit/Length";
 import { Display } from "../css-property/Display";
 import { GroupItem } from "./GroupItem";
+import { Filter } from "../css-property/Filter";
+import { BackdropFilter } from "../css-property/BackdropFilter";
+import { BackgroundImage } from "../css-property/BackgroundImage";
+import { keyEach, combineKeyArray } from "../../util/functions/func";
 
 export class ArtBoard extends GroupItem {
 
@@ -15,6 +19,9 @@ export class ArtBoard extends GroupItem {
             name: 'New ArtBoard',
             x: Length.px(100),
             y: Length.px(100),
+            filters: [],
+            backdropFilters: [],
+            backgroundImages: [],            
             perspectiveOriginPositionX: Length.percent(0),
             perspectiveOriginPositionY: Length.percent(0),
             display: Display.parse({display: 'block'}),
@@ -35,7 +42,14 @@ export class ArtBoard extends GroupItem {
         json.y = Length.parse(json.y)        
         json.perspectiveOriginPositionX = Length.parse(json.perspectiveOriginPositionX)
         json.perspectiveOriginPositionY = Length.parse(json.perspectiveOriginPositionY)
-
+        json.filters = json.filters.map(f => Filter.parse(f));
+        json.backdropFilters = json.backdropFilters.map(f =>
+          BackdropFilter.parse(f)
+        );
+        json.backgroundImages = json.backgroundImages.map(f =>
+          BackgroundImage.parse(f)
+        );
+    
         if (json.display) json.display = Display.parse(json.display);
 
         return json
@@ -64,8 +78,31 @@ export class ArtBoard extends GroupItem {
         return this.tree().filter(it => it.isRootItem()); 
     }
      
+    get filters() {
+        return this.json.filters;
+    }
+    get backdropFilters() {
+        return this.json.backdropFilters;
+    }
+    get backgroundImages() {
+        return this.json.backgroundImages || [];
+    }
 
+    addBackgroundImage(item) {
+        this.json.backgroundImages.push(item);
+        return item;
+    }
 
+    addFilter(item) {
+        this.json.filters.push(item);
+        return item;
+    }
+
+    addBackdropFilter(item) {
+        this.json.backdropFilters.push(item);
+        return item;
+    }
+    
 
     traverse (item, results, hasLayoutItem) {
         // var parentItemType = item.parent().itemType;
@@ -91,6 +128,28 @@ export class ArtBoard extends GroupItem {
     }
 
 
+    toPropertyCSS(list) {
+        var results = {};
+        list.forEach(item => {
+          keyEach(item.toCSS(), (key, value) => {
+            if (!results[key]) results[key] = [];
+            results[key].push(value);
+          });
+        });
+    
+        return combineKeyArray(results);
+    }
+
+    toBackgroundImageCSS() {
+        return this.toPropertyCSS(this.backgroundImages);
+    }
+
+    toFilterCSS() {
+        return this.toPropertyCSS(this.filters);
+    }
+    toBackdropFilterCSS() {
+        return this.toPropertyCSS(this.backdropFilters);
+    }    
 
     toString () {
         return CSS_TO_STRING(this.toCSS())
@@ -115,7 +174,10 @@ export class ArtBoard extends GroupItem {
             ...css,
             ...this.toBoundCSS(),
             ...this.toDisplayCSS(),
-            ...this.toPerspectiveCSS()
+            ...this.toPerspectiveCSS(),
+            ...this.toFilterCSS(),
+            ...this.toBackdropFilterCSS(),
+            ...this.toBackgroundImageCSS()            
         }); 
 
     }

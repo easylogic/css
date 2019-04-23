@@ -13,10 +13,9 @@ import { editor } from "../../../../../editor/editor";
 import { Length } from "../../../../../editor/unit/Length";
 
 export default class BoundProperty extends BaseProperty {
-  isHideHeader() {
-    return true;
+  getTitle() {
+    return 'Bound'
   }
-
   getBody() {
     return `
         <div class='property-item grid-4'>

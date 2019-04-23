@@ -1,10 +1,10 @@
 &.background-color {
-
+  grid-template-columns: 1fr;
 
   .fill-item {
     display: grid;
     height: 24px;
-    grid-template-columns: 20px 30px 100px 220px;
+    grid-template-columns: 20px 30px auto;
     grid-column-gap: 5px;
     margin-bottom: 5px;
     text-align: center;

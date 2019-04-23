@@ -154,10 +154,13 @@ export default class FillPicker extends UIElement {
       }).show();
       
     this.selectTabContent(data.type, data);
+    // this.emit('hidePropertyPopup')
+    this.emit('hidePicker');
   }
 
   [EVENT(
     "hideFillPicker",
+    'hidePicker',
     'hidePropertyPopup'
   )]() {
     this.$el.hide();

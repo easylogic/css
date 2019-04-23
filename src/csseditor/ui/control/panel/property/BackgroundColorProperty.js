@@ -1,7 +1,7 @@
 import BaseProperty from "./BaseProperty";
 import { editor } from "../../../../../editor/editor";
 import { EMPTY_STRING } from "../../../../../util/css/types";
-import { LOAD, CLICK } from "../../../../../util/Event";
+import { LOAD, CLICK, INPUT } from "../../../../../util/Event";
 import { EVENT } from "../../../../../util/UIElement";
 import { CHANGE_EDITOR, CHANGE_LAYER, CHANGE_SELECTION, CHANGE_ARTBOARD } from "../../../../types/event";
 
@@ -32,11 +32,7 @@ export default class BackgroundColorProperty extends BaseProperty {
                     <div class='mini-view' style="${imageCSS}" ref='$miniView'></div>
                 </div>
                 <div class='color-code'>
-                    <input type="text" ref="$colorCode" />
-                </div>
-            
-                <div class='opacity-code'>
-                    <label>opacity</label><input type='range' ref='$opacityCode' />
+                    <input type="text" ref='$colorCode' />
                 </div>
             </div>
         `;
@@ -60,6 +56,17 @@ export default class BackgroundColorProperty extends BaseProperty {
           left: rect.left + 90,
           top: rect.top
         });
+    }
+
+    [INPUT('$backgroundColor .color-code input')] (e) {
+        var color = e.$delegateTarget.value;
+        this.refs.$miniView.cssText(`background-color: ${color}`)
+
+        var current = editor.selection.current;
+        if (current) {
+            current.backgroundColor = color; 
+            this.emit("refreshItem", current);
+        }
     }
 
     [EVENT('changeBackgroundColor')] (color) {

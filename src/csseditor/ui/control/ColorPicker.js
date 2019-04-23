@@ -52,9 +52,13 @@ export default class ColorPicker extends UIElement {
       
     this.changeEvent = data.changeEvent; 
     this.colorPicker.initColorWithoutChangeEvent(data.color);
+
+    this.emit('hidePropertyPopup')
+    this.emit('hidePicker')
   }
 
   [EVENT(
+    'hidePicker',
     "hideColorPicker",
     'hidePropertyPopup',
     CHANGE_EDITOR,
