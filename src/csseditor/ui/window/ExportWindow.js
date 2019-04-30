@@ -1,5 +1,4 @@
 import UIElement, { EVENT } from "../../../util/UIElement";
-import ColorPickerCodeMirror from '../../../extension/codemirror/index'
 import { CLICK } from "../../../util/Event";
 import ExportCodePenButton from "../view/export/ExportCodPenButton";
 import ExportJSFiddleButton from "../view/export/ExportJSFiddleButton";
@@ -7,19 +6,16 @@ import { SELECTION_CURRENT_PAGE } from "../../types/SelectionTypes";
 import { EMPTY_STRING } from "../../../util/css/types";
 import { EXPORT_GENERATE_CODE } from "../../types/ExportTpyes";
 
-
-
 export default class ExportWindow extends UIElement {
+  components() {
+    return {
+      ExportJSFiddleButton,
+      ExportCodePenButton
+    };
+  }
 
-    components () {
-        return {
-            ExportJSFiddleButton,
-            ExportCodePenButton            
-        }
-    }
-
-    template () {
-        return `
+  template() {
+    return `
             <div class='export-view'>
                 <div class="color-view">
                     <div class="close" ref="$close">&times;</div>        
@@ -53,114 +49,118 @@ export default class ExportWindow extends UIElement {
                     </div>
                 </div>
             </div>
-        `
+        `;
+  }
+
+  afterRender() {
+    // ColorPickerCodeMirror.load();
+    if (!window.CodeMirror) return;
+    var mixedMode = {
+      name: "htmlmixed",
+      scriptTypes: [
+        { matches: /\/x-handlebars-template|\/x-mustache/i, mode: null },
+        { matches: /(text|application)\/(x-)?vb(a|script)/i, mode: "vbscript" }
+      ]
+    };
+    this.cmFullHtml = CodeMirror.fromTextArea(this.refs.$fullhtml.el, {
+      lineNumbers: true,
+      readOnly: true,
+      lineWrapping: true,
+      mode: mixedMode,
+      colorpicker: {
+        mode: "view"
+      }
+    });
+
+    this.cmHtml = CodeMirror.fromTextArea(this.refs.$html.el, {
+      lineNumbers: true,
+      readOnly: true,
+      lineWrapping: true,
+      mode: mixedMode
+    });
+
+    this.cmCss = CodeMirror.fromTextArea(this.refs.$css.el, {
+      lineNumbers: true,
+      readOnly: true,
+      lineWrapping: true,
+      mode: "text/css",
+      colorpicker: {
+        mode: "view"
+      }
+    });
+  }
+
+  loadCode() {
+    const [current_page, generate_code] = this.mapGetters(
+      SELECTION_CURRENT_PAGE,
+      EXPORT_GENERATE_CODE
+    );
+    var page = current_page();
+
+    if (!page) {
+      return EMPTY_STRING;
     }
 
-    afterRender () {
-        ColorPickerCodeMirror.load();
-        if (!window.CodeMirror) return;
-        var mixedMode = {
-            name: "htmlmixed",
-            scriptTypes: [{matches: /\/x-handlebars-template|\/x-mustache/i,
-                           mode: null},
-                          {matches: /(text|application)\/(x-)?vb(a|script)/i,
-                           mode: "vbscript"}]
-          };
-        this.cmFullHtml = CodeMirror.fromTextArea(this.refs.$fullhtml.el, {
-            lineNumbers: true, 
-            readOnly: true,
-            lineWrapping: true,
-            mode : mixedMode,
-            colorpicker : { 
-                mode: 'view'
-            }
-        });
+    var generateCode = generate_code();
 
-        this.cmHtml = CodeMirror.fromTextArea(this.refs.$html.el, {
-            lineNumbers: true, 
-            readOnly: true,
-            lineWrapping: true,
-            mode : mixedMode
-        });
-
-        this.cmCss = CodeMirror.fromTextArea(this.refs.$css.el, {
-            lineNumbers: true, 
-            readOnly: true,
-            lineWrapping: true,
-            mode : "text/css",
-            colorpicker: {
-                mode: 'view'
-            }
-        });        
-    }
- 
-
-    loadCode () {
-        const [ current_page, generate_code ] = this.mapGetters(SELECTION_CURRENT_PAGE, EXPORT_GENERATE_CODE)
-        var page = current_page()
-
-        if (!page) {
-            return EMPTY_STRING;  
-        }
-
-        var generateCode = generate_code()
-
-        if (this.cmFullHtml) {
-            this.cmFullHtml.setValue(generateCode.fullhtml);
-            this.cmFullHtml.refresh();
-        }
-
-        if (this.cmHtml) {
-            this.cmHtml.setValue(generateCode.html);
-            this.cmHtml.refresh();
-        }
-
-
-        if (this.cmCss) {
-            this.cmCss.setValue(generateCode.css);
-            this.cmCss.refresh();
-        }        
-
-        this.refs.$preview.html(generateCode.fullhtml);
+    if (this.cmFullHtml) {
+      this.cmFullHtml.setValue(generateCode.fullhtml);
+      this.cmFullHtml.refresh();
     }
 
-    refresh () {
-        this.loadCode();
+    if (this.cmHtml) {
+      this.cmHtml.setValue(generateCode.html);
+      this.cmHtml.refresh();
     }
 
-    [CLICK('$close')] (e) {
-        this.$el.hide();
+    if (this.cmCss) {
+      this.cmCss.setValue(generateCode.css);
+      this.cmCss.refresh();
     }
 
-    [CLICK('$title .tool-item')] (e) {
-        var type = e.$delegateTarget.attr('data-type');
+    this.refs.$preview.html(generateCode.fullhtml);
+  }
 
-        Object.keys(this.refs).filter(it => it.includes('Title')).forEach(key => {
-            var obj = this.refs[key];
-            obj.toggleClass('selected', `$${type}Title` == key);
-        })
+  refresh() {
+    this.loadCode();
+  }
 
-        Object.keys(this.refs).filter(it => it.includes('Content')).forEach(key => {
-            var obj = this.refs[key];
-            obj.toggleClass('selected', `$${type}Content` == key);
+  [CLICK("$close")](e) {
+    this.$el.hide();
+  }
 
-            if (this.cmFullHtml) this.cmFullHtml.refresh();
-            if (this.cmHtml) this.cmHtml.refresh();
-            if (this.cmCss) this.cmCss.refresh();
-        })        
+  [CLICK("$title .tool-item")](e) {
+    var type = e.$delegateTarget.attr("data-type");
 
-    }
+    Object.keys(this.refs)
+      .filter(it => it.includes("Title"))
+      .forEach(key => {
+        var obj = this.refs[key];
+        obj.toggleClass("selected", `$${type}Title` == key);
+      });
 
-    [EVENT('toggleExport')] () {
-        this.$el.toggle();
-    }
+    Object.keys(this.refs)
+      .filter(it => it.includes("Content"))
+      .forEach(key => {
+        var obj = this.refs[key];
+        obj.toggleClass("selected", `$${type}Content` == key);
 
-    [EVENT('showExport')] () {
-        this.$el.show();
-        this.refresh();                
-    }
+        if (this.cmFullHtml) this.cmFullHtml.refresh();
+        if (this.cmHtml) this.cmHtml.refresh();
+        if (this.cmCss) this.cmCss.refresh();
+      });
+  }
 
-    [EVENT('hideExport')] () {
-        this.$el.hide();
-    }    
+  [EVENT("toggleExport")]() {
+    this.$el.toggle();
+  }
+
+  [EVENT("showExport")]() {
+    this.$el.show();
+    this.refresh();
+  }
+
+  [EVENT("hideExport")]() {
+    this.$el.hide();
+  }
 }

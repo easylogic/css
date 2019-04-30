@@ -9,7 +9,17 @@
     cursor: pointer;
   }
 
-  .property-item-label[data-display='grid'] button {
+  label {
+    width: 80px;
+    box-sizing: border-box;
+    padding: 5px 2px;
+  }
+
+  button {
+    appearance: none;
+  }
+
+  .property-item-label[data-display="grid"] button {
     display: inline-block;
   }
 
@@ -21,7 +31,7 @@
     @each $display-type in inline, inline-block, block, flex, grid {
       &[selected-type="#{$display-type}"] {
         .display[display-type="#{$display-type}"] {
-          border:1px solid $border-color;
+          border: 1px solid $border-color;
           background-color: rgba($border-color, 0.3);
         }
       }
