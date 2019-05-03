@@ -8,33 +8,30 @@ import {
   CHANGE_ARTBOARD,
   CHANGE_INSPECTOR
 } from "../../../../types/event";
-import { INPUT, CLICK } from "../../../../../util/Event";
+import { INPUT, CLICK, BIND } from "../../../../../util/Event";
 import { editor } from "../../../../../editor/editor";
 import { Length } from "../../../../../editor/unit/Length";
+import icon from "../../../icon/icon";
 
-export default class BoundProperty extends BaseProperty {
-  getTitle() {
-    return 'Bound'
+export default class SizeProperty extends BaseProperty {
+  initState() {
+    return { width: 0, height: 0 };
   }
+
+  getTitle() {
+    return "Size";
+  }
+
+  getTools() {
+    return `
+      <button type="button" ref='$rect'>${icon.screen}</button>
+    `;
+  }
+
   getBody() {
     return `
         <div class='property-item grid-4'>
             <label class='property-item-label'>
-                X
-            </label>
-            <div class='property-item-input-field'>
-                <input type='number' ref="$x"> <span>px</span>
-            </div>
-            <label class='property-item-label'>
-                Y
-            </label>                
-            <div class='property-item-input-field'>
-                <input type='number' ref="$y"> <span>px</span>
-            </div>
-        </div>                
-        <div class='property-item grid-4'>
-            <label class='property-item-label'>
-                <button type="button" ref="$rect">*</button>
                 Width
             </label>
             <div class='property-item-input-field'>
@@ -61,14 +58,22 @@ export default class BoundProperty extends BaseProperty {
     this.refresh();
   }
 
+  [BIND("$width")]() {
+    return { value: this.state.width };
+  }
+
+  [BIND("$height")]() {
+    return { value: this.state.height };
+  }
+
   refresh() {
-    var item = editor.selection.currentRect;
+    var item = editor.selection.current;
     if (!item) return;
 
-    this.refs.$width.val(item.width.value);
-    this.refs.$height.val(item.height.value);
-    this.refs.$x.val(item.x.value);
-    this.refs.$y.val(item.y.value);
+    this.setState({
+      width: item.width.value,
+      height: item.height.value
+    });
   }
 
   [CLICK("$rect")](e) {

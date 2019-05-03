@@ -1,51 +1,43 @@
 # EasyLogic Studio - Enjoyable CSS Gradient Editor
 
+This project is purity CSS editor.
 
-This project is purity CSS editor. 
-
-https://css.easylogic.studio/
-
+https://www.easylogic.studio/
 
 You can use it as you see it.
 
-# Screen Shot 
+# Screen Shot
 
-<img width="800px" src="https://css.easylogic.studio/resources/image/sample.png" />
+<img width="800px" src="https://www.easylogic.studio/resources/image/sample.png" />
 
+# Features
 
-# Features 
+- Support multi DIV Layers
+- Support multi css background images(gradients)
+- Support easy colorstep tool
+- Support static colorstep
+- Support DIV clip-path property for SVG
+- Support to export (html, css)
+- Support to export both codepen and jsfiddle
+- Support local storage
+- Support css filter
+- Support box-shadow, text-shadow
 
-* Support multi DIV Layers
-* Support multi css background images(gradients) 
-* Support easy colorstep tool 
-* Support static colorstep 
-* Support DIV clip-path property for SVG 
-* Support to export (html, css)
-* Support to export both codepen and jsfiddle
-* Support local storage 
-* Support css filter 
-* Support box-shadow, text-shadow 
+# Developments
 
-
-
-# Developments 
-
-## local dev 
+## local dev
 
 ```
 git clone https://github.com/easylogic/css
 cd css
-npm install 
-npm run dev 
-open localhost:10001/dev.html 
-```
-
-## build 
-
-```
-npm run build 
+npm install
 npm run dev
-open localhost:10001/index.html
 ```
 
-# License : MIT 
+## build
+
+```
+npm run build
+```
+
+# License : MIT

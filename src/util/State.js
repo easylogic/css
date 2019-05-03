@@ -1,34 +1,34 @@
-import { debounce } from "./functions/func";
+import { debounce, keyEach } from "./functions/func";
 import { EMPTY_STRING } from "./css/types";
 
-const DELEGATE_SPLIT = '.';
+const DELEGATE_SPLIT = ".";
 
 export default class State {
-  constructor (masterObj, settingObj = {}) {
-
+  constructor(masterObj, settingObj = {}) {
     this.masterObj = masterObj;
-    this.settingObj = settingObj; 
-
-    window.addEventListener('resize', debounce(() => {
-      this.initialize()
-    }, 300))
+    this.settingObj = settingObj;
   }
 
-  initialize () {
-    this.settingObj = {} 
+  initialize() {
+    this.settingObj = {};
   }
 
-  set (key, value, defaultValue = undefined) {
+  update(obj) {
+    keyEach(obj, (key, value) => {
+      this.set(key, value);
+    });
+  }
+
+  set(key, value, defaultValue = undefined) {
     this.settingObj[key] = value || defaultValue;
   }
 
-  init (key, ...args) {
-
+  init(key, ...args) {
     if (!this.has(key)) {
-
       const arr = key.split(DELEGATE_SPLIT);
 
-      const obj = this.masterObj.refs[arr[0]] || this.masterObj[arr[0]] || this.masterObj;
+      const obj =
+        this.masterObj.refs[arr[0]] || this.masterObj[arr[0]] || this.masterObj;
       const method = arr.pop();
 
       if (obj[method]) {
@@ -36,18 +36,16 @@ export default class State {
 
         this.set(key, value);
       }
-
     }
   }
 
-  get (key, defaultValue = EMPTY_STRING) {
-
+  get(key, defaultValue = EMPTY_STRING) {
     this.init(key, defaultValue);
 
     return this.settingObj[key] || defaultValue;
   }
 
-  has (key) {
+  has(key) {
     return !!this.settingObj[key];
   }
 }

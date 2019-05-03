@@ -12,7 +12,7 @@ import Alignment from "../ui/control/Alignment";
 import HotKey from "../ui/control/HotKey";
 import { LOAD_START } from "../types/LoadTypes";
 import UIElement, { EVENT } from "../../util/UIElement";
-import { RESIZE, DEBOUNCE } from "../../util/Event";
+import { RESIZE, DEBOUNCE, IN, OUT, BIND } from "../../util/Event";
 import {
   RESIZE_WINDOW,
   TOGGLE_TIMELINE,
@@ -27,11 +27,8 @@ import BackgroundPropertyPopup from "../ui/control/BackgroundPropertyPopup";
 import DisplayPropertyPopup from "../ui/control/DisplayPropertyPopup";
 import ColorPicker from "../ui/control/ColorPicker";
 
-
-
 export default class CSSEditor extends UIElement {
   afterRender() {
-
     setTimeout(() => {
       this.emit(RESIZE_WINDOW);
       this.emit(CHANGE_EDITOR);
@@ -142,6 +139,13 @@ export default class CSSEditor extends UIElement {
     // });
   }
 
+  [BIND("$layoutMain")]() {
+    return {
+      value: this.state.xxx,
+      style: `${this.state.xxx}`,
+      class: `${this.state.class}`
+    };
+  }
   [EVENT(TOGGLE_TIMELINE)]() {
     this.$el.toggleClass("show-timeline");
   }

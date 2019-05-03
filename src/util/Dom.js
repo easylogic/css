@@ -78,6 +78,11 @@ export default class Dom {
     return this;
   }
 
+  removeStyle(key) {
+    this.el.style.removeProperty(key);
+    return this;
+  }
+
   is(checkElement) {
     return this.el === (checkElement.el || checkElement);
   }
@@ -437,8 +442,8 @@ export default class Dom {
     return this.el.value;
   }
 
-  get files () {
-    return this.el.files ? [...this.el.files] : [] 
+  get files() {
+    return this.el.files ? [...this.el.files] : [];
   }
 
   realVal() {

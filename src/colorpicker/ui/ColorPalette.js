@@ -39,8 +39,8 @@ export default class ColorPalette extends UIElement {
   }
 
   setColorUI() {
-    var x = this.state.get("$el.width") * this.$store.hsv.s,
-      y = this.state.get("$el.height") * (1 - this.$store.hsv.v);
+    var x = this.$el.width() * this.$store.hsv.s,
+      y = this.$el.height() * (1 - this.$store.hsv.v);
 
     this.refs.$drag_pointer.px("left", x);
     this.refs.$drag_pointer.px("top", y);
@@ -53,8 +53,8 @@ export default class ColorPalette extends UIElement {
   setMainColor(e) {
     // e.preventDefault();
     var pos = this.$el.offset();
-    var w = this.state.get("$el.contentWidth");
-    var h = this.state.get("$el.contentHeight");
+    var w = this.$el.contentWidth();
+    var h = this.$el.contentHeight();
 
     var x = Event.pos(e).pageX - pos.left;
     var y = Event.pos(e).pageY - pos.top;

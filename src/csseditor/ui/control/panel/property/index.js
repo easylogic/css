@@ -18,17 +18,18 @@
 // import Transform2DControlProperty from "./Transform2DControlProperty";
 // import BackgroundPositionProperty from "./BackgroundPositionProperty";
 // import LayerBorderRadiusProperty from "./LayerBorderRadiusProperty";
-import BoundProperty from "./BoundProperty";
+import SizeProperty from "./SizeProperty";
 import LayoutProperty from "./LayoutProperty";
 import FillProperty from "./FillProperty";
 import BackgroundColorProperty from "./BackgroundColorProperty";
-
+import PositionProperty from "./PositionProperty";
 
 export default {
+  PositionProperty,
   BackgroundColorProperty,
   FillProperty,
   LayoutProperty,
-  BoundProperty
+  SizeProperty
   // BackgroundPositionProperty,
   // Transform2DControlProperty,
   // LayerBorderRadiusProperty,

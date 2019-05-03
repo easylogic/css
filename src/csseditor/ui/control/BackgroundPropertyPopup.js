@@ -31,10 +31,8 @@ export default class BackgroundPropertyPopup extends UIElement {
     };
   }
 
-  initialize() {
-    super.initialize();
-
-    this.data = {
+  initState() {
+    return {
       size: "auto",
       repeat: "repeat",
       x: Length.px(0),
@@ -42,15 +40,19 @@ export default class BackgroundPropertyPopup extends UIElement {
       width: Length.px(0),
       height: Length.px(0),
       maxWidth: 100,
-      maxHeight: 100
+      maxHeight: 100,
+      position: {
+        left: 0,
+        bottom: 0
+      }
     };
   }
 
   getMaxWidth() {
-    return this.data.maxWidth;
+    return this.state.maxWidth;
   }
   getMaxHeight() {
-    return this.data.maxHeight;
+    return this.state.maxHeight;
   }
   updateX(x) {
     this.updateData({ x });
@@ -66,8 +68,7 @@ export default class BackgroundPropertyPopup extends UIElement {
   }
 
   updateData(opt) {
-    this.data = { ...this.data, ...opt };
-
+    this.setState(opt);
     this.emit("changeBackgroundPropertyPopup", opt);
   }
 
@@ -166,22 +167,22 @@ export default class BackgroundPropertyPopup extends UIElement {
     this.updateData({ repeat: $t.value });
   }
 
-  templateForBlendMode () {
+  templateForBlendMode() {
     return html`
     <div class='popup-item'>
       <label>Blend</label>
       <div class='blend-list' ">
         <select ref='$blend' class='full-size'>
           ${blend_list.map(it => {
-            return `<option value=${it}>${it}</option>`
+            return `<option value=${it}>${it}</option>`;
           })}
         </select>
       </div>
     </div>
-    `
+    `;
   }
 
-  [CHANGE('$blend')] () {
+  [CHANGE("$blend")]() {
     const blendMode = this.refs.$blend.value;
     this.updateData({ blendMode });
   }
@@ -226,12 +227,18 @@ export default class BackgroundPropertyPopup extends UIElement {
 
     this.refreshUnitRange();
 
-    this.$el.show("inline-block");
+    this.$el
+      .css({
+        top: Length.px(data.position.top - 240),
+        right: Length.px(320),
+        bottom: Length.auto
+      })
+      .show("inline-block");
   }
 
   [EVENT(
     "hideBackgroundPropertyPopup",
-    'hidePropertyPopup',
+    "hidePropertyPopup",
     CHANGE_EDITOR,
     CHANGE_SELECTION
   )]() {

@@ -10,15 +10,16 @@
   }
 
   > .property-title {
-    font-size: 12px;
-    font-weight: 400;
     padding: 2px 5px;
     padding-left: 10px;
     height: 24px;
     line-height: 2;
-    color: #333;
+    color: rgb(104, 104, 104);
     cursor: pointer;
     position: relative;
+    font-size: 13px;
+    font-weight: bold;
+    text-shadow: 2px 2px 5px $border-color;
 
     > .tools {
       display: inline-block;
@@ -59,7 +60,7 @@
       overflow: hidden;
       display: grid;
       grid-template-columns: 1fr 3fr;
-        margin-bottom: 2px;
+      margin-bottom: 2px;
 
       .property-item-label,
       .property-item-input-field {
@@ -73,7 +74,7 @@
         button {
           appearance: none;
           background-color: transparent;
-          border:0px;
+          border: 0px;
           cursor: pointer;
           padding: 0px 3px;
           outline: none;
@@ -89,7 +90,6 @@
           display: grid;
           grid-template-columns: 1fr 3fr;
         }
-        
       }
 
       .property-item-label {
@@ -118,7 +118,7 @@
 
       @import "./property-items/background-color.scss";
       @import "./property-items/fill.scss";
-      @import "./property-items/display-manager.scss";      
+      @import "./property-items/display-manager.scss";
       @import "./property-items/gradient-steps.scss";
       @import "./property-items/gradient-sample-list.scss";
       @import "./property-items/gradient-steps-info.scss";
@@ -141,7 +141,6 @@
       @import "./property-items/background-code.scss";
       @import "./property-items/text.scss";
       @import "./property-items/image-sorting.scss";
-
     }
   }
 }

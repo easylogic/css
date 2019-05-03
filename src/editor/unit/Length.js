@@ -74,9 +74,6 @@ export class Length {
   static fr(value) {
     return new Length(+value, "fr");
   }
-  static auto() {
-    return Length.string("auto");
-  }
 
   /**
    * return calc()  css fuction string
@@ -308,3 +305,5 @@ export class Length {
     return this;
   }
 }
+
+Length.auto = Length.string("auto");

@@ -4,7 +4,12 @@ import Event, {
   CHECK_SAPARATOR,
   SAPARATOR,
   CHECK_LOAD_PATTERN,
-  LOAD_SAPARATOR
+  LOAD_SAPARATOR,
+  BIND_SAPARATOR,
+  CHECK_BIND_PATTERN,
+  getRef,
+  BIND_CHECK_DEFAULT_FUNCTION,
+  BIND_CHECK_FUNCTION
 } from "./Event";
 import Dom from "./Dom";
 import State from "./State";
@@ -14,9 +19,12 @@ import {
   isArray,
   html,
   keyEach,
-  isNotUndefined
+  isNotUndefined,
+  isUndefined,
+  isString,
+  isObject
 } from "./functions/func";
-import { EMPTY_STRING } from "./css/types";
+import { EMPTY_STRING, WHITE_STRING } from "./css/types";
 import {
   ADD_BODY_MOUSEMOVE,
   ADD_BODY_MOUSEUP
@@ -249,13 +257,65 @@ const parseEvent = (context, key) => {
   });
 };
 
+const applyElementAttribute = ($element, key, value) => {
+  if (key === "style") {
+    if (isObject(value)) {
+      // 문자열이 아니라 객체 일때는 직접 입력하는 방식으로
+      keyEach(value, (sKey, sValue) => {
+        if (!sValue) {
+          $element.removeStyle(sKey);
+        } else {
+          $element.css(sKey, sValue);
+        }
+      });
+    }
+
+    return;
+  } else if (key === "class") {
+    // 문자열이 아닐 때는 문자열로 만들어 준다.
+
+    if (isArray(value)) {
+      $element.addClass(...value);
+    } else if (isObject(value)) {
+      keyEach(value, (k, v) => {
+        if (!value) {
+          $element.removeClass(k);
+        } else {
+          $element.addClass(k);
+        }
+      });
+    } else {
+      $element.addClass(value);
+    }
+
+    return;
+  }
+
+  if (isUndefined(value)) {
+    $element.removeAttr(key);
+  } else {
+    $element.attr(key, value);
+  }
+};
+
 export default class EventMachine {
   constructor() {
-    this.state = new State(this);
+    this.state = {};
+    this.prevState = {};
     this.refs = {};
     this.children = {};
     this._bindings = [];
     this.childComponents = this.components();
+  }
+
+  initState() {
+    return {};
+  }
+
+  setState(state = {}) {
+    this.prevState = this.state;
+    this.state = { ...this.state, ...state };
+    this.load();
   }
 
   render($container) {
@@ -268,12 +328,15 @@ export default class EventMachine {
 
     if ($container) $container.html(this.$el);
 
-    this.load();
+    // this.load();
+    this.parseComponent();
 
     this.afterRender();
   }
 
-  initialize() {}
+  initialize() {
+    this.state = this.initState();
+  }
   afterRender() {}
   components() {
     return {};
@@ -345,32 +408,67 @@ export default class EventMachine {
     });
   }
 
-  load() {
+  load(...args) {
     if (!this._loadMethods) {
       this._loadMethods = this.filterProps(CHECK_LOAD_PATTERN);
+      this._bindMethods = this.filterProps(CHECK_BIND_PATTERN);
     }
 
     this._loadMethods.forEach(callbackName => {
       const elName = callbackName.split(LOAD_SAPARATOR)[1];
       if (this.refs[elName]) {
         var oldTemplate = this[callbackName].t || EMPTY_STRING;
-        var newTemplate = this[callbackName].call(this);
+        var newTemplate = this[callbackName].call(this, ...args);
 
         if (isArray(newTemplate)) {
           newTemplate = newTemplate.join(EMPTY_STRING);
         }
 
         // LOAD 로 생성한 html 문자열에 변화가 없으면 업데이트 하지 않는다.
-        // if (oldTemplate != newTemplate) { 
-          // this[callbackName].t = newTemplate;
-          const fragment = this.parseTemplate(newTemplate, true);
+        // if (oldTemplate != newTemplate) {
+        // this[callbackName].t = newTemplate;
+        const fragment = this.parseTemplate(newTemplate, true);
 
-          // fragment 와 이전 el children 을 비교해서 필요한 것만 갱신한다.
-          // 이건 비교 알고리즘을 넣어도 괜찮을 듯
-          this.refs[elName].html(fragment);
+        // fragment 와 이전 el children 을 비교해서 필요한 것만 갱신한다.
+        // 이건 비교 알고리즘을 넣어도 괜찮을 듯
+        this.refs[elName].html(fragment);
 
-          // ref 를 중복해서 로드 하게 되면 이전 객체가 그대로 살아 있을 확률이 커지기 때문에 정상적으로 싱크가 맞지 않음
+        // ref 를 중복해서 로드 하게 되면 이전 객체가 그대로 살아 있을 확률이 커지기 때문에 정상적으로 싱크가 맞지 않음
         // }
+      }
+    });
+
+    /**
+     * BIND 를 해보자.
+     * 이시점에 하는게 맞는지는 모르겠지만 일단은 해보자.
+     * BIND 는 특정 element 에 html 이 아닌 데이타를 업데이트하기 위한 간단한 로직이다.
+     */
+    this._bindMethods.forEach(callbackName => {
+      const bindMethod = this[callbackName];
+      var [callbackName, id] = callbackName.split(CHECK_SAPARATOR);
+
+      const refObject = getRef(id);
+      let refCallback = BIND_CHECK_DEFAULT_FUNCTION;
+
+      if (refObject != EMPTY_STRING && isString(refObject)) {
+        refCallback = BIND_CHECK_FUNCTION(refObject);
+      } else if (isFunction(refObject)) {
+        refCallback = refObject;
+      }
+
+      const elName = callbackName.split(BIND_SAPARATOR)[1];
+      let $element = this.refs[elName];
+
+      // isBindCheck 는 binding 하기 전에 변화된 지점을 찾아서 업데이트를 제한한다.
+      const isBindCheck = isFunction(refCallback) && refCallback.call(this);
+      if ($element && isBindCheck) {
+        const results = bindMethod.call(this, ...args);
+
+        if (!results) return;
+
+        keyEach(results, (key, value) => {
+          applyElementAttribute($element, key, value);
+        });
       }
     });
 
@@ -440,7 +538,16 @@ export default class EventMachine {
       var p = this.__proto__;
       var results = [];
       do {
-        results.push(...Object.getOwnPropertyNames(p));
+        var isObject = p instanceof Object;
+
+        if (isObject === false) {
+          break;
+        }
+        const names = Object.getOwnPropertyNames(p).filter(name => {
+          return isFunction(this[name]);
+        });
+
+        results.push(...names);
         p = p.__proto__;
       } while (p);
 
